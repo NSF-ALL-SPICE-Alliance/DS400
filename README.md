@@ -7,7 +7,7 @@
 
 🕥 Tuesdays 11:20 - 12:30
 
-🕥 Wednesdays 12:30 - 1:20 
+🕥 Thursdays 12:30 - 1:20 
 
 📆 By appointment, email connor.flynn@chaminade.edu
 
