@@ -1,5 +1,10 @@
 # Welcome to DS400, Bayesian Statistics 🌊 🌱 🌎
 
+
+<img width="235" alt="Screen Shot 2024-08-22 at 4 26 52 PM" src="https://github.com/user-attachments/assets/20e929e1-18ea-4cc7-a15e-9ed24af27f31">
+
+
+
 #### Class Location & Times
 🏫 Data Science Center, Tuesdays & Thursdays | 10:00 - 11:20 
 
