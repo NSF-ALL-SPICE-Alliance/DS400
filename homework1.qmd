@@ -1,0 +1,65 @@
+---
+title: "Homework 1"
+format: html
+editor: visual
+---
+
+### Load Libraries
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(car)
+library(tidyverse)
+library(haven)
+library(here)
+library(ggplot2)
+```
+
+### Read-in Datasets for this Analysis:
+
+-   DR1TOT_J.xpt as 'diet_behavior'
+-   2017-2018_Hg-Blood.XPT as 'blood_hg'
+-   2017-2018_Hg-Urine.XPT as 'urine_hg'
+-   2017-2018_Diabetes.XPT as 'diabetes'
+
+```{r}
+diet_behavior <- read_xpt(here("nhanes_data/DR1TOT_J.XPT"))
+blood_hg <- read_xpt(here("nhanes_data/2017-2018_Hg-Blood.XPT"))
+urine_hg <- read_xpt(here("nhanes_data/2017-2018_Hg-Urine.XPT"))
+diabetes <- read_xpt(here("nhanes_data/2017-2018_Diabetes.XPT"))
+demographics <- read_xpt("nhanes_data/2017-2018_Demographics.XPT")
+```
+
+### Subset Read-in Datasets
+
+Subset 'diet_behavior' as 'diet'
+
+```{r}
+diet <- select(diet_behavior, SEQN, DRD360, DRD370B, DRD370BQ, DRD370Q, DRD370QQ)
+```
+
+Subset 'diabetes' as 'tiid'
+
+```{r}
+tiid <- select(diabetes, SEQN, DIQ010)
+```
+
+Subset 'blood_hg' as 'bhg'
+
+```{r}
+bhg <- select(blood_hg, SEQN, LBXIHG, LBDIHGSI, LBXBGE, LBXBGM)
+```
+
+Subset "urine_hg' as 'uhg'
+
+```{r}
+uhg <- select(urine_hg, SEQN, URXUHG)
+```
+
+### Merge Subsets Into A Working Dataframe as 'df'
+
+```{r}
+df <- list(diet, tiid, bhg, uhg)
+
+df <- df %>% reduce(full_join, by = 'SEQN')
+```
