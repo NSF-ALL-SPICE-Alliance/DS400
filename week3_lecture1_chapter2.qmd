@@ -1,0 +1,144 @@
+---
+title: "Week 3, Lecture 1, Chapter 2"
+format: html
+editor: visual
+---
+
+```{r}
+library(bayesrules)
+library(tidyverse)
+library(janitor)
+library(skimr)
+```
+
+#### Import data with bayesrules package
+
+```{r}
+data(fake_news)
+```
+
+#### Bring up dataset documentation
+
+```{r}
+?fake_news
+```
+
+#### Skim data for overview
+
+```{r}
+skim(fake_news)
+```
+
+#### Your Turn
+
+💻 📈 Take 10 minutes to do some some exploratory data analysis below and we will chat about best practices:
+
+### The Whole Game
+
+![](images/clipboard-2218401115.png){width="387"}
+
+A \<- Has exclamation point
+
+-   Ac \<- Does not have exclamation point
+
+B \<- Article is fake
+
+-   Bc \<- Article is real
+
+![](images/Screen Shot 2024-08-30 at 5.11.51 PM.png){width="388"}
+
+![](images/Screen Shot 2024-08-30 at 5.11.36 PM.png){width="387" height="189"}
+
+Our fake news analysis boils down to the study of two **variables**: an article’s fake vs real status and its use of exclamation points. These features can *vary* from article to article. Some are fake, some aren’t. Some use exclamation points, some don’t. We can represent the *randomness* in these variables using **probability models**. In this section we will build a **prior probability model** for our prior understanding of whether the most recent article is fake; a model for interpreting the exclamation point **data**; and, eventually, a **posterior probability model** which summarizes the posterior plausibility that the article is fake.
+
+### Prior Probability Model
+
+Percent of articles fake vs real
+
+```{r}
+fake_news %>% 
+  tabyl(type) %>% 
+  adorn_totals("row")
+```
+
+P(B) = 0.40
+
+-   The prior probability (an [unconditional probability](https://www.bayesrulesbook.com/chapter-2#building-a-bayesian-model-for-events:~:text=two%20events.%20The-,unconditional%20probability,-of)) that the article is fake is 0.4
+
+P(Bc) = 0.60
+
+-   The prior probability (an unconditional probability) that the article is real is 0.6
+
+```{r}
+fake_news %>% 
+  tabyl(title_has_excl) %>% 
+  adorn_totals("row")
+```
+
+P(A) = 0.12
+
+-   The prior probability (an [unconditional probability](https://www.bayesrulesbook.com/chapter-2#building-a-bayesian-model-for-events:~:text=two%20events.%20The-,unconditional%20probability,-of)) that the article has an exclamation point is 0.12
+
+P(Ac) = 0.60
+
+-   The prior probability (an unconditional probability) that the article does not have an exclamation point is 0.88
+
+So far we have this
+
+$$
+P(B \mid A) = \frac{0.4 L(B \mid A)}{0.12} = \frac{0.4 \cdot 0.2667}{0.12} = 0.889.
+$$
+
+#### Likelihood 
+
+When A is known, the **likelihood function** L(⋅\|A)=P(A\|⋅)L(⋅\|A)=P(A\|⋅) allows us to evaluate the relative compatibility of data A with events B or Bc:
+
+-   The likelihood function provides a framework to compare the relative compatibility of our exclamation point data with BB and B
+
+    -   Likelihoods do not sum to 1, probabilities do sum to 1\
+
+```{r}
+fake_news %>% 
+  tabyl(title_has_excl, type) %>% 
+  adorn_percentages("col") 
+```
+
+L(B\|A) = 0.267
+
+L(Bc\|A) = 0.022
+
+Thus, whereas the prior evidence suggested the article is most likely real (P(B)\<P(Bc)P(B)\<P(Bc)), the data is more consistent with the article being fake (L(B\|A)\>L(Bc\|A)L(B\|A)\>L(Bc\|A)).
+
+Now we have enough info for the posterior probability model
+
+$$
+P(B \mid A) = \frac{0.4 \cdot 0.2667  }{0.12} = \frac{0.4 \cdot 0.2667}{0.12} = 0.889.
+$$
+
+We started with a prior understanding that there’s only a 40% chance that the incoming article would be fake. Yet upon observing the use of an exclamation point in the title *“The president has a funny secret!”*, a feature that’s more common to fake news, our posterior understanding evolved quite a bit – the chance that the article is fake jumped to 88.9%.
+
+### Challenge
+
+Let’s put Bayes’ Rule into action in another example. Our word choices can reflect where we live. For example, suppose you’re watching an interview of somebody that lives in the United States. Without knowing anything about this person, U.S. Census figures provide prior information about the region in which they might live: the Midwest (M), Northeast (N), South (S), or West (W).
+
+```{r}
+data(pop_vs_soda)
+```
+
+1\) Build a prior probability model (an unconditional probability model) with probabilities for where the person is from
+
+2\) But then, you see the person point to a fizzy cola drink and say “please pass my pop.” Though the country is united in its love of fizzy drinks, it’s divided in what they’re called, with common regional terms including “pop,” “soda,” and “coke.” This **data**, i.e., the person’s use of “pop,” provides further information about where they might live.
+
+-   Determine regiional likelihoods that a person uses the word “pop,”
+
+    -   Letting A denote the event that a person uses the word “pop,”
+
+        -   Letting S denote the person is from the south
+
+        -   Letting N denote the person is from the northeast
+
+        -   Letting W denote the person is from the west
+
+        -   Letting M denote the person is from the midwest
+
+3\) Build a posterior probability model determining the probability that the person is from the south based on using the word "pop": P(S\|A)\
