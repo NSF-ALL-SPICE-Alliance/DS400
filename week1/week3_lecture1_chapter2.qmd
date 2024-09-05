@@ -33,6 +33,26 @@ skim(fake_news)
 
 💻 📈 Take 10 minutes to do some some exploratory data analysis below and we will chat about best practices. Keep in mind two variables that we will focus on, type and title_has_exc
 
+```{r}
+unique(fake_news$type)
+unique(fake_news$title_has_excl)
+
+```
+
+```{r}
+fake_news_limited <- fake_news %>% 
+  select(title_has_excl, type)
+
+fake_news_limited <- fake_news_limited %>% 
+  group_by_all() %>% 
+  count()
+```
+
+```{r}
+ggplot(data = fake_news, aes(x = type, fill = title_has_excl)) +
+  geom_bar()
+```
+
 ### The Whole Game
 
 ![](images/clipboard-2218401115.png){width="387"}
@@ -66,6 +86,10 @@ P(B) = 0.40
 
 -   The prior probability (an [unconditional probability](https://www.bayesrulesbook.com/chapter-2#building-a-bayesian-model-for-events:~:text=two%20events.%20The-,unconditional%20probability,-of)) that the article is fake is 0.4
 
+```{r}
+prior_probability_article_fake <- 0.4
+```
+
 P(Bc) = 0.60
 
 -   The prior probability (an unconditional probability) that the article is real is 0.6
@@ -80,7 +104,11 @@ P(A) = 0.12
 
 -   The prior probability (an [unconditional probability](https://www.bayesrulesbook.com/chapter-2#building-a-bayesian-model-for-events:~:text=two%20events.%20The-,unconditional%20probability,-of)) that the article has an exclamation point is 0.12
 
-P(Ac) = 0.60
+```{r}
+prior_probability_has_exc <- 0.12
+```
+
+P(Ac) = 0.88
 
 -   The prior probability (an unconditional probability) that the article does not have an exclamation point is 0.88
 
@@ -106,6 +134,10 @@ fake_news %>%
 
 L(B\|A) = 0.267
 
+```{r}
+likelihood_article_fake_has_exc <- 0.27
+```
+
 L(Bc\|A) = 0.022
 
 Thus, whereas the prior evidence suggested the article is most likely real (P(B)\<P(Bc)P(B)\<P(Bc)), the data is more consistent with the article being fake (L(B\|A)\>L(Bc\|A)L(B\|A)\>L(Bc\|A)).
@@ -115,6 +147,10 @@ Now we have enough info for the posterior probability model
 $$
 P(B \mid A) = \frac{0.4 \cdot 0.2667  }{0.12} = \frac{0.4 \cdot 0.2667}{0.12} = 0.889.
 $$
+
+```{r}
+(prior_probability_article_fake * likelihood_article_fake_has_exc) / prior_probability_has_exc
+```
 
 We started with a prior understanding that there’s only a 40% chance that the incoming article would be fake. Yet upon observing the use of an exclamation point in the title *“The president has a funny secret!”*, a feature that’s more common to fake news, our posterior understanding evolved quite a bit – the chance that the article is fake jumped to 88.9%.
 
