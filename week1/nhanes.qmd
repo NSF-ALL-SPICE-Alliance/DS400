@@ -1,5 +1,5 @@
 ---
-title: "Homework 1"
+title: "NHANES Challenge"
 format: html
 editor: visual
 ---
@@ -67,19 +67,28 @@ df <- df %>% reduce(full_join, by = 'SEQN')
 
 1.  Filter Dataframe df for the following:
 
--   For DIQ010 and DRD370B
+```{r}
+# Assuming your dataframe is named `nhanes_data`
+df <- df %>%
+  # Filter out rows where DIQ010 or DRD360 are NA
+  filter(!is.na(DIQ010), !is.na(DRD370B)) %>%
+  # Keep only rows where DIQ010 and DRD360 are 1 or 2
+  filter(DIQ010 %in% c(1, 2), DRD370B %in% c(1, 2)) %>%
+  # Recode 1 to "Yes" and 2 to "No" for DIQ010 and DRD360
+  mutate(
+    DIQ010 = ifelse(DIQ010 == 1, "Yes", "No"),
+    DRD370B = ifelse(DRD370B == 1, "Yes", "No")
+  )
+  
+```
 
-    -   No na's
-
-    -   only keep rows with value 1 or 2
-
-    -   Convert 1's to "yes" and 2 to "no"
-
-2.  Determine the prior probability that someone has diabetes (DIQ010)
+2.  Do some exploratory data analysis
+3.  Determine the prior probability that someone has diabetes (DIQ010)
     -   P(B)
-3.  Determine the prior probability that someone eats tuna (DRD370B)
+4.  Determine the prior probability that someone eats tuna (DRD370B)
     -   P(A)
-4.  Determine the likelihood of having diabetes and eating tuna
+5.  Determine the likelihood of eating tuna and having diabetes
     -   L(B\|A)
-5.  Determine posterior probability via bayes theorem
+6.  Determine posterior probability via bayes theorem
     -   P(B\|A)
+7.  What other questions can we ask of this data?
