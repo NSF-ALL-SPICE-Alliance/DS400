@@ -1,0 +1,194 @@
+---
+title: "Lecture 1"
+format: html
+editor: visual
+---
+
+```{r}
+library(bayesrules)
+library(tidyverse)
+library(janitor)
+library(skimr)
+```
+
+Import data with bayesrules package
+
+```{r}
+# Import article data
+data(fake_news)
+```
+
+Bring up dataset documentation
+
+```{r}
+?fake_news
+```
+
+Skim data for overview
+
+```{r}
+skim(fake_news)
+```
+
+Your Turn
+
+💻 📈 Take 10 minutes to do some some exploratory data analysis below and we will chat about best practices:
+
+Percent fake vs real
+
+```{r}
+fake_news %>% 
+  tabyl(type) %>% 
+  adorn_totals("row")
+```
+
+```{r}
+fake_news %>% 
+  tabyl(title_has_excl) %>% 
+  adorn_totals("row")
+```
+
+Prior probability
+
+-   Letting B denote the event that an article is fake
+
+-   Bc (read “B complement” or “B not”) denote the event that it’s *not* fake
+
+    -   P(B)=0.40 and P(Bc)=0.60.
+
+Considering exclamation points
+
+-   Conditional Probability
+
+```{r}
+fake_news %>% 
+  tabyl(title_has_excl, type) %>% 
+  adorn_totals("row") 
+
+```
+
+```{r}
+fake_news %>% 
+  tabyl(title_has_excl, type) %>% 
+  adorn_percentages("col") 
+```
+
+uses exclamation point (A)
+
+*given* an article’s fake status (B or Bc):
+
+-   B represents true
+
+-   Bc represents fake
+
+P(A\|B) - Probability of A given B = 26.67%
+
+P(A\|Bc) - Probability of A given Bc = 2.22%
+
+Unconditional probability (prior)
+
+-   measures the probability of observing AA, without any knowledge of B.
+
+    -   Real vs fake [without]{.underline} knowledge of exclamation points
+
+Conditional probability
+
+-   measures the probability of observing A in light of the information that B occurred.
+
+    -   Real vs fake [with]{.underline} knowledge of exclamation points
+
+[Joint probability](https://www.bayesrulesbook.com/chapter-2#building-a-bayesian-model-for-events:~:text=That%20is%2C%20the-,joint%20probability,-of%20observing%20both)
+
+|       | B      | Bc     | Total |
+|-------|--------|--------|-------|
+| A     | 0.1067 | 0.0133 | 0.12  |
+| Ac    | 0.2933 | 0.5867 | 0.88  |
+| Total | 0.4    | 0.6    | 1     |
+
+-   the **joint probability** of observing both A and B is
+
+    -   P(A∩B)=P(A\|B)P(B)=0.2667⋅0.4=0.1067
+
+**Independent events**
+
+Two events AA and BB are **independent** if and only if the occurrence of BB doesn’t tell us anything about the occurrence of AA:
+
+P(A\|B)=P(A).
+
+```{r}
+data("pop_vs_soda")
+```
+
+```{r}
+ggplot(data = pop_vs_soda, aes(x = region, fill = pop)) +
+  geom_bar()
+```
+
+```{r}
+# Calculate percentages within each region
+pop_vs_soda_percentages <- pop_vs_soda %>%
+  group_by(region, pop) %>%
+  summarise(count = n()) %>%
+  mutate(percentage = count / sum(count) * 100)  # Calculate percentage
+
+# Create the bar plot with percentages
+ggplot(data = pop_vs_soda_percentages, aes(x = region, fill = pop, y = count)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), 
+            position = position_stack(vjust = 0.5)) +  # Position the labels in the middle of the bars
+  theme_minimal() +
+  labs(title = "Population vs Soda Consumption by Region",
+       x = "Region",
+       y = "Count")
+
+```
+
+1\) Build a prior probability model (an unconditional probability model) with probabilities for where the person is from
+
+-   Census data vs pop_vs_soda data
+
+```{r}
+priors <- c(
+  midwest = 0.21,
+  northeast = 0.17,
+  south = 0.38,
+  west = 0.24
+)
+
+priors
+```
+
+2\) Regional Likelihoods
+
+```{r}
+pop_vs_soda %>%
+  tabyl(pop, region) %>%
+  adorn_percentages("col")
+```
+
+```{r}
+likelihoods <- pop_vs_soda %>%
+  tabyl(pop, region) %>%
+  adorn_percentages("col") %>%
+  filter(pop == "TRUE") %>%
+  select(-pop) %>%
+  unlist()
+
+likelihoods
+```
+
+3\) Marginal prior probability that a person uses the word pop
+
+```{r}
+# Compute the marginal probability P(A)
+prior_says_pop <- sum(likelihoods * priors)
+
+# Print the result
+prior_says_pop
+```
+
+4\) Posterior Probability, P(S\|A)
+
+```{r}
+(priors[3] * likelihoods[3]) / prior_says_pop
+```
