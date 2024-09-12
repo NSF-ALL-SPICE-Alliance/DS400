@@ -34,7 +34,7 @@
 | Week   | Day | Module | Assignment Due @ Midnight|
 | -------- | ------- | ------- | ------- |
 | 8/19-8/23 |  Tuesday |  History of Bayesian Stats, Evidence Ideation and re-voting Activity|  |          
-| 8/19-8/23 |  Thursday | The exciting world of R! |  |  
+| 8/19-8/23 |  Thursday | Math and Miracles |  |  
 | 8/26-8/30 |  Tuesday | *No Lecture* |  |  
 | 8/26-8/30 |  Thursday | Indigenous Statistical Practices that Reflect Bayesian Reasoning | | 
 | 9/2-9/6     | Tuesday  | Github Repository Setup, bayesrules package installation |            |
