@@ -42,7 +42,7 @@ diet <- select(diet_behavior, SEQN, DRD360, DRD370B, DRD370BQ, DRD370Q, DRD370QQ
 Subset 'diabetes' as 'tiid'
 
 ```{r}
-tiid <- select(diabetes, SEQN, DIQ010)
+tiid <- select(diabetes, SEQN, DIQ010, DIQ170)
 ```
 
 Subset 'blood_hg' as 'bhg'
@@ -76,8 +76,8 @@ df <- df %>%
   filter(DIQ010 %in% c(1, 2), DRD370B %in% c(1, 2)) %>%
   # Recode 1 to "Yes" and 2 to "No" for DIQ010 and DRD360
   mutate(
-    DIQ010 = ifelse(DIQ010 == 1, "Yes", "No"),
-    DRD370B = ifelse(DRD370B == 1, "Yes", "No")
+    DIQ010 = ifelse(DIQ010 == 1, "Has Diabetes", "No Diabetes"),
+    DRD370B = ifelse(DRD370B == 1, "Consumes Ahi", "No Ahi")
   )
   
 ```
@@ -92,3 +92,101 @@ df <- df %>%
 6.  Determine posterior probability via bayes theorem
     -   P(B\|A)
 7.  What other questions can we ask of this data?
+
+#### Bayes Theorem
+
+$$
+P(B \mid A) = \frac{P(B) L(B \mid A)}{P(A)} 
+$$
+
+B \<- Has Diabetes
+
+A \<- Consumes Ahi
+
+#### P(B)
+
+The probability that a person has diabetes
+
+```{r}
+df %>% 
+  tabyl(DIQ010)
+```
+
+```{r}
+probability_has_diabetes <- 0.13
+```
+
+#### L(B\|A) = P(A\|B)
+
+```{r}
+df %>% 
+  tabyl(DRD370B, DIQ010) %>% 
+  adorn_percentages("col")
+```
+
+```{r}
+nhanes_percent <- df %>%
+  tabyl(DIQ010, DRD370B) %>%
+  adorn_percentages("row")
+
+# Step 2: Convert the wide format into a long format
+nhanes_long <- nhanes_percent %>%
+  pivot_longer(cols = -DIQ010, names_to = "DRD370B", values_to = "percentage")
+
+
+# Step 3: Create the bar plot with percentages
+ggplot(nhanes_long, aes(x = DIQ010, y = percentage, fill = DRD370B)) +
+  geom_bar(stat = "identity", position = "fill") +
+  geom_text(aes(label = percent(percentage, accuracy = 0.1)), 
+            position = position_fill(vjust = 0.5)) +
+  scale_y_continuous(labels = percent_format()) +
+  labs(y = "Percentage", x = "Diabetes", fill = "Ahi Consumption") +
+  theme_minimal()
+```
+
+```{r}
+probability_consumes_ahi_given_diabetes <- 0.36
+```
+
+#### P(A)
+
+```{r}
+df %>% 
+  tabyl(DRD370B)
+```
+
+```{r}
+probability_consumes_ahi <- 0.36
+```
+
+#### P(B\|A) 
+
+```{r}
+(probability_has_diabetes * probability_consumes_ahi_given_diabetes) / probability_consumes_ahi
+```
+
+#### Diabetes & Age
+
+```{r}
+demographics <- demographics %>% 
+  select(SEQN, RIDRETH1, RIAGENDR, RIDAGEYR)
+```
+
+```{r}
+nhanes_data <- left_join(df, demographics, by = "SEQN")
+```
+
+```{r}
+nhanes_data <- nhanes_data %>% 
+  mutate(age_bracket = ifelse(RIDAGEYR > 40, "old", "young"))
+```
+
+```{r}
+ggplot(nhanes_data, aes(x = RIDAGEYR, fill = DIQ010)) + geom_density(alpha = 0.5)
+```
+
+P(B\|A)
+
+B \<- has diabetes
+
+A \<- old, over 40
