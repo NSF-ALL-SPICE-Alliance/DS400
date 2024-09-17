@@ -86,7 +86,7 @@ L(B\|A) (the likelihood of B given A) is the same as P(A∣B) the probability of
 
 ```{r}
 fake_news %>% 
-  tabyl(type, title_has_excl) %>% 
+  tabyl(title_has_excl, type) %>% 
   adorn_percentages("row")
 ```
 
