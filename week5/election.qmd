@@ -1,0 +1,44 @@
+---
+title: "The Beta-Binomial Bayesian Model"
+format: html
+editor: visual
+---
+
+```{r, message=FALSE}
+library(tidyverse)
+library(bayesrules)
+```
+
+#### 
+
+#### Background (Prior)
+
+Every four years, Americans go to the polls to cast their vote for President of the United States. Consider the following scenario. “Michelle” has decided to run for president and you’re her campaign manager for the state of Minnesota. As such, you’ve conducted 30 different polls throughout the election season. Though Michelle’s support has hovered around 45%, she polled at around 35% in the dreariest days and around 55% in the best days on the campaign trail.
+
+![](images/prior-election-ch3-1.png){width="732"}
+
+[FIGURE 3.1](https://www.bayesrulesbook.com/chapter-3#ch3-prior:~:text=3.1%20(left)). The results of 30 previous polls of Minnesotans’ support of Michelle for president (left) and a corresponding continuous prior model for π, her current election support (right).
+
+This model is best understood by playing around. Figure [3.2](https://www.bayesrulesbook.com/chapter-3#fig:beta-tuning) plots the Beta pdf f(π) under a variety of **shape hyperparameters**, α and β. Check out the various shapes the Beta pdf can take. This flexibility means that we can *tune* the Beta to reflect our prior understanding of π by tweaking α and β.
+
+![](images/beta-tuning-1.png)
+
+![](images/beta_param_quiz.png){width="771" height="255"}
+
+```{r}
+plot_beta(45, 55)
+```
+
+#### New Data
+
+In the second step of our Bayesian analysis of Michelle’s election support π, you’re ready to collect some data. You plan to conduct a new poll of n=50 Minnesotans and record Y, the number that support Michelle. We ultimately observe that the poll was a huge success: Y=30 of n=50 (60%) polled voters support Michelle!
+
+![](images/posterior_model_quiz.png){width="1033"}
+
+```{r}
+plot_beta_binomial(alpha = 45, beta = 55, y = 30, n = 50)
+```
+
+```{r}
+summarize_beta_binomial(alpha = 45, beta = 55, y = 30, n = 50)
+```
