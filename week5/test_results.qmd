@@ -79,6 +79,46 @@ patients <- patients %>%
 
 #### Apply Bayes Theorem in Class
 
+##### P(B)
+
+```{r}
+patients %>% 
+  tabyl(has_disease)
+```
+
+```{r}
+probability_disease <- 0.001
+```
+
+##### L(B\|A) = P(A\|B)
+
+```{r}
+patients %>% 
+  tabyl(has_disease, test_result) %>% 
+  adorn_percentages("row")
+```
+
+```{r}
+probability_positive_result_given_disease <- 1
+```
+
+##### P(A)
+
+```{r}
+patients %>% 
+  tabyl(test_result)
+```
+
+```{r}
+probabilty_positive_test_result <- 0.0112
+```
+
+##### P(B\|A)
+
+```{r}
+(probability_positive_result_given_disease * probability_disease) / probabilty_positive_test_result
+```
+
 #### Video
 
 ```{r}
