@@ -1,0 +1,22 @@
+---
+title: "naive bayes penguins"
+format: html
+editor: visual
+---
+
+### Libraries
+
+```{r, message = FALSE}
+library(tidyverse)
+library(bayesrules)
+library(janitor)
+library(e1071)
+```
+
+### Story
+
+We’ll start our naive Bayes classification with just a single penguin. Suppose an Antarctic researcher comes across a penguin that weighs less than 4200g with a 195mm-long flipper and 50mm-long bill. Our goal is to help this researcher identify the species of this penguin, Adelie, Chinstrap, or Gentoo.
+
+#### Let's Plot!
+
+Make a visualization that will help the researcher determine the species based on the characteristics described above
