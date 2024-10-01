@@ -46,3 +46,21 @@
 | 9/23-9/27   | Tuesday  | Positive Test Result                    |            |
 | 9/23-9/27   | Thursday     | Second Positive Test Result                    |     Write predictions of second positive test result  due before class (10:00am)      |
 | 9/30-10/4  | Tuesday  | Naive Bayes Classification Penguins  |            |
+| 9/30-10/4   | Thursday     | Naive Bayes Classification Penguins             |        |
+| 10/7-10/11  | Tuesday     | Bayes Logisitc Regression                |            |
+| 10/7-10/11  | Thursday  | Bayes Logisitc Regression                                |      Naive Bayes Assignment (2X)  due before class (10:00am)    |
+| 10/14-10/18 | Tuesday     | Hierarchial Models                                      |            |
+| 10/14-10/18 | Thursday  | Hierarchial Models                                        |            |
+| 10/21-10/25 | Tuesday     |                                         |            |
+| 10/21-10/25 | Thursday  |                                         |            |
+| 10/28-11/1  | Tuesday     |                            |            |
+| 10/28-11/1  | Thursday  |                            |            |
+| 11/4-11/8   | Tuesday     |                       |            |
+| 11/4-11/8   | Thursday  |                      |            |
+| 11/11-11/15 | Tuesday     |                                      |            |
+| 11/11-11/15 | Thursday  |                     |            |
+| 11/18-11/22 | Tuesday     | Final Projects                               |            |
+| 11/18-11/22 | Thursday  | Final Projects                               |            |
+| 11/25-11/29 | Tuesday     | Final Projects                               |            |
+| 11/25-11/29 | Thursday  | Final Projects                               |            |
+| 12/2-12/6 | Thursday 11:00-1:00     | Final Presentations!              |            |
