@@ -20,3 +20,8 @@ We’ll start our naive Bayes classification with just a single penguin. Suppose
 #### Let's Plot!
 
 Make a visualization that will help the researcher determine the species based on the characteristics described above
+
+```{r}
+data(penguins_bayes)
+penguins <- penguins_bayes
+```
