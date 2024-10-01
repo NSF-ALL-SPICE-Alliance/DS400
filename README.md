@@ -41,5 +41,8 @@
 | 9/2-9/6   | Thursday     | Bayes Theorem: Fake News         |            |
 | 9/9-9/13  | Tuesday     | Bayes Theorem: Pop vs Soda       |            |
 | 9/9-9/13  | Thursday  | Bayes Theorem: NHANES, Diabeteas and Ahi Consumption        | |
-| 9/14-9/17 | Tuesday     | Bayes Theorem: NHANES, Diabeteas and Age       |           |
-| 9/14-9/17 | Thursday  | Election Results, Beta Binomial Model       | [nhanes.qmd challenge](https://chaminade.instructure.com/courses/36857/assignments/369280) due before class (10:00am)|
+| 9/16-9/20 | Tuesday     | Bayes Theorem: NHANES, Diabeteas and Age       |           |
+| 9/16-9/20 | Thursday  | Election Results, Beta Binomial Model       | [nhanes.qmd challenge](https://chaminade.instructure.com/courses/36857/assignments/369280) due before class (10:00am)|
+| 9/23-9/27   | Tuesday  | Positive Test Result                    |            |
+| 9/23-9/27   | Thursday     | Second Positive Test Result                    |     Write predictions of second positive test result  due before class (10:00am)      |
+| 9/30-10/4  | Tuesday  | Naive Bayes Classification Penguins  |            |
