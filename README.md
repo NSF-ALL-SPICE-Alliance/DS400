@@ -40,6 +40,27 @@
 | 9/2-9/6   | Tuesday  | Github Repository Setup, bayesrules package installation |            |
 | 9/2-9/6   | Thursday     | Bayes Theorem: Fake News         |            |
 | 9/9-9/13  | Tuesday     | Bayes Theorem: Pop vs Soda       |            |
-| 9/9-9/13  | Thursday  | Bayes Theorem: NHANES, Diabeteas and Ahi Consumption        | |
-| 9/14-9/17 | Tuesday     | Bayes Theorem: NHANES, Diabeteas and Age       |           |
-| 9/14-9/17 | Thursday  | Election Results, Beta Binomial Model       | [nhanes.qmd challenge](https://chaminade.instructure.com/courses/36857/assignments/369280) due before class (10:00am)|
+| 9/9-9/13  | Thursday  | Bayes Theorem: NHANES, Diabetes and Ahi Consumption        | |
+| 9/16-9/20 | Tuesday     | Bayes Theorem: NHANES, Diabetes and Age       |           |
+| 9/16-9/20 | Thursday  | Election Results, Beta Binomial Model       | [nhanes.qmd challenge](https://chaminade.instructure.com/courses/36857/assignments/369280) due before class (10:00am)|
+| 9/23-9/27   | Tuesday  | Positive Test Result                    |            |
+| 9/23-9/27   | Thursday     | Second Positive Test Result                    |     Write predictions of second positive test result  due before class (10:00am)      |
+| 9/30-10/4  | Tuesday  | Naive Bayes Classification Penguins  |            |
+| 9/30-10/4   | Thursday     | Naive Bayes Classification Penguins             |        |
+| 10/7-10/11  | Tuesday     | Bayes Logisitc Regression                |            |
+| 10/7-10/11  | Thursday  | Bayes Logisitc Regression                                |      Naive Bayes Assignment (2X)  due before class (10:00am)    |
+| 10/14-10/18 | Tuesday     | Hierarchial Models                                      |            |
+| 10/14-10/18 | Thursday  | Hierarchial Models                                        |            |
+| 10/21-10/25 | Tuesday     |       Bayes on Github                                  |            |
+| 10/21-10/25 | Thursday  |           Bayes on Github                              |            |
+| 10/28-11/1  | Tuesday     |         Work on Group Project                   |            |
+| 10/28-11/1  | Thursday  |           Group Project Presentations                 |            |
+| 11/4-11/8   | Tuesday     |                       |            |
+| 11/4-11/8   | Thursday  |                      |            |
+| 11/11-11/15 | Tuesday     |                                      |            |
+| 11/11-11/15 | Thursday  |                     |            |
+| 11/18-11/22 | Tuesday     | Final Projects                               |            |
+| 11/18-11/22 | Thursday  | Final Projects                               |            |
+| 11/25-11/29 | Tuesday     | Final Projects                               |            |
+| 11/25-11/29 | Thursday  | Final Projects                               |            |
+| 12/4 | Wednesday 8:30 - 10:30     | Final Presentations!              |            |
