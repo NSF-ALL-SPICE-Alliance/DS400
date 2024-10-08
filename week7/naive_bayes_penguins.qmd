@@ -6,11 +6,12 @@ editor: visual
 
 ### Libraries
 
-```{r, message = FALSE}
+```{r, message = FALSE, warning = FALSE}
 library(tidyverse)
 library(bayesrules)
 library(janitor)
 library(e1071)
+options(scipen = 99)
 ```
 
 ### Story
@@ -24,4 +25,265 @@ Make a visualization that will help the researcher determine the species based o
 ```{r}
 data(penguins_bayes)
 penguins <- penguins_bayes
+```
+
+```{r}
+ggplot(data = penguins, aes(x = above_average_weight, fill = species)) +
+  geom_bar()
+```
+
+```{r, warning=FALSE, message=FALSE}
+ggplot(data = penguins, aes(bill_length_mm, flipper_length_mm, color = body_mass_g)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_grid(~species)
+```
+
+```{r}
+ggplot(penguins, aes(x = flipper_length_mm, y = bill_length_mm, color = species)) +
+  geom_point() +
+  facet_wrap(~ above_average_weight) +
+  theme_minimal() +
+  scale_color_viridis_d() +
+  geom_hline(yintercept = 50) +
+  geom_vline(xintercept = 195)
+```
+
+Replace 1 with yes and 0 with no
+
+```{r}
+penguins <- penguins %>%
+  mutate(above_average_weight = if_else(above_average_weight == 1, "yes", "no"))
+```
+
+Our old bayesian ways
+
+P(B\|A)
+
+-   P(Chinstrap \| below average weight)
+
+```{r}
+penguins %>% 
+  tabyl(above_average_weight, species) %>% 
+  adorn_percentages("row")
+```
+
+#### Naive Bayes Classification!
+
+```{r}
+naive_model_hints <- naiveBayes(species ~ flipper_length_mm + bill_length_mm + above_average_weight, data = penguins)
+```
+
+Our penguin
+
+```{r}
+our_penguin <- data.frame(bill_length_mm = 50, flipper_length_mm = 195, above_average_weight = "no")
+```
+
+Ask our model to make a prediction of what species our penguin is
+
+```{r}
+predict(naive_model_hints, newdata = our_penguin, type = "raw")
+```
+
+Test our model fro accuracy with confusion matrix
+
+```{r}
+penguins <- penguins %>% 
+  mutate(predicted_species = predict(naive_model_hints, newdata = .))
+```
+
+```{r}
+penguins %>% 
+  tabyl(species, predicted_species) %>% 
+  adorn_percentages("row") %>% 
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns
+```
+
+```{r}
+naive_model_hints
+```
+
+## Lecture 2 - Under the hood of Naive Bayes
+
+### Adelie
+
+#### Species
+
+```{r}
+penguins %>% 
+  tabyl(species)
+```
+
+#### Flipper Length - Probability density function
+
+-   first argument = our penguins flipper length
+
+-   second argument = mean flipper length for adelie penguins
+
+-   third argument = standard deviation in flipper length for adelie penguins
+
+```{r}
+dnorm(195, mean = 190, sd = 6.54)
+```
+
+What happened here
+
+-   a picture worth a thousand words
+
+```{r}
+# Filter penguins dataset for Adelie species
+adelie_penguins <- subset(penguins, species == "Adelie")
+
+# Calculate mean and standard deviation of flipper_length_mm for Adelie penguins
+mean_flipper <- mean(adelie_penguins$flipper_length_mm, na.rm = TRUE)
+sd_flipper <- sd(adelie_penguins$flipper_length_mm, na.rm = TRUE)
+
+# Value to highlight (195 mm)
+highlight_value <- 195
+highlight_density <- dnorm(highlight_value, mean = mean_flipper, sd = sd_flipper)
+
+# Plot the normal distribution with a point for 195 mm and 1 standard deviation lines
+ggplot(adelie_penguins, aes(x = flipper_length_mm)) +
+  geom_density(color = "blue", size = 1) +  # Plot the density curve
+  
+  # Highlight the point for 195 mm
+  geom_point(aes(x = highlight_value, y = highlight_density), 
+             color = "red", size = 3) +  
+  
+  # Add a vertical dashed line for 195 mm
+  geom_vline(xintercept = highlight_value, linetype = "dashed", color = "red") +  
+  
+  # Add vertical lines for 1 standard deviation from the mean
+  geom_vline(xintercept = mean_flipper + sd_flipper, linetype = "dotted", color = "black") + 
+  geom_vline(xintercept = mean_flipper - sd_flipper, linetype = "dotted", color = "black") + 
+  
+  # Add annotations for standard deviation lines
+  annotate("text", x = mean_flipper + sd_flipper + 1, y = 0.01, 
+           label = "+1 SD", color = "black", hjust = 0) +
+  annotate("text", x = mean_flipper - sd_flipper - 1, y = 0.01, 
+           label = "-1 SD", color = "black", hjust = 1) +
+  
+  # Add labels and title
+  labs(title = "Normal Distribution of Flipper Lengths for Adelie Penguins",
+       subtitle = paste("Mean =", round(mean_flipper, 2), "mm, SD =", round(sd_flipper, 2), "mm"),
+       x = "Flipper Length (mm)", y = "Density") +
+  
+  # Add annotation for 195 mm
+  annotate("text", x = highlight_value + 2, y = highlight_density, 
+           label = paste0("195 mm\nDensity: ", round(highlight_density, 5)),
+           hjust = 0, color = "red") +
+  
+  # Minimal theme for cleaner look
+  theme_minimal()
+```
+
+#### Bill Length
+
+```{r}
+dnorm(50, mean = 38.79139, sd = 2.663405)
+```
+
+#### Above Average Weight
+
+```{r}
+penguins %>% 
+  tabyl(species, above_average_weight) %>% 
+  adorn_percentages("row")
+```
+
+P(Adelie) \* P(Adelie \| 195 mm flipper) \* P(Adelie \| 50 mm bill) \* P(under average weight \| Adelie)
+
+```{r}
+probs_adelie <- (152/342) * 0.04554 * 0.0000212  * 0.83
+probs_adelie
+
+```
+
+### Chinstrap
+
+#### Species
+
+```{r}
+penguins %>% 
+  tabyl(species)
+```
+
+#### Flipper Length
+
+```{r}
+dnorm(195, mean = 195.8235, sd = 7.131894)
+```
+
+#### Bill Length
+
+```{r}
+dnorm(50, mean = 48.83382, sd = 3.339256)
+```
+
+#### Above Average Weight
+
+```{r}
+penguins %>% 
+  tabyl(species, above_average_weight) %>% 
+  adorn_percentages("row")
+```
+
+P(Chinstrap) \* P(Chinstrap \| 195 mm flipper) \* P(Chinstrap \| 50 mm bill) \* P(under average weight \| Chinstrap)
+
+```{r}
+probs_chinstrap <- (68/342) * 0.05541 * 0.112 * 0.89
+probs_chinstrap
+
+```
+
+### Gentoo
+
+#### Species
+
+```{r}
+penguins %>% 
+  tabyl(species)
+```
+
+#### Flipper Length
+
+```{r}
+dnorm(195, mean = 217.1870, sd = 6.484976)
+```
+
+#### Bill Length
+
+```{r}
+dnorm(50, mean = 47.50488, sd = 3.081857)
+```
+
+#### Above Average Weight
+
+```{r}
+penguins %>% 
+  tabyl(species, above_average_weight) %>% 
+  adorn_percentages("row")
+```
+
+P(Gentoo) \* P(Gentoo \| 195 mm flipper) \* P(Gentoo \| 50 mm bill) \* P(under average weight \| Gentoo)
+
+```{r}
+probs_gentoo <- (124/342) * 0.0001767016 * 0.09327 * 0.05
+probs_gentoo
+```
+
+### Sum of Probabilities
+
+```{r}
+sum_of_probs <- probs_adelie + probs_chinstrap + probs_gentoo
+sum_of_probs
+```
+
+### Probability Chinstrap
+
+```{r}
+probs_chinstrap / sum_of_probs
+
 ```
