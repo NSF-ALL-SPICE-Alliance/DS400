@@ -1,0 +1,26 @@
+---
+title: "Naive Bayes Breast Cancer"
+format: html
+editor: visual
+---
+
+## Dataset & Paper:
+
+The ***Breast Cancer Wisconsin (Diagnostic)*** dataset is a renowned collection of data used extensively in machine learning and medical research. Originating from digitized images of fine needle aspirates (FNA) of breast masses, this dataset facilitates the analysis of cell nuclei characteristics to aid in the diagnosis of breast cancer. In this article, we delve into the attributes, statistics, and significance of this dataset.
+
+[*A new classifier for breast cancer detection based on Naïve Bayesian*](https://www.sciencedirect.com/science/article/abs/pii/S0263224115002419)
+
+### Libraries
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(e1071)
+library(here)
+library(ggcorrplot)
+```
+
+### Read in Data
+
+```{r}
+breast_cancer_data <- read_csv(here("data/wisconsin_breast_cancer_data.csv"))
+```
