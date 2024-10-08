@@ -47,17 +47,17 @@
 | 9/23-9/27   | Thursday     | Second Positive Test Result                    |     Write predictions of second positive test result  due before class (10:00am)      |
 | 9/30-10/4  | Tuesday  | Naive Bayes Classification Penguins  |            |
 | 9/30-10/4   | Thursday     | Naive Bayes Classification Penguins             |        |
-| 10/7-10/11  | Tuesday     | Bayes Logisitc Regression                |            |
-| 10/7-10/11  | Thursday  | Bayes Logisitc Regression                                |      Naive Bayes Assignment (2X)  due before class (10:00am)    |
-| 10/14-10/18 | Tuesday     | Hierarchial Models                                      |            |
+| 10/7-10/11  | Tuesday     | Naive Bayes Breast Cancer                |            |
+| 10/7-10/11  | Thursday  | Naive Bayes Spam                                |    |
+| 10/14-10/18 | Tuesday     | Hierarchial Models                                      |        Naive Bayes Assignment (2X)  due before class (10:00am)         |
 | 10/14-10/18 | Thursday  | Hierarchial Models                                        |            |
-| 10/21-10/25 | Tuesday     |       Bayes on Github                                  |            |
-| 10/21-10/25 | Thursday  |           Bayes on Github                              |            |
+| 10/21-10/25 | Tuesday     |       Bayes Logistic Regression                                 |            |
+| 10/21-10/25 | Thursday  |           Bayes Logistic Regression                              |            |
 | 10/28-11/1  | Tuesday     |         Work on Group Project                   |            |
 | 10/28-11/1  | Thursday  |           Group Project Presentations                 |            |
-| 11/4-11/8   | Tuesday     |                       |            |
-| 11/4-11/8   | Thursday  |                      |            |
-| 11/11-11/15 | Tuesday     |                                      |            |
+| 11/4-11/8   | Tuesday     |       Group Project Presentations                 |            |
+| 11/4-11/8   | Thursday  |          Github Bayes            |            |
+| 11/11-11/15 | Tuesday     |        Github Bayes                              |            |
 | 11/11-11/15 | Thursday  |                     |            |
 | 11/18-11/22 | Tuesday     | Final Projects                               |            |
 | 11/18-11/22 | Thursday  | Final Projects                               |            |
