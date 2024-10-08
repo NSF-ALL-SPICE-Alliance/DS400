@@ -1,0 +1,84 @@
+---
+title: "Naive Bayes Classification Assignment"
+format: html
+editor: visual
+---
+
+## Assignment Description
+
+This assignment is designed to test your knowledge of Naive Bayes Classification. It closely mirrors our [naive_bayes_penguins.qmd](https://github.com/NSF-ALL-SPICE-Alliance/DS400/blob/main/week7/naive_bayes_penguins.qmd) from lectures 10/1 and 10/3. We reflect back on the true vs fake news dataset from the beginning of the semester and apply the new skills in our bayesian toolbox.
+
+This assignment is worth 16 points and is due by 10:00am on October 15th. Each section has a number of points noted. To turn in this assignment, render this qmd and save it as a pdf, it should look beautiful. If you do not want warning messages and other content in the rendered pdf, you can use `message = FALSE, warning = FALSE` at the top of each code chunk as it appears in the libraries code chunk below.
+
+### Load Libraries
+
+```{r, message=FALSE, warning=FALSE}
+library(bayesrules)
+library(tidyverse)
+library(e1071)
+library(janitor)
+```
+
+### Read in data
+
+```{r}
+data(fake_news)
+```
+
+### Challenge
+
+[**Exercise 14.7**](https://www.bayesrulesbook.com/chapter-14#exercises-13) **Fake news: three predictors**
+
+Suppose a ***new news article*** is posted online – it has a 15-word title, 6% of its words have negative associations, and its title *doesn’t* have an exclamation point. We want to know if it is fake or real
+
+### Visualization (Exploratory Data Analysis) - 2 points
+
+Below, insert a code chunk(s) and use `ggplot` to visualize the features of the data we are interested in. This can be one or multiple visualizations
+
+-   Type (fake vs real)
+
+-   Number of words in the title (numeric value)
+
+-   Negative associations (numeric value)
+
+-   Exclamation point in the title (true vs false)
+
+### Interpretation of Visualization - 2 points
+
+Below, write a few sentences explaining whether or not this ***new news article*** is true or fake solely using your visualization above
+
+### Perform Naive Bayes Classification - 3 points
+
+Based on these three features (15-word title, 6% of its words have negative associations, and its title *doesn’t* have an exclamation point), utilize naive Bayes classification to calculate the posterior probability that the article is real. Do so using `naiveBayes()` with `predict()`.
+
+Below, insert the code chunks and highlight your answer
+
+### Break Down the Model - 5 points
+
+Similar to the penguins example, we are going to break down the model we created above. To do this we need to find:
+
+-   Probability(15 - word title\| article is real) using `dnorm()`
+
+-   Probability(6% of words have negative associations \| article is real) using `dnorm()`
+
+-   Probability(no exclamation point in title \| article is real)
+
+    -   Multiply these probabilities and save as the object **`probs_real`**
+
+-   Probability(15 - word title\| article is fake) using `dnorm()`
+
+-   Probability(6% of words have negative associations \| article is fake) using `dnorm()`
+
+-   Probability(no exclamation point in title \| article is fake)
+
+    -   Multiply these probabilities and save as the object **`probs_fake`**
+
+Lastly divide your **`probs_real`** by the sum of **`probs_real`** and **`probs_fake`** to see if you can reproduce the output from `naiveBayes()` above
+
+### Confusion Matrix - 2 points
+
+Calculate a confusion matrix by first mutating a column to fake_news called `predicted_type` . Then, use `tabyl()` to create the matrix
+
+### How can our model be improved? - 2 points
+
+Think about the results of the confusion matrix, is the model performing well? Try creating a new model that uses all of the features in the fake_news dataset to make a prediction on type (fake vs true). Then, create a new confusion matrix to see if the model improves.
