@@ -193,7 +193,7 @@ penguins %>%
   adorn_percentages("row")
 ```
 
-P(Adelie) \* P(Adelie \| 195 mm flipper) \* P(Adelie \| 50 mm bill) \* P(under average weight \| Adelie)
+P(Adelie) \* P(195 mm flipper \| Adelie ) \* P(50 mm bill \| Adelie ) \* P(under average weight \| Adelie)
 
 ```{r}
 probs_adelie <- (152/342) * 0.04554 * 0.0000212  * 0.83
@@ -230,7 +230,7 @@ penguins %>%
   adorn_percentages("row")
 ```
 
-P(Chinstrap) \* P(Chinstrap \| 195 mm flipper) \* P(Chinstrap \| 50 mm bill) \* P(under average weight \| Chinstrap)
+P(Chinstrap) \* P(195 mm flipper \| Chinstrap) \* P(50 mm bill \| Chinstrap) \* P(under average weight \| Chinstrap)
 
 ```{r}
 probs_chinstrap <- (68/342) * 0.05541 * 0.112 * 0.89
@@ -267,7 +267,7 @@ penguins %>%
   adorn_percentages("row")
 ```
 
-P(Gentoo) \* P(Gentoo \| 195 mm flipper) \* P(Gentoo \| 50 mm bill) \* P(under average weight \| Gentoo)
+P(Gentoo) \* P(195 mm flipper \| Gentoo) \* P(50 mm bill \| Gentoo) \* P(under average weight \| Gentoo)
 
 ```{r}
 probs_gentoo <- (124/342) * 0.0001767016 * 0.09327 * 0.05
