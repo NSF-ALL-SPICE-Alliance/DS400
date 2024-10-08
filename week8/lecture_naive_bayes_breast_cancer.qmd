@@ -17,10 +17,89 @@ library(tidyverse)
 library(e1071)
 library(here)
 library(ggcorrplot)
+library(ggpubr)
+library(janitor)
+options(scipen = 999)
 ```
 
 ### Read in Data
 
 ```{r}
 breast_cancer_data <- read_csv(here("data/wisconsin_breast_cancer_data.csv"))
+```
+
+### Correlation Matrix
+
+Let's test the assumption that are features are independent from each other
+
+Drop columns that we don't need in the correlation matrix
+
+```{r}
+breast_cancer_data_cor <- breast_cancer_data %>% 
+  select(-id, -diagnosis, -...33)
+```
+
+Create a matrix from the dataframe
+
+```{r}
+breast_cancer_matrix <- as.matrix(breast_cancer_data_cor)
+```
+
+Calculate the correlations using `cor()`
+
+```{r}
+breast_cancer_correlations <- cor(breast_cancer_matrix)
+```
+
+Plot the correlations
+
+```{r}
+ggcorrplot(breast_cancer_correlations, type = "lower", lab = TRUE, lab_size = 1)
+```
+
+visualizing correlations between two features
+
+```{r}
+ggplot(breast_cancer_data, aes(x = radius_mean, y = perimeter_mean)) +
+  geom_point() +
+  geom_smooth() +
+  stat_cor()
+```
+
+### Create a Naive Bayes Model
+
+```{r}
+breast_cancer_mod <- naiveBayes(diagnosis ~., data = breast_cancer_data)
+```
+
+predict diagnosis in breast cancer dataset
+
+```{r}
+breast_cancer_data <- breast_cancer_data %>% 
+  mutate(predicted_diagnosis = predict(breast_cancer_mod, newdata = .))
+```
+
+create the confusion matrix
+
+```{r}
+breast_cancer_data %>% 
+  tabyl(diagnosis, predicted_diagnosis) %>% 
+  adorn_percentages("row") %>% 
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns
+```
+
+```{r}
+breast_cancer_data <- breast_cancer_data %>% 
+  mutate(predicted_diagnosis_raw = predict(breast_cancer_mod, newdata = ., type = "raw"))
+```
+
+```{r}
+ggplot(breast_cancer_data, aes(x = predicted_diagnosis_raw[, "M"])) +
+  geom_histogram(bins = 100)
+```
+
+```{r}
+ggplot(breast_cancer_data, aes(x = predicted_diagnosis_raw[, "B"])) +
+  geom_histogram(bins = 100)
 ```
