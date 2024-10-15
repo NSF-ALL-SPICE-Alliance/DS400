@@ -62,5 +62,5 @@
 | 11/18-11/22 | Tuesday     | Final Projects                               |            |
 | 11/18-11/22 | Thursday  | Final Projects                               |            |
 | 11/25-11/29 | Tuesday     | Final Projects                               |            |
-| 11/25-11/29 | Thursday  | Final Projects                               |            |
+| 11/25-11/29 | Thursday  | Thanksgiving                            |            |
 | 12/4 | Wednesday 8:30 - 10:30     | Final Presentations!              |            |
