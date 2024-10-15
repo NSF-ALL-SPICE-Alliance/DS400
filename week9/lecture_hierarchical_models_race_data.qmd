@@ -1,0 +1,178 @@
+---
+title: "Lecture Hierarchical Models w / Race Data"
+format: html
+editor: visual
+---
+
+### Hierarchical Models
+
+Unit 4 is all about hierarchies. Used in the sentence “my workplace is so hierarchical,” this word might have negative connotations. In contrast, “my Bayesian model is so hierarchical” often connotes a good thing! Hierarchical models greatly expand the flexibility of our modeling toolbox by accommodating hierarchical, or *grouped* data. For example, our data might consist of:
+
+-   a sampled group of schools and data y on multiple individual students within each school; or
+
+-   a sampled group of labs and data y from multiple individual experiments within each lab; or
+
+-   a sampled group of people on whom we make multiple individual observations of information y over time.
+
+*Ignoring* this type of underlying grouping structure violates the assumption of *independent* data behind our Unit 3 models and, in turn, can produce misleading conclusions. In Unit 4, we’ll explore techniques that empower us to build this hierarchical structure into our models:
+
+### Load Libraries
+
+```{r, warning=FALSE, message=FALSE}
+library(bayesrules)
+library(tidyverse)
+library(rstanarm)
+library(broom.mixed)
+library(plotly)
+```
+
+### Data Description
+
+This data, a subset of the `Cherry` data in the **mdsr** package ([Baumer, Horton, and Kaplan 2021](https://www.bayesrulesbook.com/chapter-15#ref-R-mdsr)), contains the `net` running times (in minutes) for 36 participants in the annual 10-mile Cherry Blossom race held in Washington, D.C.. Each runner is in their 50s or 60s and has entered the race in multiple years. The plot below illustrates the degree to which some runners are faster than others, as well as the variability in each runner’s times from year to year.
+
+```{r}
+data(cherry_blossom_sample)
+running <- cherry_blossom_sample %>% 
+  select(runner, age, net)
+```
+
+### Exploratory Data Analysis - 10 minutes
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+### Complete Pooling
+
+We’ll begin our analysis of the relationship between running time and age using a **complete pooling** technique: combine all 252 observations across our 36 runners into *one pool* of information. In doing so, notice that the relationship appears weak – there’s quite a bit of variability in run times at each age with no clear trend as age increases:
+
+```{r}
+ggplot(running, aes(y = net, x = age)) + 
+  geom_point()
+```
+
+Histogram
+
+```{r}
+
+```
+
+Complete Pooled Model
+
+-   This is new but focus on the overall concept for now, then we can breakdown the code/model
+
+```{r}
+complete_pooled_model <- stan_glm(
+  net ~ age, 
+  data = running, family = gaussian, 
+  prior_intercept = normal(0, 2.5, autoscale = TRUE),
+  prior = normal(0, 2.5, autoscale = TRUE), 
+  prior_aux = exponential(1, autoscale = TRUE),
+  chains = 4, iter = 5000*2, seed = 84735)
+```
+
+```{r}
+tidy(complete_pooled_model, conf.int = TRUE, conf.level = 0.80)
+```
+
+```{r}
+# Plot of the posterior median model
+ggplot(running, aes(x = age, y = net, group = runner)) + 
+  geom_smooth(method = "lm", se = FALSE, color = "gray", size = 0.5) + 
+  geom_abline(aes(intercept = 75.2, slope = 0.268), color = "blue")
+```
+
+### No Pooling
+
+Having failed with our complete pooled model, let’s swing to the other extreme. Instead of lumping everybody together into one pool and ignoring any information about runners, the **no pooling** approach considers each of our m=36 runners *separately*.
+
+Histogram with age on x as factor and net on y
+
+```{r}
+
+```
+
+Connect each runner age and net time point with a line
+
+```{r}
+runner_lines_plot <- ggplot(running, aes(x = age, y = net, group = runner, color = runner)) + 
+  geom_line() +
+  geom_point() +
+  scale_colour_viridis_d(option = "plasma") +
+  theme_minimal()
+
+ggplotly(runner_lines_plot)
+```
+
+Smooth the line
+
+```{r}
+runners_smoothed <- ggplot(running, aes(x = age, y = net, color = runner)) + 
+  geom_point() + 
+  geom_smooth(method = "lm", se = FALSE, fullrange = TRUE) +
+  scale_colour_viridis_d(option = "plasma") +
+  theme_minimal()
+
+ggplotly(runners_smoothed)
+```
+
+This *seems* great at first glance. The runner-specific models pick up on the runner-specific trends. However, there are two significant drawbacks to the no pooling approach. First, suppose that *you* planned to run in the Cherry Blossom race in each of the next few years. Based on the no pooling results for our three example cases, what do you anticipate your running times to be? Are you stumped? If not, you should be. The no pooling approach can’t help you answer this question. Since they’re tailored to the 36 individuals in our sample, the resulting 36 models don’t reliably extend beyond these individuals. To consider a second wrinkle, take a quick quiz.
+
+-   Reexamine runner 1. If they were to race a sixth time at age 62, 5 years after their most recent data point, what would you expect their `net` running time to be?
+
+    1.  Below 75 minutes
+
+    2.  Between 75 and 85 minutes
+
+    3.  Above 85 minutes
+
+If you were utilizing the no pooled model to answer this question, your answer would be a. Runner 1’s model indicates that they’re getting faster with age and should have a running time under 75 minutes by the time they turn 62. Yet this no pooled conclusion exists in a vacuum, only taking into account data on runner 1. From the other *35* runners, we’ve observed that *most* people tend to get slower over time. It would be unfortunate to completely ignore this information, especially since we have a mere five race sample size for runner 1 (hence aren’t in the position to disregard the extra data!). A more reasonable prediction might be option b: though they might not maintain such a steep downward trajectory, runner 1 will likely remain a fast runner with a race time between 75 and 85 minutes. Again, this would be the *reasonable* conclusion, not the conclusion we’d make if using our no pooled models alone. Though we’ve explored the no pooling drawbacks in the specific context of the Cherry Blossom race, they are true in general.
+
+### Partial Pooling
+
+Again, this is new but focus on the overall concept for now, then we can breakdown the code/model
+
+```{r}
+hierarchical_model <- stan_glmer(
+  net ~ age + (age | runner),  # Predict net time using age with varying intercepts and slopes for each runner
+  data = running,              # Your dataset
+  family = gaussian(),          # Assuming the outcome (net time) is normally distributed
+  chains = 4,                   # Number of Markov chains
+  iter = 2000                   # Number of iterations per chain
+)
+```
+
+```{r}
+hierarchical_model
+```
+
+#### Visualize Predictions
+
+```{r}
+# Step 1: Filter out rows with missing 'net' values to match the model's data
+running_clean <- running %>% filter(!is.na(net))
+
+# Step 2: Generate posterior predictions for the filtered dataset
+predictions <- posterior_predict(hierarchical_model)
+
+# Step 3: Compute the median of the posterior predictions
+running_clean$predicted_net <- apply(predictions, 2, median)
+
+# Step 4: Plot the original data and predicted values
+model_predictions_plot <- ggplot(running_clean, aes(x = age, y = net, color = factor(runner))) + 
+  geom_point(alpha = 0.6) +  # Original data points
+  geom_line(aes(y = predicted_net), size = 1) +  # Predicted values
+  scale_colour_viridis_d(option = "plasma") +  # Use a color palette for runners
+  theme_minimal() + 
+  labs(title = "Hierarchical Model Predictions for Each Runner",
+       x = "Age",
+       y = "Net Time",
+       color = "Runner")
+
+# Step 5: Make the plot interactive
+ggplotly(model_predictions_plot)
+```
