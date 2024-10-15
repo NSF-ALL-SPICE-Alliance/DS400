@@ -64,3 +64,18 @@
 | 11/25-11/29 | Tuesday     | Final Projects                               |            |
 | 11/25-11/29 | Thursday  | Thanksgiving                            |            |
 | 12/4 | Wednesday 8:30 - 10:30     | Final Presentations!              |            |
+
+
+#### Assignments and Points Breakdown
+
+| Assignment              | Points |
+|-------------------------|--------|
+| NHANES                  | 8      |
+| Two Positive Results     | 8      |
+| Naive Bayes Fake News    | 16     |
+| Hierarchical Models      | 16     |
+| Presentations            | 16     |
+| Final Project            | 24     |
+| GitHub                   | 12     |
+
+
