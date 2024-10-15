@@ -51,14 +51,14 @@
 | 10/7-10/11  | Thursday  | Naive Bayes Spam                                |    |
 | 10/14-10/18 | Tuesday     | Hierarchial Models                                      |        Naive Bayes Assignment (2X)  due before class (10:00am)         |
 | 10/14-10/18 | Thursday  | Hierarchial Models                                        |            |
-| 10/21-10/25 | Tuesday     |       Bayes Logistic Regression                                 |            |
-| 10/21-10/25 | Thursday  |           Bayes Logistic Regression                              |            |
-| 10/28-11/1  | Tuesday     |         Work on Group Project                   |            |
-| 10/28-11/1  | Thursday  |           Group Project Presentations                 |            |
-| 11/4-11/8   | Tuesday     |       Group Project Presentations                 |            |
-| 11/4-11/8   | Thursday  |          Github Bayes            |            |
-| 11/11-11/15 | Tuesday     |        Github Bayes                              |            |
-| 11/11-11/15 | Thursday  |                     |            |
+| 10/21-10/25 | Tuesday     |       Hierarchial Models                                 |            |
+| 10/21-10/25 | Thursday  |           Hierarchial Models                                |            |
+| 10/28-11/1  | Tuesday     |         Presentations                   |            |
+| 10/28-11/1  | Thursday  |                Presentations            |            |
+| 11/4-11/8   | Tuesday     |       Time Series Bayes                 |            |
+| 11/4-11/8   | Thursday  |          Use Cases            |            |
+| 11/11-11/15 | Tuesday     |        Use Cases                             |            |
+| 11/11-11/15 | Thursday  |        Github Bayes             |            |
 | 11/18-11/22 | Tuesday     | Final Projects                               |            |
 | 11/18-11/22 | Thursday  | Final Projects                               |            |
 | 11/25-11/29 | Tuesday     | Final Projects                               |            |
