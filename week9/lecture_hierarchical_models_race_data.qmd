@@ -24,6 +24,7 @@ library(tidyverse)
 library(rstanarm)
 library(broom.mixed)
 library(plotly)
+library(ggpubr)
 ```
 
 ### Data Description
@@ -39,7 +40,10 @@ running <- cherry_blossom_sample %>%
 ### Exploratory Data Analysis - 10 minutes
 
 ```{r}
-
+ggplot(data = running, aes(x = age, y = net)) +
+  geom_point() +
+  geom_smooth() +
+  stat_cor()
 ```
 
 ```{r}
@@ -55,10 +59,12 @@ ggplot(running, aes(y = net, x = age)) +
   geom_point()
 ```
 
-Histogram
+Boxplot
 
 ```{r}
-
+ggplot(data = running, aes(as.factor(age), y = net)) +
+  geom_boxplot() +
+  geom_jitter(size = 0.5)
 ```
 
 Complete Pooled Model
