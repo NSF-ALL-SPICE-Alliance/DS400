@@ -1,0 +1,167 @@
+---
+title: "Bayesian Regression"
+format: html
+editor: visual
+---
+
+### Load Libraries
+
+```{r, warning=FALSE, message=FALSE}
+library(bayesrules)
+library(tidyverse)
+library(rstan)
+library(rstanarm)
+library(bayesplot)
+library(tidybayes)
+library(janitor)
+library(broom.mixed)
+library(ggpubr)
+options(scipen = 999)
+```
+
+### Today's Data
+
+*Capital Bikeshare* is a bike sharing service in the Washington, D.C. area. To best serve its registered members, the company must understand the demand for its service.
+
+```{r}
+data(bikes)
+```
+
+### Exploratory Data Analysis - 10 minutes
+
+### Relationship between temp and rides
+
+This is the first time in this class we are considering the relationship between two **numeric** variables
+
+#### Frequentist Approach
+
+Add smooth, stat cor, and theme
+
+```{r}
+ggplot(data = bikes, aes(x = temp_feel, y = rides)) +
+  geom_point() 
+```
+
+Display intercept and slope
+
+-   For each additional degree in perceived temperature, there is an increase of about 81.88 bike rides
+
+```{r}
+lm(rides ~ temp_feel, data = bikes)
+```
+
+#### Bayesian Approach
+
+Based on past bikeshare analyses, suppose we have the following prior understanding of this relationship:
+
+1.  On an *average* temperature day, say 65 or 70 degrees for D.C., there are typically around 5000 riders, though this average could be somewhere between 3000 and 7000.
+
+    ```{r}
+    plot_normal(mean = 5000, sd = 1000) + 
+      labs(x = "beta_0c", y = "pdf") +
+        geom_vline(xintercept = 5000, linetype = "dashed", color = "blue", size = 1) +  # Mean
+      geom_vline(xintercept = 5000 + 1000, linetype = "dotted", color = "red") +      # +1 SD
+      geom_vline(xintercept = 5000 - 1000, linetype = "dotted", color = "red")  + # -1 SD
+      theme_bw()
+    ```
+
+2.  For every one degree increase in temperature, ridership typically increases by 100 rides, though this average increase could be as low as 20 or as high as 180.
+
+    ```{r}
+    plot_normal(mean = 100, sd = 40) + 
+      labs(x = "beta_1", y = "pdf") +
+        geom_vline(xintercept = 100, linetype = "dashed", color = "blue", size = 1) +  # Mean
+      geom_vline(xintercept = 140, linetype = "dotted", color = "red") +      # +1 SD
+      geom_vline(xintercept = 60, linetype = "dotted", color = "red")  +
+      theme_bw()
+    ```
+
+3.  At any given temperature, daily ridership will tend to vary with a moderate standard deviation of 1250 rides.
+
+    ```{r}
+    plot_gamma(shape = 1, rate = 0.0008) + 
+      labs(x = "sigma", y = "pdf") +
+        geom_vline(xintercept = 1250, linetype = "dashed", color = "blue", size = 1) +
+      theme_bw()
+    ```
+
+Create the Bayesian Model
+
+```{r}
+bike_model <- stan_glm(rides ~ temp_feel, data = bikes,
+                       family = gaussian,
+                       prior_intercept = normal(5000, 1000),
+                       prior = normal(100, 40), 
+                       prior_aux = exponential(0.0008),
+                       chains = 4, iter = 5000*2, seed = 84735)
+```
+
+```{r}
+bike_model
+```
+
+Interpretation
+
+-   The slope (or coefficient) for `temp_feel` is 82.2, meaning that for every 1 degree increase in perceived temperature, the number of rides increases by an average of 82.2 rides.
+
+-   The **MAD_SD** of 5.1 reflects the uncertainty in the slope estimate, indicating that the true slope could vary by about 5.1 rides.
+
+-   In your case, a median σ\sigmaσ of **1282.5** means that the actual number of rides often deviates from what the model predicts by an average of about **1282.5 rides**. This indicates a considerable amount of variability in the data.
+
+    -   **Moderate Variability**: The term "moderate variability" suggests that while the model captures some trends (like how temperature affects ridership), there are many factors influencing the number of rides that are not accounted for by temperature alone.
+
+Let's visualize our models prediction of rides for a 75 degree day (feel)
+
+```{r}
+set.seed(84735)
+shortcut_prediction <- 
+  posterior_predict(bike_model, newdata = data.frame(temp_feel = 75))
+```
+
+```{r}
+mcmc_dens(shortcut_prediction) + 
+  xlab("predicted ridership on a 75 degree day (feel)")
+```
+
+### Adding more features to the model
+
+```{r}
+bike_model_all <- stan_glm(
+  rides ~ season + year + month + day_of_week + weekend + holiday + temp_actual + temp_feel + humidity + windspeed + weather_cat,
+  data = bikes,
+  family = gaussian,  # because we're predicting continuous data (number of rides)
+  chains = 4, 
+  iter = 5000, 
+  seed = 84735
+)
+```
+
+```{r}
+new_data_for_prediction <- data.frame(
+  temp_feel = 75, 
+  temp_actual = 70,
+  season = "summer",      
+  year = 2011,           
+  month = "Sep",             
+  day_of_week = "Wed", 
+  weekend = FALSE,           
+  holiday = "yes",            
+  humidity = 53.6667,      
+  windspeed = 16,        
+  weather_cat = "categ1"   
+)
+```
+
+```{r}
+prediction <- 
+  posterior_predict(bike_model_all, newdata = new_data_for_prediction)
+```
+
+```{r}
+mcmc_dens(prediction) + 
+  xlab("new prediction of rides")
+```
+
+### Challenge
+
+Build two dataframes for prediction (similiar to new_data_for_prediction above) but try to make one result in a very low predicted number of rides and one with a very high predicted number of rides
