@@ -29,6 +29,45 @@ data(bikes)
 
 ### Exploratory Data Analysis - 10 minutes
 
+```{r}
+ggplot(data = bikes, aes(x = temp_actual, y = temp_feel)) +
+  geom_point()
+```
+
+```{r}
+average_rides_per_season <- bikes %>% 
+  group_by(season) %>% 
+  summarise(mean_rides = mean(rides, na.rm = TRUE))
+  
+ggplot(data = average_rides_per_season, aes(x = season, y = mean_rides)) +
+  geom_bar(stat = "identity") +
+  theme_bw()
+```
+
+```{r}
+ggplot(data = bikes, aes(x = rides, fill = holiday)) +
+  geom_density() +
+  theme_bw()
+```
+
+```{r}
+ggplot(data = bikes, aes(x = temp_actual, y = rides, color = weather_cat)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  stat_cor()
+```
+
+```{r}
+ggplot(data = bikes, aes(x = date, y = rides, color = season, shape = holiday)) +
+  geom_point()
+```
+
+```{r}
+ggplot(data = bikes, aes(x = day_of_week, y = rides, fill = as.factor(year))) +
+  geom_col() +
+  facet_wrap(~season)
+```
+
 ### Relationship between temp and rides
 
 This is the first time in this class we are considering the relationship between two **numeric** variables
@@ -39,7 +78,9 @@ Add smooth, stat cor, and theme
 
 ```{r}
 ggplot(data = bikes, aes(x = temp_feel, y = rides)) +
-  geom_point() 
+  geom_point() +
+  geom_smooth(method = "lm") +
+  stat_cor()
 ```
 
 Display intercept and slope
@@ -138,17 +179,17 @@ bike_model_all <- stan_glm(
 
 ```{r}
 new_data_for_prediction <- data.frame(
-  temp_feel = 75, 
-  temp_actual = 70,
-  season = "summer",      
+  temp_feel = 28, 
+  temp_actual = 30,
+  season = "winter",      
   year = 2011,           
-  month = "Sep",             
-  day_of_week = "Wed", 
+  month = "Dec",             
+  day_of_week = "Sun", 
   weekend = FALSE,           
   holiday = "yes",            
   humidity = 53.6667,      
   windspeed = 16,        
-  weather_cat = "categ1"   
+  weather_cat = "categ3"   
 )
 ```
 
@@ -165,3 +206,10 @@ mcmc_dens(prediction) +
 ### Challenge
 
 Build two dataframes for prediction (similiar to new_data_for_prediction above) but try to make one result in a very low predicted number of rides and one with a very high predicted number of rides
+
+```{r}
+a <- ggplot(data = bikes, aes(x = humidity, y = temp_feel, color = rides)) +
+  geom_point()
+
+ggplotly(a)
+```
