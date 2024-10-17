@@ -43,7 +43,7 @@ running <- cherry_blossom_sample %>%
 ggplot(data = running, aes(x = age, y = net)) +
   geom_point() +
   geom_smooth() +
-  stat_cor()
+  stat_cor(method = "lm")
 ```
 
 ```{r}
@@ -182,3 +182,75 @@ model_predictions_plot <- ggplot(running_clean, aes(x = age, y = net, color = fa
 # Step 5: Make the plot interactive
 ggplotly(model_predictions_plot)
 ```
+
+### Our Penguin Friends
+
+```{r}
+data(penguins_bayes)
+```
+
+```{r}
+ggplot(data = penguins_bayes, aes(x = bill_length_mm, y = bill_depth_mm)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  stat_cor() +
+  theme_minimal()
+  
+```
+
+```{r}
+ggplot(data = penguins_bayes, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  stat_cor() +
+  theme_minimal() +
+  scale_colour_viridis_d()
+```
+
+```{r}
+penguin_model <- stan_glmer(
+  bill_length_mm ~ bill_depth_mm + (bill_depth_mm | species),  # Random intercepts and slopes by species
+  data = penguins_bayes,  # Palmer penguins dataset
+  family = gaussian(),  # Assuming normal distribution for the outcome
+  chains = 4,
+  iter = 2000
+)
+```
+
+```{r}
+penguin_model
+```
+
+```{r}
+penguins_bayes <- penguins_bayes %>% filter(!is.na(bill_length_mm))
+
+# Make predictions using posterior_predict from the Bayesian model
+posterior_preds <- posterior_predict(penguin_model, newdata = penguins_bayes, draws = 1000)
+
+# Use the mean of the posterior predictive distribution for each penguin
+penguins_bayes$predicted_length <- apply(posterior_preds, 2, mean, na.rm = TRUE)
+```
+
+```{r}
+predictions_summary <- penguins_bayes %>%
+  group_by(species, bill_depth_mm) %>%
+  summarise(predicted_length = mean(predicted_length, na.rm = TRUE), .groups = 'drop')
+
+# Plotting the actual data points and predicted values with separate lines for each species
+model_predictions_plot <- ggplot(penguins_bayes, aes(x = bill_depth_mm, y = bill_length_mm, color = species)) +
+  geom_point(alpha = 0.6) +  # Original data points
+  geom_line(data = predictions_summary, aes(x = bill_depth_mm, y = predicted_length, color = species), size = 1) +  # Predicted values
+  scale_colour_viridis_d() +  # Use a color palette for species
+  theme_minimal() +
+  labs(title = "Penguin Bill Length Predictions by Species",
+       x = "Bill Depth (mm)",
+       y = "Bill Length (mm)",
+       color = "Species")
+
+# Step 5: Make the plot interactive
+ggplotly(model_predictions_plot)
+```
+
+### 
+
+### 
