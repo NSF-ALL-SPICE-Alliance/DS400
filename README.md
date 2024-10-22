@@ -57,13 +57,13 @@
 | 10/28-11/1  | Thursday  |                Presentations            |            |
 | 11/4-11/8   | Tuesday     |       Time Series Bayes                 |            |
 | 11/4-11/8   | Thursday  |          Use Cases            |            |
-| 11/11-11/15 | Tuesday     |        Use Cases                             |            |
-| 11/11-11/15 | Thursday  |        Github Bayes             |            |
-| 11/18-11/22 | Tuesday     | Final Projects                               |            |
-| 11/18-11/22 | Thursday  | Final Projects                               |            |
-| 11/25-11/29 | Tuesday     | Final Projects                               |            |
+| 11/11-11/15 | Tuesday     |        Final Projects Workshop                             |            |
+| 11/11-11/15 | Thursday  |         Final Projects Workshop              |            |
+| 11/18-11/22 | Tuesday     | Final Projects Workshop                             |            |
+| 11/18-11/22 | Thursday  | Final Project Presentations                                |            |
+| 11/25-11/29 | Tuesday     | Final Project Presentations                              |            |
 | 11/25-11/29 | Thursday  | Thanksgiving                            |            |
-| 12/4 | Wednesday 8:30 - 10:30     | Final Presentations!              |            |
+| 12/4 | Wednesday 8:30 - 10:30     | Final Project Due!              |            |
 
 
 #### Assignments and Points Breakdown
