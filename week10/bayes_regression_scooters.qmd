@@ -1,0 +1,194 @@
+---
+title: "Borrowing Strength in Bayesian Regression"
+format: html
+editor: visual
+---
+
+### Load Libraries
+
+```{r, warning=FALSE, message=FALSE}
+library(bayesrules)
+library(tidyverse)
+library(rstan)
+library(rstanarm)
+library(bayesplot)
+library(tidybayes)
+library(janitor)
+library(broom.mixed)
+library(ggpubr)
+options(scipen = 999)
+```
+
+### Overview
+
+Last class, we utilized a Bayesian regression model utilizing `stan_glm()` to better understand the relationship between temperature and rides. Now, *Capital Bikeshare* has started to rent scooters. Can we expect the same relationship between temperature and scooter rides as temperature and bike rides? Our scooter data is scarce (3 months) since *Capital Bikeshare* has only just started offering scooters to ride. As a company, *Capital Bikeshare* want to know expected ridership for summer (\~75 degree days) but currently only has scooter data from December 2011 to February 2012. Can we borrow strength from our temp \~ bike rides model to assist our scooter rides predictions?
+
+### Data
+
+```{r}
+data(bikes)
+```
+
+### Bike rides \~ temp model
+
+```{r}
+bike_model <- stan_glm(rides ~ temp_feel, data = bikes,
+                       family = gaussian,
+                       prior_intercept = normal(5000, 1000),
+                       prior = normal(100, 40), 
+                       prior_aux = exponential(0.0008),
+                       chains = 4, iter = 5000*2, seed = 84735)
+```
+
+```{r}
+bike_model
+```
+
+-   The slope (or coefficient) for `temp_feel` is 82.2, meaning that for every 1 degree increase in perceived temperature, the number of rides increases by an average of 82.2 rides.
+
+-   The **MAD_SD** of 5.1 reflects the uncertainty in the slope estimate, indicating that the true slope could vary by about 5.1 rides.
+
+-   In your case, a median σ\sigmaσ of **1282.5** means that the actual number of rides often deviates from what the model predicts by an average of about **1282.5 rides**. This indicates a considerable amount of variability in the data.
+
+    -   **Moderate Variability**: The term "moderate variability" suggests that while the model captures some trends (like how temperature affects ridership), there are many factors influencing the number of rides that are not accounted for by temperature alone.
+
+Let's visualize our models prediction of rides for a 75 degree day (feel)
+
+```{r}
+set.seed(84735)
+shortcut_prediction <- 
+  posterior_predict(bike_model, newdata = data.frame(temp_feel = 75))
+```
+
+```{r}
+mcmc_dens(shortcut_prediction) + 
+  xlab("predicted ridership on a 75 degree day (feel)")
+```
+
+### Scooter Data
+
+```{r}
+bikes_spring_2012 <- bikes %>% 
+  filter(date < "2012-02-01")
+```
+
+```{r}
+ggplot(data = bikes_spring_2012, aes(x = date, y = rides)) +
+  geom_point()
+```
+
+```{r}
+# Set seed for reproducibility
+set.seed(123)
+
+# Define the date range for scooter rides
+start_date <- as.Date("2011-12-01")
+end_date <- as.Date("2012-02-01")
+
+# Mutate the existing bikes_spring_2012 dataframe to add scooter_rides
+bikes_scooters <- bikes_spring_2012 %>%
+  mutate(
+    # Parameters for scooter rides: correlation 0.89 with temp_feel, mean 500, sd 200
+    correlation = 0.89,
+    mean_scooter_rides = 500,
+    sd_scooter_rides = 200,
+    
+    # Generate random noise
+    noise = rnorm(n(), mean = 0, sd = sd_scooter_rides * sqrt(1 - correlation^2)),
+    
+    # Generate scooter rides with correlation to temp_feel, only for the specified dates
+    scooter_rides = ifelse(
+      date >= start_date & date <= end_date,
+      mean_scooter_rides + correlation * (temp_feel - mean(temp_feel)) * (sd_scooter_rides / sd(temp_feel)) + noise,
+      NA_real_  # Set NA for other dates
+    ),
+    
+    # Ensure scooter_rides have no negative values
+    scooter_rides = pmax(0, scooter_rides)
+  ) %>%
+  # Select only relevant columns
+  select(-correlation, -mean_scooter_rides, -sd_scooter_rides, -noise)
+```
+
+### Exploratory Data Analysis
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+### Visualizing Together
+
+```{r}
+ggplot(data = bikes_scooters) +
+  geom_point(aes(x = date, y = scooter_rides)) +
+  geom_point(aes(x = date, y = rides)) 
+```
+
+```{r}
+ggplot(data = bikes_scooters) +
+  geom_point(aes(x = date, y = scooter_rides, color = "steelblue")) +
+  geom_point(aes(x = date, y = rides, color = "coral")) 
+```
+
+```{r}
+ggplot(data = bikes_scooters, aes(x = temp_feel, y = scooter_rides)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  stat_cor() 
+```
+
+### Individual Scooter Model
+
+```{r}
+scooter_model_solo <- stan_glm(
+  scooter_rides ~ temp_feel, 
+  data = bikes_scooters,
+  family = gaussian,
+  chains = 4,
+  iter = 5000)
+```
+
+```{r}
+scooter_prediction_solo <- 
+  posterior_predict(scooter_model_solo, newdata = data.frame(temp_feel = 75))
+```
+
+```{r}
+mcmc_dens(scooter_prediction_solo) + 
+  xlab("new prediction of scooter rides")
+```
+
+### Borrowed Strength Scooter Model
+
+```{r}
+scooter_model_borrowed_strength <- stan_glm(
+  scooter_rides ~ temp_feel, 
+  data = bikes_scooters,
+  family = gaussian,
+  prior_intercept = normal(-2195.3, 353.8),   # Prior for intercept
+  prior = normal(82.2, 5.1),                  # Prior for temp_feel
+  prior_aux = exponential(1 / 1282.5),        # Prior for sigma (standard deviation)
+  chains = 4,
+  iter = 5000,
+  seed = 84735
+)
+
+```
+
+```{r}
+scooter_model_borrowed_strength
+```
+
+```{r}
+scooter_prediction_borrowed_strength <- 
+  posterior_predict(scooter_model_borrowed_strength, newdata = data.frame(temp_feel = 75))
+```
+
+```{r}
+mcmc_dens(scooter_prediction_borrowed_strength) + 
+  xlab("new prediction of scooter rides")
+```
