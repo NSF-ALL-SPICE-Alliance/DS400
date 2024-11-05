@@ -1,0 +1,191 @@
+---
+title: "Week 12"
+format: html
+editor: visual
+---
+
+### Overview
+
+Today, we'll be analyzing Airbnb Data. This data contains information on 1561 listings across 43 Chicago neighborhoods, and hence *multiple listings per neighborhood*:
+
+We will utilize a **Bayesian hierarchical (multilevel) model** to understand the effect that price, walking score, number of rooms, and listing type have on price. We will account for the grouping variable *neighborhood* by allowing each neighborhood to have its own baseline price level. This approach will help us capture not only the effects of listing-specific attributes, like the number of rooms and type of listing, but also the unique characteristics of each neighborhood that might influence price. By using a Bayesian hierarchical model, we’ll incorporate both fixed effects, which apply consistently across all listings, and random effects for neighborhoods, which allow for neighborhood-specific price variations. This will enable us to understand both the overall trends in listing prices and how these trends vary across different neighborhoods in Chicago.
+
+Definitions for today
+
+-   log scale
+
+-   fixed vs random effects
+
+### Load Libraries
+
+```{r}
+library(tidyverse)
+library(bayesrules)
+library(bayesplot)
+library(rstanarm)
+library(janitor)
+library(tidybayes)
+library(broom.mixed)
+```
+
+### Data
+
+```{r}
+data(airbnb)
+```
+
+```{r}
+?bayesrules::airbnb
+```
+
+### Exploratory Data Analysis (\~15 minutes)
+
+```{r}
+
+```
+
+#### Price vs Log Price
+
+```{r}
+ggplot(airbnb, aes(x = price)) +
+  geom_histogram()
+
+ggplot(airbnb, aes(x = log(price))) +
+  geom_histogram()
+```
+
+-   In R, the `log()` function calculates the natural logarithm of a number, which uses Euler's number (**e ≈ 2.71828**) as the base.
+
+-   So, `log(price)` gives you the exponent to which you need to raise **e** to get the original `price`.
+
+<!-- -->
+
+-   **Converting Logarithmic Values Back to Prices**:
+
+    -   So, a `log(price)` of 5 corresponds to an actual price of approximately **\$148.41**.
+
+        -   **2.71828 \^ 5**
+
+Why?
+
+Airbnb prices are often highly skewed, with a few extremely high-priced listings causing a right-skewed distribution. Skewed data can make it challenging to model and interpret because traditional regression models (like those that assume a normal distribution) struggle with skewed outcomes. Taking the logarithm of prices transforms the data into a more symmetric, bell-shaped distribution, which is easier to work with statistically and allows for better-fitting models.
+
+### Model
+
+```{r}
+airbnb_model <- stan_glmer(
+  log(price) ~ walk_score + bedrooms + rating + room_type +
+    (1 | neighborhood), 
+  data = airbnb, family = gaussian,
+  prior_intercept = normal(4.6, 2.5, autoscale = TRUE),
+  prior = normal(0, 2.5, autoscale = TRUE), 
+  prior_aux = exponential(1, autoscale = TRUE),
+  prior_covariance = decov(reg = 1, conc = 1, shape = 1, scale = 1),
+  chains = 4, iter = 5000*2, seed = 84735
+)
+```
+
+#### Model Inputs
+
+-   fixed effects
+
+    -   In this context, **fixed effects** represent the estimated impact of specific predictors (like `walk_score`, `bedrooms`, `rating`, and `room_type`) on the outcome variable, `log(price)`, that are assumed to apply **consistently across all listings** and **do not vary by neighborhood**.
+
+        -   walk score
+
+        -   bedrooms
+
+        -   rating
+
+        -   room type
+
+-   random effects
+
+    -   In this context, **random effects** account for **group-specific variations** in the outcome variable, `log(price)`, that are unique to each neighborhood. They allow each neighborhood to have its own baseline price level, capturing unobserved characteristics that may influence prices within each neighborhood beyond the fixed effects.
+
+        -   neighborhood
+
+-   prior intercept
+
+    -   what do we mean by "weak" priors
+
+        -   large standard deviations
+
+```{r}
+ggplot(data = airbnb, aes(x = log(price))) +
+  geom_density() +
+  geom_vline(xintercept = 4.6) +
+  geom_vline(xintercept = 4.6-2.5, linetype = "dashed") +
+  geom_vline(xintercept = 4.6+2.5, linetype = "dashed") +
+  theme_minimal()
+```
+
+-   prior
+
+    -   **Mean of 0**: Centering the prior at `0` reflects a neutral assumption that, without data, we expect each predictor’s effect on `log(price)` to be around zero. This means that, initially, we don’t assume a strong positive or negative impact for any predictor.
+
+    <!-- -->
+
+    -   **Standard Deviation of 2.5**: The standard deviation defines how wide the prior is around zero, allowing for a range of possible values. Here, `2.5` is quite broad, meaning we are open to the coefficients being either positive or negative and potentially substantial, but we don’t commit to any specific range with high certainty.
+
+-   prior covariance
+
+    -   `prior_covariance = decov(reg = 1, conc = 1, shape = 1, scale = 1)` provides a weakly informative prior for the neighborhood random effect variances. It applies regularization to prevent overfitting and stabilizes the model, especially useful in situations with sparse data for some neighborhoods. This prior encourages realistic neighborhood-level variability without constraining it too tightly, allowing the data to play a significant role in determining neighborhood-specific intercepts.
+
+```{r}
+airbnb_model
+```
+
+#### Model Outputs
+
+-   **Bedrooms (0.3)**:
+
+    -   For each additional bedroom, `log(price)` increases by `0.3`.
+
+    -   In percentage terms, this translates to an approximate **35% increase in price per additional bedroom** (**2.71828 \^ 0.3 =** 1.349859). So, if a listing has one more bedroom, we expect its price to increase by around 35%.
+
+-   **Rating (0.2)**:
+
+    -   For each one-point increase in `rating` (e.g., from 4 to 5 stars), `log(price)` increases by `0.2`.
+
+    -   This translates to an approximate **22% increase in price per one-point increase in rating** (since **2.71828 \^ 0.2** ≈1.22). Listings with higher ratings are expected to have higher prices.
+
+-   **Room Type - Private Room (-0.5)**:
+
+    -   If a listing is a private room (rather than an entire home/apartment), `log(price)` decreases by `0.5`.
+
+    <!-- -->
+
+    -   In percentage terms, this means a **39% decrease in price** for private rooms compared to entire homes (**2.71828 \^ 0.5** ≈0.61). Private rooms are generally priced lower than entire apartments.
+
+-   **Walk Score (0.0)**:
+
+    -   The coefficient for `walk_score` is `0.0`, indicating no meaningful impact on `log(price)`. This suggests that walkability, in this dataset, doesn’t significantly influence price once other factors are accounted for
+
+        -   Walk score accounted for in neighborhood
+
+        -   Note: Including walking score in the model decreases the standard deviation/increases certainty
+
+-   **Neighborhood (Intercept, Std.Dev. = 0.20)**:
+
+    -   This random intercept captures the neighborhood-level variability in baseline price. A standard deviation of `0.20` implies that different neighborhoods have moderately different baseline price levels, even after adjusting for the listing’s specific attributes.
+
+    -   This allows the model to adjust price expectations based on each neighborhood’s unique characteristics that aren’t explained by `bedrooms`, `rating`, etc.
+
+-   **Residual (Std.Dev. = 0.37)**:
+
+    -   This residual variance (`0.37`) indicates that there is still some remaining, unexplained variability in listing prices. This captures the random noise or price differences that are not accounted for by the fixed and random effects.
+
+### Summary
+
+In plain terms, this model suggests:
+
+-   **Each additional bedroom** increases price by about **35%**.
+
+-   **Each additional rating point** increases price by around **22%**.
+
+-   **Private rooms** cost about **39% less** than entire homes.
+
+-   **Shared rooms** cost about **67% less** than entire homes.
+
+-   **Neighborhood effects** indicate some variability, with each neighborhood having a slightly different baseline price level.
