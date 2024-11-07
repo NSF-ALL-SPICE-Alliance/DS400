@@ -1,0 +1,137 @@
+---
+title: "Final Projects"
+format: html
+editor: visual
+---
+
+### Overview
+
+It is time for our final projects! Final projects are worth 24 points (rubric below). The presentations will be on Thursday November 21st and and Tuesday November 26th. There will be 4-5 people in each group, every group will have a github repository for the project with all data/code.
+
+### Rubric
+
+#### 1. Documentation
+
+Github repository (6 points)
+
+-   Nice readme file with CUH logo, description of the project, data, code, and links to each project members github profile
+
+-   Students need to be able to fork the repository and rerun the entire analysis without editing any code
+
+-   Each group member must be marked as a *contributor* on github
+
+#### 2. Code
+
+Exploratory Data Viz (4 points)
+
+-   Visualize the data, highlight key findings
+
+Bayesian Methods (6 points)
+
+-   Utilize a Bayesian approach specific to your project
+
+    -   More details to follow
+
+#### Presentation
+
+Group Presentation (8 points)
+
+-   Show the code as rendered qmd or shiny app (no powerpoints)
+
+    -   Exploratory Data Viz
+
+    -   Bayesian Methods
+
+    -   Results
+
+### Projects
+
+#### Flight Delay Prediction Shiny App
+
+[Data on Kaggle](https://www.kaggle.com/datasets/arvindnagaonkar/flight-delay/)
+
+Objective: Create a shiny app that allows users to input information about their upcoming flight and see a probability that the flight will be delayed
+
+Guidance: read_parquet, sample the dataset if it is too large
+
+Group Members:
+
+-   Aaron Rice
+
+-   Krystin Nishiguchi
+
+-   Johnny Bae
+
+-   Selena Buttery
+
+-   Kandielynn Ueligitone
+
+#### SNAP Analysis
+
+Data from the [tidycensus](https://walker-data.com/tidycensus/index.html) R Package
+
+Objective: Analyze the relationships between snap participation and other socioeconomic variables at the census tract level
+
+Group Members:
+
+-   Victoria Delacruz
+
+-   Olyann Ta'ase
+
+-   Cade Garcia
+
+-   Upumoni Logologo
+
+-   Alii Napoleon
+
+#### SPAM Classification Shiny App
+
+[Data on UC Irvine Machine Learning Repo](https://archive.ics.uci.edu/dataset/228/sms+spam+collection)
+
+Objective: Build a shiny app that allows users to input a message and receive a prediction of whether it is spam or not
+
+Group:
+
+-   Lydia Hefel
+
+-   Ashley Holen
+
+-   Landon Vitug
+
+-   Kamryn Lopez
+
+-   Bennet Bush
+
+#### Bikeshare Shiny App
+
+Data from [bayesrules](https://github.com/bayes-rules/bayesrules) package
+
+Objective: Create a shiny app that allows a user to input information and receive a distribution of the expected number of rides
+
+Group:
+
+-   Anson Ekau
+
+-   Kole Nagai
+
+-   Sydney Danielson
+
+-   Lela Gi
+
+#### Renewable Energy Forecasting in Spain
+
+[Data on Kaggle](https://www.kaggle.com/datasets/nicholasjhana/energy-consumption-generation-prices-and-weather/data)
+
+Objective: Plot the distribution of total energy demand. Can any of the features in the data help us predict demand? Can any of the features in the data help us predict wind or solar energy generation. Can we forecast a renewable energy sources supply and total energy demand to see the gap?
+
+Guidance: Join the data, extract features from date (day of week, season, hour, etc..), filter city for Barcelona
+
+Group:
+
+-   Wilneris Colon
+
+-   William Kim
+
+-   Eugene Garvilles
+
+-   Andrew Nishitomi
