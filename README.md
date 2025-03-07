@@ -28,6 +28,18 @@
 
 📕 [Bayes Rules!](https://www.bayesrulesbook.com/)
 
+#### Final Projects Showcases
+
+[Bayes-Renewable-Energy-Forecasting-in-Spain](https://github.com/anishitomi/Bayes-Renewable-Energy-Forecasting-in-Spain)
+
+[Bayes-Flight-Analytics](https://github.com/selenabuttery/Bayes-Flight-Analytics)
+
+[spam-classification-shiny-app
+](https://github.com/lydiahefel/spam-classification-shiny-app/tree/main)
+
+[BayesBikes-Bikeshare-analytics](https://github.com/aekau21/BayesBikes-Bikeshare-analytics)
+
+
 
 #### Course Schedule
 
