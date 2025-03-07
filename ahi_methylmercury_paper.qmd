@@ -1,0 +1,230 @@
+---
+title: "PMA Analysis"
+format: html
+editor: visual
+---
+
+## Libraries
+
+```{r}
+library(tidyverse)
+library(bayesrules)
+library(BayesFactor)
+library(haven)
+library(here)
+library(brms)
+```
+
+## Data
+
+NHANES
+
+```{r}
+diet_behavior <- read_xpt(here("data/nhanes_data/DR1TOT_J.XPT"))
+blood_hg <- read_xpt(here("data/nhanes_data/2017-2018_Hg-Blood.XPT"))
+urine_hg <- read_xpt(here("data/nhanes_data/2017-2018_Hg-Urine.XPT"))
+diabetes <- read_xpt(here("data/nhanes_data/2017-2018_Diabetes.XPT"))
+demographics <- read_xpt(here("data/nhanes_data/2017-2018_Demographics.XPT"))
+body_measures <- read_xpt(here("data/nhanes_data/BMX_J.xpt"))
+
+
+```
+
+### Subset Read-in Datasets
+
+Subset 'diet_behavior' as 'diet'
+
+```{r}
+diet <- select(diet_behavior, SEQN, DRD360, DRD370B, DRD370BQ, DRD370Q, DRD370QQ)
+```
+
+Subset 'diabetes' as 'tiid'
+
+```{r}
+tiid <- select(diabetes, SEQN, DIQ010, DIQ170)
+```
+
+Subset 'blood_hg' as 'bhg'
+
+```{r}
+bhg <- select(blood_hg, SEQN, LBXIHG, LBDIHGSI, LBXBGE, LBXBGM)
+```
+
+Subset "urine_hg' as 'uhg'
+
+```{r}
+uhg <- select(urine_hg, SEQN, URXUHG)
+```
+
+Subset BMI
+
+```{r}
+bmi <- select(body_measures, SEQN, BMXBMI)
+```
+
+Subset Demographics
+
+```{r}
+dems <- select(demographics, SEQN, RIDAGEYR, RIAGENDR)
+```
+
+### Merge Subsets Into A Working Dataframe as 'df'
+
+```{r}
+df <- list(diet, tiid, bhg, uhg, bmi, dems)
+
+df <- df %>% reduce(full_join, by = 'SEQN')
+```
+
+1.  Filter Dataframe df for the following:
+
+```{r}
+# Assuming your dataframe is named `nhanes_data`
+df <- df %>%
+  # Filter out rows where DIQ010 or DRD360 are NA
+  filter(!is.na(DIQ010), !is.na(DRD370B)) %>%
+  # Keep only rows where DIQ010 and DRD360 are 1 or 2
+  filter(DIQ010 %in% c(1, 2), DRD370B %in% c(1, 2)) %>%
+  # Recode 1 to "Yes" and 2 to "No" for DIQ010 and DRD360
+  mutate(
+    DIQ010 = ifelse(DIQ010 == 1, "Has Diabetes", "No Diabetes"),
+    DRD370B = ifelse(DRD370B == 1, "Consumes Ahi", "No Ahi")
+  )
+  
+```
+
+```{r}
+df <- df %>% 
+  filter(!is.na(LBXBGM))
+```
+
+### Analysis
+
+```{r}
+ggplot(data = df, aes(x = DRD370B, y = LBXBGM, fill = DRD370B)) +
+  geom_boxplot() +
+  #geom_jitter(size = 0.001) +
+  #ylim(0,5)+
+  theme_minimal()
+
+```
+
+```{r}
+threshold <- 5.8  # Set the threshold for blood mercury level
+
+df %>%
+  group_by(DRD370B) %>%
+  summarise(
+    total = n(),
+    exceeding = sum(LBXBGM > threshold, na.rm = TRUE),
+    percentage_exceeding = (exceeding / total) * 100
+  )
+```
+
+```{r}
+ttestBF(
+  formula = LBXBGM ~ DRD370B,  # Numeric variable on left, categorical on right
+  data = df
+)
+```
+
+```{r}
+ggplot(df, aes(x = DRD370B, y = LBXBGM)) +
+  stat_summary(fun = mean, geom = "point", size = 3) +
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+  labs(x = "Fish Consumption (ahi)", y = "Blood Mercury Level")
+
+```
+
+```{r}
+ggplot(data = df, aes(x = LBXBGM, fill = DRD370B)) +
+  geom_density(alpha = 0.7) +
+  theme_bw()
+```
+
+```{r}
+model <- brm(LBXBGM ~ DRD370B, data = df, family = Gamma(link = "log"))
+summary(model)
+```
+
+```{r}
+posterior <- posterior_samples(model)
+
+
+ggplot(posterior, aes(x = b_DRD370BNoAhi)) +
+  geom_density(fill = "steelblue", alpha = 0.5) +
+  labs(
+    title = "",
+    x = "Log Difference in Blood Mercury Levels (Non-Ahi vs. Ahi Consumers)",
+    y = "Posterior Density of Log Difference"
+  ) +
+  theme_bw()
+
+```
+
+```{r}
+brms::pp_check(model)
+```
+
+```{r}
+pp_check(model, type = "dens_overlay", ndraws = 100) +
+  labs(
+    title = "Posterior Predictive Check",
+    x = "Blood Mercury Levels (µg/L)",
+    y = "Density",
+    color = "Legend"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "top")
+```
+
+```{r}
+library(janitor)
+```
+
+```{r}
+tabyl(df$RIAGENDR)
+tabyl(df$RIDAGEYR)
+tabyl(df$DRD370B)
+
+```
+
+```{r}
+ggplot(df, aes(x = DRD370B, y = LBXBGM, fill = DRD370B)) +
+  geom_violin(alpha = 0.7, trim = FALSE) +  # Keep full distribution
+  geom_boxplot(width = 0.1, color = "black", alpha = 0.7, outlier.shape = NA) +  # Overlay boxplot
+  stat_summary(fun = median, geom = "point", size = 3, color = "black") +  # Show median
+  scale_fill_manual(values = c("red3", "steelblue")) +  # Custom colors
+  labs(
+    x = "Ahi Consumption",
+    y = "Blood Mercury Levels (µg/L)",
+    title = "Distribution of Blood Mercury Levels by Ahi Consumption"
+  ) +
+  theme_minimal(base_size = 14) +  # Use clean theme
+  theme(legend.position = "top")  # Move legend to top
+
+```
+
+```{r}
+ggplot(df, aes(x = DRD370B, y = LBXBGM, fill = DRD370B)) +
+  geom_violin(alpha = 0.7, trim = FALSE) +  # Preserve full distribution
+  geom_boxplot(width = 0.1, color = "black", alpha = 0.7, outlier.shape = NA) +  # Overlay boxplot
+  stat_summary(fun = median, geom = "point", size = 3, color = "black") +  # Add median
+  scale_y_log10() +  # Log transformation for better scaling
+  scale_fill_manual(values = c("red3", "steelblue")) +  # Custom colors
+  labs(
+    x = "Ahi Consumption",
+    y = "Blood Mercury Levels (µg/L, log scale)",
+    title = "Log-Transformed Distribution of Blood Mercury Levels by Ahi Consumption"
+  ) +
+  theme_minimal(base_size = 14) +  # Clean theme
+  theme(legend.position = "top")  # Move legend to top
+
+```
+
+test diabetes
+
+```{r}
+brm(DIQ010 ~ LBXBGM + DRD370B + RIDAGEYR + RIAGENDR + BMXBMI, data = df, family = bernoulli())
+
+```
