@@ -13,6 +13,7 @@ library(BayesFactor)
 library(haven)
 library(here)
 library(brms)
+library(janitor)
 ```
 
 ## Data
@@ -81,13 +82,10 @@ df <- df %>% reduce(full_join, by = 'SEQN')
 ```{r}
 # Assuming your dataframe is named `nhanes_data`
 df <- df %>%
-  # Filter out rows where DIQ010 or DRD360 are NA
-  filter(!is.na(DIQ010), !is.na(DRD370B)) %>%
-  # Keep only rows where DIQ010 and DRD360 are 1 or 2
-  filter(DIQ010 %in% c(1, 2), DRD370B %in% c(1, 2)) %>%
+  # Filter out rows where DRD370B is NA
+  filter(!is.na(DRD370B)) %>%
   # Recode 1 to "Yes" and 2 to "No" for DIQ010 and DRD360
   mutate(
-    DIQ010 = ifelse(DIQ010 == 1, "Has Diabetes", "No Diabetes"),
     DRD370B = ifelse(DRD370B == 1, "Consumes Ahi", "No Ahi")
   )
   
@@ -98,7 +96,28 @@ df <- df %>%
   filter(!is.na(LBXBGM))
 ```
 
+methods
+
+```{r}
+tabyl(df$RIAGENDR)
+```
+
+```{r}
+mean(df$RIDAGEYR)
+sd(df$RIDAGEYR)
+```
+
+```{r}
+tabyl(df$DRD370B)
+```
+
+```{r}
+summary(df$LBXBGM)
+```
+
 ### Analysis
+
+Standard boxplot
 
 ```{r}
 ggplot(data = df, aes(x = DRD370B, y = LBXBGM, fill = DRD370B)) +
@@ -108,6 +127,33 @@ ggplot(data = df, aes(x = DRD370B, y = LBXBGM, fill = DRD370B)) +
   theme_minimal()
 
 ```
+
+Log Violin plot w/ boxplots
+
+why log?
+
+Using **log-transformed blood mercury levels** makes the analysis more **statistically robust**, helps meet model assumptions, and allows us to interpret results in terms of **relative differences** rather than absolute changes, which is often more meaningful in environmental health studies.
+
+**Right-Skewed Distribution**:\
+Blood mercury levels are typically **highly right-skewed**, meaning most people have low levels, while a few individuals have very high concentrations. Log transformation **reduces skewness**, making the data more **approximately normal**, which is often desirable for modeling.
+
+```{r}
+ggplot(df, aes(x = DRD370B, y = LBXBGM, fill = DRD370B)) +
+  geom_violin(alpha = 0.7, trim = FALSE) +  # Preserve full distribution
+  geom_boxplot(width = 0.1, color = "black", alpha = 0.7, outlier.shape = NA) +  # Overlay boxplot
+  stat_summary(fun = median, geom = "point", size = 3, color = "black") +  # Add median
+  scale_y_log10() +  # Log transformation for better scaling
+  scale_fill_manual(values = c("cyan4", "darkorange")) +  # Custom colors
+  labs(
+    x = "Ahi Consumption",
+    y = "Blood Mercury Levels (µg/L, log scale)",
+    title = "Log-Transformed Distribution of Blood Mercury Levels by Ahi Consumption"
+  ) +
+  theme_minimal(base_size = 14) +  # Clean theme
+  theme(legend.position = "top")  # Move legend to top
+```
+
+"Consistent with the U.S. EPA reference dose, a threshold of 5.8 µg/L was used to identify participants with elevated blood mercury levels (<https://pmc.ncbi.nlm.nih.gov/articles/PMC5584810/>)."
 
 ```{r}
 threshold <- 5.8  # Set the threshold for blood mercury level
@@ -121,12 +167,16 @@ df %>%
   )
 ```
 
+Perform a Bayesian t-test
+
 ```{r}
 ttestBF(
   formula = LBXBGM ~ DRD370B,  # Numeric variable on left, categorical on right
   data = df
 )
 ```
+
+Show difference in means
 
 ```{r}
 ggplot(df, aes(x = DRD370B, y = LBXBGM)) +
@@ -136,16 +186,22 @@ ggplot(df, aes(x = DRD370B, y = LBXBGM)) +
 
 ```
 
+Show difference in density
+
 ```{r}
 ggplot(data = df, aes(x = LBXBGM, fill = DRD370B)) +
   geom_density(alpha = 0.7) +
   theme_bw()
 ```
 
+Bayesian Regression Model
+
 ```{r}
 model <- brm(LBXBGM ~ DRD370B, data = df, family = Gamma(link = "log"))
 summary(model)
 ```
+
+Plot Posterior Density of Log Difference
 
 ```{r}
 posterior <- posterior_samples(model)
@@ -161,6 +217,8 @@ ggplot(posterior, aes(x = b_DRD370BNoAhi)) +
   theme_bw()
 
 ```
+
+Post Predictive check
 
 ```{r}
 brms::pp_check(model)
@@ -178,53 +236,9 @@ pp_check(model, type = "dens_overlay", ndraws = 100) +
   theme(legend.position = "top")
 ```
 
-```{r}
-library(janitor)
-```
+test diabetes but no luck
 
 ```{r}
-tabyl(df$RIAGENDR)
-tabyl(df$RIDAGEYR)
-tabyl(df$DRD370B)
-
-```
-
-```{r}
-ggplot(df, aes(x = DRD370B, y = LBXBGM, fill = DRD370B)) +
-  geom_violin(alpha = 0.7, trim = FALSE) +  # Keep full distribution
-  geom_boxplot(width = 0.1, color = "black", alpha = 0.7, outlier.shape = NA) +  # Overlay boxplot
-  stat_summary(fun = median, geom = "point", size = 3, color = "black") +  # Show median
-  scale_fill_manual(values = c("red3", "steelblue")) +  # Custom colors
-  labs(
-    x = "Ahi Consumption",
-    y = "Blood Mercury Levels (µg/L)",
-    title = "Distribution of Blood Mercury Levels by Ahi Consumption"
-  ) +
-  theme_minimal(base_size = 14) +  # Use clean theme
-  theme(legend.position = "top")  # Move legend to top
-
-```
-
-```{r}
-ggplot(df, aes(x = DRD370B, y = LBXBGM, fill = DRD370B)) +
-  geom_violin(alpha = 0.7, trim = FALSE) +  # Preserve full distribution
-  geom_boxplot(width = 0.1, color = "black", alpha = 0.7, outlier.shape = NA) +  # Overlay boxplot
-  stat_summary(fun = median, geom = "point", size = 3, color = "black") +  # Add median
-  scale_y_log10() +  # Log transformation for better scaling
-  scale_fill_manual(values = c("red3", "steelblue")) +  # Custom colors
-  labs(
-    x = "Ahi Consumption",
-    y = "Blood Mercury Levels (µg/L, log scale)",
-    title = "Log-Transformed Distribution of Blood Mercury Levels by Ahi Consumption"
-  ) +
-  theme_minimal(base_size = 14) +  # Clean theme
-  theme(legend.position = "top")  # Move legend to top
-
-```
-
-test diabetes
-
-```{r}
-brm(DIQ010 ~ LBXBGM + DRD370B + RIDAGEYR + RIAGENDR + BMXBMI, data = df, family = bernoulli())
+# brm(DIQ010 ~ LBXBGM + DRD370B + RIDAGEYR + RIAGENDR + BMXBMI, data = df, family = bernoulli())
 
 ```
