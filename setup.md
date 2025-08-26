@@ -39,7 +39,72 @@ library(bayesrules)
 ```r
 install.packages("tidyverse")
 library(tidyverse)
-``` 
+```
+
+
+## Step 2.5: If You Don't Have A Github Profile Linked with R 
+### 🐙 Create / Update your GitHub Account
+
+1. Navigate to [https://github.com](https://github.com)
+2. Sign up using your school or personal email
+3. Choose a username you'll use professionally (e.g., `csmith-ds421`)
+4. Verify your email and log in
+
+### Check for Git
+
+#### For macOS users
+Open RStudio and use the **Terminal** tab (bottom left panel). Type:
+
+```bash
+which git
+```
+If you see something like `/usr/bin/git`, you're good! If not, install [Xcode Command Line Tools](https://developer.apple.com/xcode/resources/).
+
+#### For Windows users
+In the **Terminal** tab in RStudio, type:
+
+```bash
+where git
+```
+If no result is shown, download Git for Windows: [https://git-scm.com/download/win](https://git-scm.com/download/win)
+
+
+### Configure Git
+Run the following in the RStudio Terminal (replace with your GitHub name/email):
+
+```bash
+git config --global user.name "Jane Doe"
+git config --global user.email janedoe@example.com"
+```
+
+Check your setup:
+
+```bash
+git config --list --global
+```
+
+### Generate and Store a GitHub PAT
+A PAT (Personal Access Token) is needed to push to GitHub securely.
+
+1. In the Console tab (next to Terminal):
+
+```r
+install.packages("usethis")
+usethis::create_github_token()
+```
+2. This opens a GitHub page. Name the token (e.g. `ds421-laptop`) and click **Generate token**.
+3. Copy the token to your clipboard (you won't be able to see it again).
+
+4. Back in the Console:
+```r
+gitcreds::gitcreds_set()
+```
+5. Paste your token when prompted.
+
+6. Check that everything works:
+```r
+usethis::git_sitrep()
+```
 
 
 ## 📦 Step 3: Create a  New Github Repository
@@ -94,6 +159,14 @@ gitcreds::gitcreds_set()
 ```
 5. Paste your token when prompted.
 
+## 🔐 Step 6: Add Profile Photo & Introduction to your Github Account
+- Go to **[GitHub Profile Settings](https://github.com/settings/profile)**  
+- Upload a **profile photo** that represents you professionally  
+- Add a short **bio** (e.g., "Data Science Student at Chaminade University")  
+- Optionally, include:
+  - Your **location**
+  - A link to your **website** or **LinkedIn**
+- Click **Update Profile** to save your changes  
 
 
 
