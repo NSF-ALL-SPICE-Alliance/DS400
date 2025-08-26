@@ -36,6 +36,11 @@ install.packages("bayesrules")
 library(bayesrules)
 ``` 
 
+```r
+install.packages("tidyverse")
+library(tidyverse)
+``` 
+
 
 ## 📦 Step 3: Create a  New Github Repository
 
