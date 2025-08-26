@@ -21,7 +21,9 @@ By the end of class, you will have:
 ## 🔧 Step 1: Update R
 
 Make sure you have the latest version of R installed:  
-[Download R here](https://cran.r-project.org/)
+- Check in console with R.version
+- R version 4.5.1 (2025-06-13)
+- [Download R here](https://cran.r-project.org/)
 
 ---
 
