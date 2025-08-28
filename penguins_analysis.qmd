@@ -1,0 +1,413 @@
+---
+title: "Analyzing Penguins Data"
+author: "Connor Flynn"
+format: html
+editor: visual
+---
+
+#### Loading Libraries
+
+```{r, message=FALSE}
+library(tidyverse)
+library(here)
+library(palmerpenguins)
+library(janitor)
+library(plotly)
+library(DataExplorer)
+```
+
+#### Reading in Data w/ [palmerpenguins](https://allisonhorst.github.io/palmerpenguins/articles/intro.html)
+
+[![](images/clipboard-1031246121.png){width="78" height="89"}](https://allisonhorst.github.io/palmerpenguins/articles/intro.html)
+
+There are multiple options to read data into R
+
+1.  Data download (manual click) -\> Move into project "data" folder -\> read_csv() with here()
+2.  Sometimes data is included in packages
+    1.  In this case, the penguins data we are going to analyze is included in the palmerpenguins package.
+
+##### Option 1
+
+```{r, message=FALSE}
+penguins_data_from_csv <- read_csv(here("data/penguins_lter.csv"))
+```
+
+##### Option 2
+
+```{r, message=FALSE}
+penguins_data_from_package <- palmerpenguins::penguins
+```
+
+```{r, message=FALSE}
+raw_penguins_data_from_package <- palmerpenguins::penguins_raw
+```
+
+##### 
+
+Please note that all of these methods of reading data in to R are *reproducible* meaning that this script should work for anyone using the appropriate steps with Github
+
+#### A Little Data Cleaning
+
+Let's focus on the dataframe penguins_data_from_csv for learning purposes
+
+-   If you click on the dataframe in you environment you'll notice the space in the column names, ex. Culmen Length (mm)
+
+    -   Having spaces in column names often causes headaches, R doesn't like it, so we always avoid spaces
+
+        -   We can do this with underscores (snakecase)
+
+            -   culmen_length_mm
+
+        -   We can do this with capitals (camelcase)
+
+            -   CulmenLengthMm
+
+Lets start by cleaning one column name manually, so you can appreciate the janitor packages' efficiency
+
+First, with Base R
+
+```{r}
+names(penguins_data_from_csv)[names(penguins_data_from_csv) == "Culmen Length (mm)"] <- "culmen_length_mm"
+```
+
+Second, with the dplyr package
+
+```{r}
+penguins_data_from_csv <- penguins_data_from_csv %>% 
+  rename(culmen_depth_mm = "Culmen Depth (mm)")
+```
+
+We are lucky our penguins dataframe only has 17 columns, but often times dataframes can have many more. So manually cleaning column names with base R or dplyr is highly inefficient. Here's where the janitor package, clean_names() function comes to the rescue!
+
+```{r}
+penguins_data_from_csv <- penguins_data_from_csv %>% 
+  clean_names()
+```
+
+Awesome, now all of our column names are clean and our dataframe is ready for analysis
+
+#### Exploratory Analysis
+
+The skim() function from the skimr package gives us a cool overview of the data with one line of code
+
+```{r}
+skimr::skim(penguins_data_from_csv)
+```
+
+#### Exercise 2 {style="color: #B8860B;"}
+
+What other packages/functions do a similar thing?
+
+-   Try a good ol google search "R package to get in depth description of dataframe"
+
+    -   How about a Chat GPT search?
+
+-   Type you answer(s) in bullet points below
+
+```{r}
+introduce(penguins_data_from_csv)
+```
+
+```{r}
+plot_intro(penguins_data_from_csv)
+```
+
+#### Data Visualization
+
+Wohoo!! ggplot is the most common package used for data visualization in R!
+
+Let's start with the most basic plot we can make
+
+```{r}
+ggplot(data = penguins_data_from_csv, aes(x = flipper_length_mm)) +
+  geom_histogram()
+
+```
+
+Cool! What if we color the histogram by species
+
+```{r}
+ggplot(data = penguins_data_from_csv, aes(x = flipper_length_mm, fill = species)) +
+  geom_histogram()
+
+```
+
+Interesting! Seems like flipper length is very dependent on species of penguin
+
+The magic of ggplot is simplicity and *customization* so let's customize
+
+```{r}
+ggplot(data = penguins_data_from_csv, aes(x = flipper_length_mm, fill = species)) +
+  geom_histogram(alpha =0.5) +
+  theme_bw() +
+  scale_fill_manual(values = c("darkorange","darkorchid","cyan4")) +
+  labs(title = "Palmer Penguins, Distribution of Flipper Length",
+       subtitle = "3 penguin species observed on three islands in the Palmer Archipelago, Antarctica",
+       x = "flipper length (mm)",
+       y = "number of penguins")
+  
+```
+
+Manually exciting colors is cool, but there are also color palettes available for us with viridis
+
+```{r}
+ggplot(data = penguins_data_from_csv, aes(x = flipper_length_mm, fill = species)) +
+  geom_histogram(alpha =0.5) +
+  theme_bw() +
+  scale_fill_viridis_d() +
+  labs(title = "Palmer Penguins, Distribution of Flipper Length",
+       subtitle = "3 penguin species observed on three islands in the Palmer Archipelago, Antarctica",
+       x = "flipper length (mm)",
+       y = "number of penguins")
+```
+
+Let's investigate flipper length with another type of data viz
+
+```{r}
+ggplot(data = penguins_data_from_csv, aes(x = species, y = flipper_length_mm, fill = species)) +
+  geom_boxplot()
+```
+
+Again, let's customize!
+
+```{r}
+ggplot(data = penguins_data_from_csv, aes(x = species, y = flipper_length_mm, fill = species)) +
+  geom_boxplot() +
+  geom_jitter(size = 0.2) +
+  theme_bw() +
+  scale_fill_viridis_d() +
+  labs(title = "Palmer Penguins, Distribution of Flipper Length",
+       subtitle = "3 penguin species observed on three islands in the Palmer Archipelago, Antarctica",
+       x = "",
+       y = "flipper length (mm)") + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1), legend.position = "none") +
+  coord_flip()
+  
+
+```
+
+Awesome! Let's take a look at flipper length and it's relationship to body mass
+
+```{r}
+ggplot(data = penguins_data_from_csv, aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point()
+```
+
+Cool! Let's add species and island to this plot
+
+```{r}
+ggplot(data = penguins_data_from_csv, aes(x = flipper_length_mm, y = body_mass_g, color = species, shape = island)) +
+  geom_point() +
+  theme_bw() +
+  scale_color_viridis_d() +
+   labs(title = "Palmer Penguins, Flipper Length & Body Mass",
+       subtitle = "3 penguin species observed on three islands in the Palmer Archipelago, Antarctica",
+       x = "flipper length (mm)",
+       y = "body mass (g)")
+  
+```
+
+#### Exercise 3 {style="color: #B8860B;"}
+
+-   Part 1
+
+    -   In the code chunk below create a histogram with culmen_depth_mm on the x axis and color by species using the dataframe *penguins_data_from_csv*. Give the plot the theme: theme_bw(). Assign a color palette with *scale_fill_viridis_d()*. Give the plot a title, subtitile and custom x and y axis titles.
+
+```{r}
+
+```
+
+-   Part 2
+
+    -   In the code chunk below create a scatterplot with culmen_depth_mm on the x axis, body_mass_g on the y axis, and color by species using the dataframe *penguins_data_from_csv*. Give the plot the theme: theme_bw(). Assign a color palette with *scale_fill_viridis_d(option = "inferno")*. Give the plot a title, subtitile and custom x and y axis titles.
+
+```{r}
+
+```
+
+#### Interactive Data Visualization
+
+```{r}
+scatter_plot <- ggplot(data = penguins_data_from_csv, aes(x = flipper_length_mm, y = body_mass_g, color = species, shape = island)) +
+  geom_point() +
+  theme_bw() +
+  scale_color_viridis_d() +
+   labs(title = "Palmer Penguins, Flipper Length & Body Mass",
+       subtitle = "3 penguin species observed on three islands in the Palmer Archipelago, Antarctica",
+       x = "flipper length (mm)",
+       y = "body mass (g)")
+```
+
+```{r}
+ggplotly(scatter_plot)
+```
+
+Question from Class
+
+-   How can we edit the tooltip to replace body_mass_g with "body mass"
+
+```{r}
+scatter_plot <- ggplot(data = penguins_data_from_csv, 
+                       aes(x = flipper_length_mm, y = body_mass_g, color = species, shape = island, 
+                           text = paste(
+                             "Flipper Length (mm):", flipper_length_mm,
+                             "<br>Body Mass (g):", body_mass_g,
+                             "<br>Species:", species,
+                             "<br>Island:", island))) +
+  geom_point() +
+  theme_bw() +
+  scale_color_viridis_d() +
+  labs(title = "Palmer Penguins, Flipper Length & Body Mass",
+       subtitle = "3 penguin species observed on three islands in the Palmer Archipelago, Antarctica",
+       x = "flipper length (mm)",
+       y = "body mass (g)")
+
+# Convert the ggplot object to a plotly object with customized tooltip
+ggplotly(scatter_plot, tooltip = "text")
+
+
+
+```
+
+Awesome! Let's add one more variable to the plot, the sex of the penguin. Since we have already used our x axis, y axis, color, and shape for other variables, our best option is to use facet_wrap() to slit the plot into two plots based on sex
+
+```{r}
+ggplot(data = penguins_data_from_csv, aes(x = flipper_length_mm, y = body_mass_g, color = species, shape = island)) +
+  geom_point() +
+  theme_bw() +
+  scale_color_viridis_d() +
+  facet_wrap(~sex) +
+   labs(title = "Palmer Penguins, Flipper Length & Body Mass",
+       subtitle = "3 penguin species observed on three islands in the Palmer Archipelago, Antarctica",
+       x = "flipper length (mm)",
+       y = "body mass (g)")
+
+```
+
+Interesting, it seems there are actually 4 unique sexes in the dataframe (male, female, ".", and NA).
+
+We could also have seen this with the unique() function
+
+```{r}
+unique(penguins_data_from_csv$sex)
+```
+
+-   If we wanted to know the number of penguins in each category for sex, we can use table(), however this does not include NA
+
+    ```{r}
+    table(penguins_data_from_csv$sex)
+    ```
+
+-   We can use the sum(is.na() function to count the number of penguins with NA as the sex
+
+    -   This was also included in the skim() function in the beginning of this document
+
+```{r}
+sum(is.na(penguins_data_from_csv$sex))
+```
+
+Let;s filter for observations where sex is wither male or female and drop observations with na in the sex column
+
+```{r}
+penguins_male_female <- penguins_data_from_csv %>% 
+  filter(sex %in% c("MALE", "FEMALE")) %>% 
+  drop_na(sex)
+```
+
+-   Notice in our environment pane that our \# of observations went from 344 in the dataframe penguins_data_from_csv to 333 observation in penguins_clean
+
+Let's let's make the same faceted scatter plot from the new dataframe
+
+```{r}
+ggplot(data = penguins_male_female, aes(x = flipper_length_mm, y = body_mass_g, color = species, shape = island)) +
+  geom_point() +
+  theme_bw() +
+  scale_color_viridis_d() +
+  facet_wrap(~sex) +
+   labs(title = "Palmer Penguins, Flipper Length & Body Mass",
+       subtitle = "3 penguin species observed on three islands in the Palmer Archipelago, Antarctica",
+       x = "flipper length (mm)",
+       y = "body mass (g)")
+```
+
+#### Data manipulation
+
+Our first plots did not call for us to manipulate the data at all. How about if we wanted to make a bar graph of the average body mass by species?
+
+-   Let's create a new dataframe called *average_body_masses* that has the average body mass for each penguin species. We'll do this by using the *group_by()* and *summarise()* functions.
+
+    ```{r}
+    average_species_body_mass <- penguins_data_from_csv %>% 
+      group_by(species) %>% 
+      summarise(average_body_mass = mean(body_mass_g, na.rm = TRUE))
+    ```
+
+-   Sweet! Now let's plot the results
+
+    ```{r}
+    ggplot(data = average_species_body_mass, aes(x = species, y = average_body_mass)) +
+      geom_bar(stat = "identity")
+    ```
+
+-   Cool, but let's clean the graph up
+
+    ```{r}
+    ggplot(data = average_species_body_mass, aes(x = species, y = average_body_mass, fill = species)) +
+      geom_bar(stat = "identity") +
+      theme_bw() +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+      scale_fill_viridis_d()
+      
+    ```
+
+-   It might be nice to have the bars going horizontally. We can do this with cooed_flip()
+
+    -   Let's also get rid of the legend since the species is already written on the axis and add appropriate titles
+
+    ```{r}
+    ggplot(data = average_species_body_mass, aes(x = species, y = average_body_mass, fill = species)) +
+      geom_bar(stat = "identity") +
+      theme_bw() +
+      scale_fill_viridis_d() +
+      coord_flip() +
+      theme(legend.position = "none") +
+      labs(title = "Palmer Penguins, Average Body Mass by Species",
+           subtitle = "3 penguin species observed on three islands in the Palmer Archipelago, Antarctica",
+           x = "average body mass (g)",
+           y = "species")
+      
+    ```
+
+#### Exercise 4 {style="color: #B8860B;"}
+
+-   In the code chunk below create a new dataframe called *average_species_flipper_length* that has the average flipper length for each species
+
+```{r}
+
+
+```
+
+-   In the code chunk below, plot *average_species_flipper_length* using *ggplot()* and geom_bar(). Customize the graph with colors, a theme, and labels
+
+```{r}
+
+
+```
+
+#### Joining Data
+
+Let's say the only way to get the penguins data was via the uri. At the top of this quarto document, we read in two datasets via uri, the *adelie_penguins_data_from_url and gentoo_penguins_data_from_url.* How can we join them together to analyze data for both species?
+
+-   We can use the function full_join()
+
+```{r}
+gentoo_adelie_penguins_data_joined <- full_join(gentoo_penguins_data_from_uri, adelie_penguins_data_from_url)
+```
+
+#### Final Exercises {style="color: #B8860B;"}
+
+1.  Create a boxplot of body mass by species & make the plot interactive
+    1.  Hint: geom_boxplot(), ggplotly()
+2.  How many penguins live on Torgersen Island?
+3.  Create a dataframe that has the average culmen depth for each species
+    1.  Make a bar plot of the new dataframe with species on the x axis and average culmen depth on the y axis
