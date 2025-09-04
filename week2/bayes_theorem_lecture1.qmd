@@ -60,7 +60,7 @@ ggplot(data = fake_news, aes(x = type, fill = title_has_excl)) +
 
 ### The Whole Game
 
-![](images/clipboard-2218401115.png){width="387"}
+![](images/clipboard-2218401115.png)
 
 A \<- Has exclamation point
 
@@ -70,9 +70,7 @@ B \<- Article is fake
 
 -   Bc \<- Article is real
 
-![](images/Screen%20Shot%202024-08-30%20at%205.11.36%20PM.png){width="387" height="189"}
-
-![](images/Screen%20Shot%202024-08-30%20at%205.11.51%20PM.png){width="388"}
+![](images/clipboard-3013301639.png){width="534"}
 
 Our fake news analysis boils down to the study of two **variables**: an article’s fake vs real status and its use of exclamation points. These features can *vary* from article to article. Some are fake, some aren’t. Some use exclamation points, some don’t. We can represent the *randomness* in these variables using **probability models**. In this section we will build a **prior probability model** for our prior understanding of whether the most recent article is fake; a model for interpreting the exclamation point **data**; and, eventually, a **posterior probability model** which summarizes the posterior plausibility that the article is fake.
 
