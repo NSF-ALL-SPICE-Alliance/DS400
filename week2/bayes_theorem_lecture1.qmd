@@ -214,11 +214,45 @@ ggplot(beach_data, aes(x = beach_today, fill = vacation)) +
 
 P(B) - this person went to the beach
 
+```{r}
+beach_data %>% 
+  tabyl(beach_today) %>% 
+  adorn_totals("row")
+```
+
+```{r}
+probability_went_to_beach <- 0.30
+```
+
 P(A) - this person is on vacation
+
+```{r}
+beach_data %>% 
+  tabyl(vacation) %>% 
+  adorn_totals("row")
+```
+
+```{r}
+probability_on_vacation <- 0.24
+```
+
+L(B\|A) = P(A\|B) - the probability that this person is on vacation given that they went to the beach
+
+```{r}
+beach_data %>% 
+  tabyl(beach_today, vacation) %>% 
+  adorn_percentages("row")
+```
+
+```{r}
+likelihood_went_to_beach_on_vacation <- 0.62
+```
 
 P(B\|A) - what is the probability this person went to the beach given that they are on vacation
 
-L(B\|A) = P(A\|B) - the probability that this person is on vacation given that they went to the beach
+```{r}
+(probability_went_to_beach * likelihood_went_to_beach_on_vacation) / probability_on_vacation
+```
 
 ### Video
 
