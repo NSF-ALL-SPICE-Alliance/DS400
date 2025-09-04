@@ -23,12 +23,6 @@ data(fake_news)
 ?fake_news
 ```
 
-#### Skim data for overview
-
-```{r}
-skim(fake_news)
-```
-
 #### Your Turn
 
 💻 📈 Take 10 minutes to do some some exploratory data analysis below and we will chat about best practices. Keep in mind two variables that we will focus on, type and title_has_exc
@@ -52,12 +46,11 @@ unique(fake_news$title_has_excl)
 ```
 
 ```{r}
-fake_news_limited <- fake_news %>% 
-  select(title_has_excl, type)
 
-fake_news_limited <- fake_news_limited %>% 
-  group_by_all() %>% 
+fake_news %>% 
+  group_by(title_has_excl, type) %>% 
   count()
+
 ```
 
 ```{r}
@@ -87,6 +80,8 @@ Our fake news analysis boils down to the study of two **variables**: an article�
 
 Percent of articles fake vs real
 
+P(B)
+
 ```{r}
 fake_news %>% 
   tabyl(type) %>% 
@@ -105,6 +100,8 @@ prior_probability_article_fake <- 0.4
 P(Bc) = 0.60
 
 -   The prior probability (an unconditional probability) that the article is real is 0.6
+
+P(A)
 
 ```{r}
 fake_news %>% 
@@ -132,11 +129,13 @@ $$
 
 #### Likelihood
 
-When A is known, the **likelihood function** L(⋅\|A)=P(A\|⋅)L(⋅\|A)=P(A\|⋅) allows us to evaluate the relative compatibility of data A with events B or Bc:
+-   The likelihood L(B∣A) is defined as P(A∣B):
 
--   The likelihood function provides a framework to compare the relative compatibility of our exclamation point data with BB and B
-
-    -   Likelihoods do not sum to 1, probabilities do sum to 1\
+    > *If the article were fake, how likely is it to have an exclamation point?*
+    >
+    > *The probability the article uses an exclamation point given that it is fake*
+    >
+    > -   What percentage of fake articles use an exclamation point?
 
 ```{r}
 fake_news %>% 
@@ -152,8 +151,6 @@ likelihood_article_fake_has_exc <- 0.27
 
 L(Bc\|A) = 0.022
 
-Thus, whereas the prior evidence suggested the article is most likely real (P(B)\<P(Bc)P(B)\<P(Bc)), the data is more consistent with the article being fake (L(B\|A)\>L(Bc\|A)L(B\|A)\>L(Bc\|A)).
-
 Now we have enough info for the posterior probability model
 
 $$
@@ -166,12 +163,46 @@ $$
 
 We started with a prior understanding that there’s only a 40% chance that the incoming article would be fake. Yet upon observing the use of an exclamation point in the title *“The president has a funny secret!”*, a feature that’s more common to fake news, our posterior understanding evolved quite a bit – the chance that the article is fake jumped to 88.9%.
 
+Another way to think about it:
+
+P(B\|A)
+
+```{r}
+fake_news %>% 
+  tabyl(title_has_excl, type) %>% 
+  adorn_percentages("row") 
+```
+
+### Challenge
+
+Come up with your own P(B\|A) and share with the class
+
+Let's choose one, generate synthetic data, and model
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+### Video
+
+<https://www.youtube.com/watch?v=8vHKCrNGPhY>
+
 ### Challenge
 
 Let’s put Bayes’ Rule into action in another example. Our word choices can reflect where we live. For example, suppose you’re watching an interview of somebody that lives in the United States. Without knowing anything about this person, U.S. Census figures provide prior information about the region in which they might live: the Midwest (M), Northeast (N), South (S), or West (W).
 
 ```{r}
 data(pop_vs_soda)
+```
+
+Exploratory Analysis
+
+```{r}
+
 ```
 
 1\) Build a prior probability model (an unconditional probability model) with probabilities for where the person is from
