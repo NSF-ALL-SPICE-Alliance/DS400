@@ -28,7 +28,8 @@ data(fake_news)
 💻 📈 Take 10 minutes to do some some exploratory data analysis below and we will chat about best practices. Keep in mind two variables that we will focus on, type and title_has_exc
 
 ```{r}
-
+ggplot(fake_news, aes(x = title_has_excl, fill = type)) +
+  geom_bar()
 ```
 
 ```{r}
@@ -178,12 +179,46 @@ Come up with your own P(B\|A) and share with the class
 Let's choose one, generate synthetic data, and model
 
 ```{r}
+# ---- Setup & assumptions you can tweak ----
+set.seed(123)
+
+n <- 5000                     # number of people
+p_vac <- 0.25                 # P(Vacation = Yes)
+p_beach_given_vac <- 0.75     # P(Beach = Yes | Vacation = Yes)
+p_beach_given_not <- 0.15     # P(Beach = Yes | Vacation = No)
+
+# ---- Simulate vacation status ----
+vacation_yes <- rbinom(n, size = 1, prob = p_vac) == 1
+
+# ---- Simulate beach_today conditional on vacation ----
+beach_yes <- ifelse(
+  vacation_yes,
+  rbinom(n, size = 1, prob = p_beach_given_vac) == 1,
+  rbinom(n, size = 1, prob = p_beach_given_not) == 1
+)
+
+# ---- Build the dataset (exactly two columns) ----
+beach_data <- data.frame(
+  beach_today = ifelse(beach_yes, "Yes", "No"),
+  vacation    = ifelse(vacation_yes, "Yes", "No"),
+  stringsAsFactors = FALSE
+)
 
 ```
 
 ```{r}
+ggplot(beach_data, aes(x = beach_today, fill = vacation)) +
+  geom_bar()
 
 ```
+
+P(B) - this person went to the beach
+
+P(A) - this person is on vacation
+
+P(B\|A) - what is the probability this person went to the beach given that they are on vacation
+
+L(B\|A) = P(A\|B) - the probability that this person is on vacation given that they went to the beach
 
 ### Video
 
