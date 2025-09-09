@@ -269,6 +269,7 @@ data(pop_vs_soda)
 Exploratory Analysis
 
 ```{r}
+?pop_vs_soda
 
 ```
 
@@ -307,37 +308,77 @@ Pop vs Soda - In Class
 Exploratory Analysis
 
 ```{r}
+logan <- ggplot(pop_vs_soda, aes(x = region, fill = word_for_cola)) +
+  geom_bar()
 
+library(plotly)
+
+ggplotly(logan)
+
+
+```
+
+```{r}
+ggplot(pop_vs_soda, aes(x = region, fill = word_for_cola)) +
+  geom_bar()
 ```
 
 Prior Probability
 
-```{r}
+P(B) Prior probability the person is from the south
 
+```{r}
+pop_vs_soda %>% 
+  tabyl(region)
+```
+
+```{r}
+priors <- c(
+  midwest = 0.21,
+  northeast = 0.17,
+  south = 0.39,
+  west = 0.24
+  
+  
+)
+
+priors
+```
+
+```{r}
+prior_probability_from_south <- 0.39
 ```
 
 2\) Regional Likelihoods
 
 ```{r}
+likelihoods <- pop_vs_soda %>%
+  tabyl(pop, region) %>%
+  adorn_percentages("col") %>%
+  filter(pop == "TRUE") %>%
+  select(-pop) %>%
+  unlist()
 
+likelihoods
 ```
 
 ```{r}
-
+probability_says_pop_given_from_south <- 0.079
 ```
 
 3\) Marginal prior probability that a person uses the word pop
 
 ```{r}
-
-```
-
-```{r}
-
+prior_probability_says_pop <- sum(priors * likelihoods)
+prior_probability_says_pop
 ```
 
 4\) Finding our posterior probability P(S\|A)
 
 ```{r}
-
+(prior_probability_from_south * probability_says_pop_given_from_south) / prior_probability_says_pop
 ```
+
+Mapping Challenge:
+
+Make a map in R showing the percentage of people that say pop in each state
