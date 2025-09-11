@@ -179,7 +179,6 @@ Come up with your own P(B\|A) and share with the class
 Let's choose one, generate synthetic data, and model
 
 ```{r}
-# ---- Setup & assumptions you can tweak ----
 set.seed(123)
 
 n <- 5000                     # number of people
@@ -209,38 +208,40 @@ beach_data <- data.frame(
 ```{r}
 ggplot(beach_data, aes(x = beach_today, fill = vacation)) +
   geom_bar()
-
 ```
 
-P(B) - this person went to the beach
+P(B) - person went to the beach
+
+``` r
+```
 
 ```{r}
-beach_data %>% 
-  tabyl(beach_today) %>% 
+beach_data %>%
+  tabyl(beach_today) %>%
   adorn_totals("row")
 ```
+
+P(A) - person is on vacation
 
 ```{r}
 probability_went_to_beach <- 0.30
 ```
 
-P(A) - this person is on vacation
+P(B\|A) - what is the probability this person went to the beach given they are on vacation.
 
 ```{r}
-beach_data %>% 
-  tabyl(vacation) %>% 
-  adorn_totals("row")
+
 ```
 
 ```{r}
 probability_on_vacation <- 0.24
 ```
 
-L(B\|A) = P(A\|B) - the probability that this person is on vacation given that they went to the beach
+L(B\|A) = P(A\|B) - the probability that this person is on vacation given that they went to the beach.
 
 ```{r}
-beach_data %>% 
-  tabyl(beach_today, vacation) %>% 
+beach_data %>%
+  tabyl(beach_today, vacation) %>%
   adorn_percentages("row")
 ```
 
@@ -248,10 +249,11 @@ beach_data %>%
 likelihood_went_to_beach_on_vacation <- 0.62
 ```
 
-P(B\|A) - what is the probability this person went to the beach given that they are on vacation
+P(B\|A) - what is the probability this person went to the beach given they are on vacation.
 
 ```{r}
-(probability_went_to_beach * likelihood_went_to_beach_on_vacation) / probability_on_vacation
+(probability_went_to_beach * likelihood_went_to_beach_on_vacation) /
+  probability_on_vacation
 ```
 
 ### Video
@@ -269,7 +271,32 @@ data(pop_vs_soda)
 Exploratory Analysis
 
 ```{r}
-?pop_vs_soda
+logan <- ggplot(pop_vs_soda, aes(x = word_for_cola, fill = state)) +
+  geom_bar()
+
+library(plotly)
+
+ggplotly(logan)
+```
+
+```{r}
+pop_vs_soda %>% 
+  tabyl(region)
+```
+
+```{r}
+priors <- c(
+  south = 0.39,
+  midwest = 0.21,
+  northeast = 0.17,
+  west = 0.24
+)
+
+priors
+```
+
+```{r}
+prior_prob_from_south <- 0.39
 
 ```
 
@@ -302,83 +329,101 @@ Exploratory Analysis
 Pop vs Soda - In Class
 
 ```{r}
-
+data(pop_vs_soda)
 ```
 
 Exploratory Analysis
 
 ```{r}
-logan <- ggplot(pop_vs_soda, aes(x = region, fill = word_for_cola)) +
+logan <- ggplot(pop_vs_soda, aes(x = word_for_cola, fill = state)) +
   geom_bar()
 
 library(plotly)
 
 ggplotly(logan)
 
-
-```
-
-```{r}
-ggplot(pop_vs_soda, aes(x = region, fill = word_for_cola)) +
-  geom_bar()
-```
-
-Prior Probability
-
-P(B) Prior probability the person is from the south
-
-```{r}
-pop_vs_soda %>% 
-  tabyl(region)
-```
-
-```{r}
 priors <- c(
+  south = 0.39,
   midwest = 0.21,
   northeast = 0.17,
-  south = 0.39,
   west = 0.24
-  
-  
 )
 
 priors
 ```
 
+Prior Probability
+
 ```{r}
-prior_probability_from_south <- 0.39
+prior_prob_from_south <- 0.39
 ```
 
 2\) Regional Likelihoods
 
 ```{r}
-likelihoods <- pop_vs_soda %>%
-  tabyl(pop, region) %>%
-  adorn_percentages("col") %>%
-  filter(pop == "TRUE") %>%
-  select(-pop) %>%
+likelihoods <- pop_vs_soda %>% 
+  tabyl(pop, region) %>% 
+  adorn_percentages("col") %>% 
+  filter(pop == "TRUE") %>% 
+  select(-pop) %>% 
   unlist()
 
 likelihoods
 ```
 
 ```{r}
-probability_says_pop_given_from_south <- 0.079
+prob_says_pop_given_from_south <- 0.079
 ```
 
 3\) Marginal prior probability that a person uses the word pop
 
 ```{r}
-prior_probability_says_pop <- sum(priors * likelihoods)
-prior_probability_says_pop
+prior_prob_says_pop <- sum(priors*likelihoods)
+prior_prob_says_pop
 ```
+
+```{r}
+
+```
+
+P(B\|A) = P(B) \* L P(A) / P(A)
 
 4\) Finding our posterior probability P(S\|A)
 
 ```{r}
-(prior_probability_from_south * probability_says_pop_given_from_south) / prior_probability_says_pop
+posterior_prob_says_pop <- (prior_prob_from_south * prob_says_pop_given_from_south) / prior_prob_says_pop
+
+posterior_prob_says_pop
 ```
 
-Mapping Challenge:
+```{r}
 
-Make a map in R showing the percentage of people that say pop in each state
+
+library(leaflet)
+library(dplyr)
+library(sf)
+library(maps)
+
+states <- st_as_sf(map("state", plot = FALSE, fill = TRUE))
+
+
+state_counts <- pop_vs_soda %>%
+  group_by(state) %>%
+  summarise(count = n())
+
+
+states <- states %>%
+  left_join(state_counts, by = c("ID" = "state"))
+
+
+leaflet(states) %>%
+  addTiles() %>%
+  addPolygons(
+    fillColor = ~colorNumeric("Blues", count)(count),
+    weight = 1,
+    color = "white",
+    fillOpacity = 0.7,
+    popup = ~paste(ID, "<br>Count:", count)
+  )
+
+```
