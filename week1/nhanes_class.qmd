@@ -85,19 +85,74 @@ df <- df %>%
 
 2.  Do some exploratory data analysis
 
+diabetes
+
 ```{r}
+df %>%
+  ggplot(aes(x = DIQ010, fill = DRD370B )) +
+  geom_bar()
 
 ```
 
-2.  Determine the prior probability that someone has diabetes (DIQ010)
+2.  
+
+    3.  Determine the prior probability that someone has diabetes (DIQ010)
+
     -   P(B)
-3.  Determine the prior probability that someone eats tuna (DRD370B)
+
+```{r}
+df %>% 
+  tabyl(DIQ010)
+```
+
+```{r}
+prior_prob_someone_has_diabetes <- 0.13
+```
+
+2.  
+
+    4.  Determine the prior probability that someone eats tuna (DRD370B)
+
     -   P(A)
-4.  Determine the likelihood of eating tuna and having diabetes
+
+```{r}
+df %>% 
+  tabyl(DRD370)
+```
+
+```{r}
+prior_prob_someone_eaten_ahi <- 0.36
+```
+
+2.  
+
+    5.  Determine the likelihood of eating tuna and having diabetes
+
     -   L(B\|A) = P(A\|B)
-5.  Determine posterior probability via bayes theorem
+
+```{r}
+df %>% 
+  tabyl(DRD370B, DIQ010) %>% 
+  adorn_percentages("col")
+```
+
+```{r}
+likelihood_has_diabetes_eats_ahi <- 0.36
+```
+
+2.  
+
+    6.  Determine posterior probability via bayes theorem
+
     -   P(B\|A)
-6.  What other questions can we ask of this data?
+
+```{r}
+(prior_prob_someone_has_diabetes * likelihood_has_diabetes_eats_ahi)/ prior_prob_someone_eaten_ahi
+```
+
+2.  
+
+    7.  What other questions can we ask of this data?
 
 #### Bayes Theorem
 
