@@ -117,7 +117,7 @@ prior_prob_someone_has_diabetes <- 0.13
 
 ```{r}
 df %>% 
-  tabyl(DRD370)
+  tabyl(DRD370B)
 ```
 
 ```{r}
@@ -169,3 +169,85 @@ A \<- Consumes Ahi
 ### Challenge
 
 Determine the posterior probability that someone has diabetes given they are over the age of 40. Age is in the demographics dataframe, you will have to join it with the tiid data.
+
+P(B\|A) = P(B)L(B\|A)/P(A)
+
+P(B) = Has diabetes
+
+L(B\|A) = Likelihood has diabetes if over 40
+
+P(A) = Over age of 40
+
+```{r}
+diabetes_age_df <- demographics %>% 
+  select(SEQN, RIDAGEYR)
+  
+new_tiid <- left_join(tiid, diabetes_age_df, by = "SEQN")
+
+new_tiid
+```
+
+```{r}
+new_tiid <- new_tiid %>% 
+  # get rid of nan values
+  filter(!is.na(DIQ010)) %>% 
+  # show only row with 1 or 2 as diabetes column values
+  filter(DIQ010 %in% c(1,2)) %>% 
+  # change all 1 & 2 to yes and no to diabetes
+  mutate(
+    DIQ010 = ifelse(DIQ010 == 1, "Has Diabetes", "No Diabetes")
+  )
+
+
+  
+```
+
+```{r}
+new_tiid %>% 
+  tabyl(DIQ010)
+```
+
+```{r}
+prior_prob_someone_has_diabetes <- 0.10
+# P(B)
+```
+
+```{r}
+new_tiid <- new_tiid %>% 
+  mutate(
+    age_group = ifelse(RIDAGEYR > 40, "41+", "<=40")
+  )
+new_tiid
+```
+
+```{r}
+new_tiid %>% 
+  tabyl(age_group)
+```
+
+```{r}
+prior_prob_someone_over_40 <- 0.42
+#P(A)
+```
+
+```{r}
+
+```
+
+```{r}
+new_tiid %>% 
+  tabyl(DIQ010, age_group) %>% 
+  adorn_percentages('col')
+```
+
+```{r}
+likelihood_has_diabetes_if_40_over <- 0.23
+```
+
+```{r}
+posterior_prob_has_diabetes_given_40_over <- (prior_prob_someone_has_diabetes * likelihood_has_diabetes_if_40_over)/prior_prob_someone_over_40
+
+posterior_prob_has_diabetes_given_40_over
+```
+
+P(B\|A) = 0.05/5%
