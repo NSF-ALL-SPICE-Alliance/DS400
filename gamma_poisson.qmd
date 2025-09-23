@@ -132,7 +132,7 @@ plot_gamma(shape = 4, rate = 2, mean = TRUE, mode = TRUE)
     -   Use `plot_gamma` to plot a gamma distribution that fits the prompt:
 
 ```{r}
-plot_gamma(10, 2, mean = TRUE, mode = TRUE)
+plot_gamma(shape = 10, rate = 2, mean = TRUE, mode = TRUE)
 ```
 
 -   New Data
@@ -182,12 +182,14 @@ Yi|λind∼Pois(λ)λ∼Gamma(1,0.25)
 1.  Plot and summarize our prior understanding of λ.
 
 ```{r}
-
+plot_gamma(1, 0.25, mean = TRUE, mode = TRUE)
 ```
 
 1.  Why is the Poisson model a reasonable choice for our data Yi?
 
-    -   
+    -   This is count data so it fits the data type for Poisson model
+
+    -   This generally fits our prior understanding of how many goals can be scored in a soccer game, usually very
 
 2.  The `wwc_2019_matches` data in the **fivethirtyeight** package includes the number of goals scored by the two teams in each 2019 Women’s World Cup match. Define, plot, and discuss the total number of goals scored per game:
 
@@ -198,8 +200,21 @@ wwc_2019_matches <- wwc_2019_matches %>%
   mutate(total_goals = score1 + score2)
 ```
 
+```{r}
+ggplot(data = wwc_2019_matches, aes(x = total_goals)) +
+  geom_histogram()
+```
+
 1.  Plot the posterior model of λ and verify your answer using `summarize_gamma_poisson()`.
 
 ```{r}
+sum(wwc_2019_matches$total_goals)
+```
 
+```{r}
+summarize_gamma_poisson(shape = 1, rate = 0.25, sum_y = 146, n = 52) 
+```
+
+```{r}
+plot_gamma_poisson(shape = 1, rate = 0.25, sum_y = 146, n = 52) 
 ```
