@@ -1,0 +1,205 @@
+---
+title: "Conjugate Families"
+format: html
+editor: visual
+---
+
+## [Chapter 5: Bayes Rules](https://www.bayesrulesbook.com/chapter-5)
+
+By the end of this session, you will: - Identify when to use Beta-Binomial, Gamma-Poisson, and Normal-Normal models - Apply conjugate prior update formulas to real data - Interpret the balance between prior beliefs and observed data in posterior distributions
+
+```{r}
+library(tidyverse)
+library(bayesrules)
+```
+
+### Overview
+
+We have used:
+
+-   Bayes Theorem:
+
+    -   Answered the question: "What is the posterior probability of having a rare disease given you test positive for it and the test is reported to be 99% accurate?"
+
+```{r}
+prior_probabiilty_has_disease <- 0.001 # effects 1 in 1000 people
+prior_probability_test_positive <- 0.011 # 11 out of 1000 people testing positive
+probability_testing_positive_given_have_disease <- 0.99 # accuracy of the test
+
+posterior_probability_having_disease_given_tested_positive <- (prior_probabiilty_has_disease * probability_testing_positive_given_have_disease) / prior_probability_test_positive
+
+posterior_probability_having_disease_given_tested_positive
+
+```
+
+```{r}
+## Second Positive Test
+prior_probabiilty_has_disease <- 0.09 # updated prior after first positive test
+prior_probability_test_positive <- 0.0982 # true positives + false positives
+probability_testing_positive_given_have_disease <- 0.99 # accuracy of the test
+
+posterior_probability_having_disease_given_second_positive_test <- (prior_probabiilty_has_disease * probability_testing_positive_given_have_disease) / prior_probability_test_positive
+
+posterior_probability_having_disease_given_second_positive_test
+```
+
+-   [Beta Binomial Model](https://www.bayesrulesbook.com/chapter-3#:~:text=Chapter%203-,The%20Beta%2DBinomial%20Bayesian%20Model,-Every%20four%20years):
+
+    -   Answered the question: "What is Michelle's current election support? In the past her polling support has hovered around 45 percent, ranging from 35 - 55 %, . New data comes in showing 30 of 50 voters supporting her
+
+```{r}
+plot_beta(alpha = 45, beta = 55, mean = TRUE, mode = TRUE)
+```
+
+```{r}
+plot_beta_binomial(alpha = 45, beta = 55, y = 30, n = 50)
+```
+
+```{r}
+summarize_beta_binomial(alpha = 45, beta = 55, y = 30, n = 50)
+```
+
+-   Now the [Gamma-Poisson Model](https://www.bayesrulesbook.com/chapter-5#:~:text=phone%20call%20situation.-,The%20Gamma%2DPoisson%20Bayesian%20model,-Let)
+
+    -   Why?
+
+        -   Suppose we have count data. For example we have been receiving fraud-risk phone calls every day and we want to model λ, the typical number of fraud risk calls received per day
+
+            -   **Prior** to collecting any data, the our guess was that this rate was most likely around 5 calls per day, but could also reasonably range between 2 and 7 calls per day.
+
+    -   Gamma Distribution
+
+        -   The Gamma distribution has two parameters: **shape (s)** and **rate (r)**.
+
+        -   For Gamma(s, r):
+
+            -   **Mean** = s/r
+
+            -   **Variance** = s/r²
+
+            -   **Mode** = (s-1)/r (when s ≥ 1)
+
+                -   **Shape (s)**:
+
+                    -   Controls the "form" of the distribution curve
+
+                    -   s \< 1: Decreasing exponential curve (starts high at 0, drops rapidly)
+
+                    -   s = 1: Pure exponential distribution
+
+                    -   s \> 1: Creates a peak (mode), becomes more bell-shaped as s increases
+
+                    -   Higher s = more symmetric, less skewed
+
+                -   **Rate (r):**
+
+                    -   Controls how "fast" the distribution decreases
+
+                    -   Higher rate = distribution concentrated closer to 0
+
+                    -   Lower rate = distribution more spread out
+
+            -   Let's see a few!
+
+```{r}
+plot_gamma(shape = 1, rate = 1, mean = TRUE, mode = TRUE) 
+```
+
+```{r}
+plot_gamma(shape = 2, rate = 1, mean = TRUE, mode = TRUE)
+```
+
+```{r}
+plot_gamma(shape = 4, rate = 1, mean = TRUE, mode = TRUE)
+```
+
+```{r}
+plot_gamma(shape = 1, rate = 2, mean = TRUE, mode = TRUE)
+```
+
+```{r}
+plot_gamma(shape = 2, rate = 2, mean = TRUE, mode = TRUE)
+```
+
+```{r}
+plot_gamma(shape = 4, rate = 2, mean = TRUE, mode = TRUE)
+```
+
+-   Now let's go back to our prompt:
+
+    -   **Prior** to collecting any data, the our guess was that this rate was most likely around 5 calls per day, but could also reasonably range between 2 and 7 calls per day.
+
+    -   Use `plot_gamma` to plot a gamma distribution that fits the prompt:
+
+```{r}
+plot_gamma(10, 2, mean = TRUE, mode = TRUE)
+```
+
+-   New Data
+
+    -   There we have a Gamma(10,2) prior for λ, the daily rate of calls. Further, on four separate days in the second week of August, we received →y=(y1,y2,y3,y4)=(6,2,2,1) such calls. Thus, we have a sample of n=4 data points with a *total* of 11 fraud risk calls and an *average* of 2.75 phone calls per day:
+
+```{r}
+plot_poisson_likelihood(y = c(6, 2, 2, 1))
+```
+
+-   The posterior
+
+```{r}
+plot_gamma_poisson(shape = 10, rate = 2, sum_y = 11, n = 4)
+```
+
+```{r}
+summarize_gamma_poisson(shape = 10, rate = 2, sum_y = 11, n = 4)
+```
+
+Practice
+
+**Exercise 5.1 (Tuning a Gamma prior)** For each situation below, tune an appropriate Gamma(s,r) prior model for λ.
+
+1.  The most common value of λ is 4, and the mean is 7.
+
+```{r}
+
+```
+
+1.  The most common value of λ is 10 and the mean is 12.
+
+```{r}
+
+```
+
+1.  The most common value of λ is 5, and the variance is 3.
+
+```{r}
+
+```
+
+**Exercise 5.7 (World Cup)** Let λ be the average number of goals scored in a Women’s World Cup game. We’ll analyze λ by the following Gamma-Poisson model where data Yi is the observed number of goals scored in a sample of World Cup games:
+
+Yi|λind∼Pois(λ)λ∼Gamma(1,0.25)
+
+1.  Plot and summarize our prior understanding of λ.
+
+```{r}
+
+```
+
+1.  Why is the Poisson model a reasonable choice for our data Yi?
+
+    -   
+
+2.  The `wwc_2019_matches` data in the **fivethirtyeight** package includes the number of goals scored by the two teams in each 2019 Women’s World Cup match. Define, plot, and discuss the total number of goals scored per game:
+
+```{r}
+library(fivethirtyeight)
+data("wwc_2019_matches")
+wwc_2019_matches <- wwc_2019_matches %>% 
+  mutate(total_goals = score1 + score2)
+```
+
+1.  Plot the posterior model of λ and verify your answer using `summarize_gamma_poisson()`.
+
+```{r}
+
+```
