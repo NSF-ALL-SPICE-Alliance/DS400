@@ -1,0 +1,166 @@
+---
+title: "Simple Normal Regression"
+format: html
+editor: visual
+---
+
+## [Simple Normal Regression](https://www.bayesrulesbook.com/chapter-9#:~:text=Chapter%209-,Simple%20Normal%20Regression,-Welcome%20to%20Unit)
+
+```{r}
+library(bayesrules)
+library(tidyverse)
+library(rstan)
+library(rstanarm)
+library(bayesplot)
+library(tidybayes)
+library(janitor)
+library(broom.mixed)
+library(ggpubr)
+options(scipen = 99)
+```
+
+### Case Study - Capital Bikeshare
+
+We want to understand the relationship between temperature and ridership
+
+```{r}
+data(bikes)
+```
+
+💻 Do some exploratory data viz to tell me about the relationship between `temp_feel` and `rides`. Also make a guess for the number of rides based on `temp_feel` being 75 degrees
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+So the frequentest statistical methods allow us to calculate a correlation coefficient to measure the strength/direction of the relationship and a p value to measure the significance
+
+```{r}
+ggplot(data = bikes, aes(x = temp_feel, y = rides)) +
+  geom_point() +
+  geom_smooth() +
+  stat_cor()
+```
+
+```{r}
+fit <- lm(rides ~ temp_feel, bikes)
+fit
+```
+
+This linear regression model tells us that for each 1 degree increase in temperature there is an expected increase of 81 rides
+
+```{r}
+summary(fit)$coefficients
+```
+
+```{r}
+confint(fit, "temp_feel", level = 0.95) 
+```
+
+“Using `lm()`, the 95% confidence interval for the slope of `temp_feel` is **\[71.82, 91.94\]** rides per °F. If we repeated this study many times and computed intervals the same way, **95% of those intervals** would contain the true slope.”
+
+### How do we approach this example with Bayesian statistics?
+
+First, we'll need priors:
+
+1.  On an *average* temperature day, say 65 or 70 degrees for D.C., there are typically around 5000 riders, though this average could be somewhere between 3000 and 7000.
+
+```{r}
+plot_normal(mean = 5000, sd = 1000) + 
+  labs(x = "beta_0c", y = "pdf") +
+  geom_vline(xintercept = 3000) +
+  geom_vline(xintercept = 7000) 
+```
+
+1.  For every one degree increase in temperature, ridership typically increases by 100 rides, though this average increase could be as low as 20 or as high as 180.
+
+```{r}
+plot_normal(mean = 100, sd = 40) + 
+  labs(x = "beta_1", y = "pdf") +
+  geom_vline(xintercept = 20) +
+  geom_vline(xintercept = 180) 
+```
+
+1.  At any given temperature, daily ridership will tend to vary with a moderate standard deviation of 1250 rides.
+
+    -   For an Exponential, the average equals 1 / rate. So set rate = 1 / 1250 = 0.0008.
+
+```{r}
+plot_gamma(shape = 1, rate = 0.0008) + 
+  labs(x = "sigma", y = "pdf")
+```
+
+### Simulation via rstanarm
+
+```{r}
+bike_model <- stan_glm(rides ~ temp_feel, data = bikes,
+                       family = gaussian,
+                       prior_intercept = normal(5000, 1000),
+                       prior = normal(100, 40), 
+                       prior_aux = exponential(0.0008),
+                       chains = 4, iter = 5000*2, seed = 84735)
+```
+
+```{r}
+bike_model
+```
+
+-   **Model & data**: You fit a straight-line model of **rides** vs **temp_feel** using **500 days**.
+
+-   **Slope (temp_feel = 82.2, MAD_SD ≈ 5.1)**\
+
+-   On average, **each +1°F** is associated with about **+82 more rides**. The small MAD_SD means the slope is estimated pretty precisely and is almost certainly positive.
+
+-   **Intercept ((Intercept) = −2195.3, MAD_SD ≈ 354)**\
+    This is where the fitted line crosses the y-axis at **0°F**. It’s not meant to be literal (negative rides); it just anchors the line. If you center temperature (e.g., subtract the average temp), the intercept would become “typical rides at an average-temp day,” which is more interpretable.
+
+-   **Residual spread (sigma = 1282.5, MAD_SD ≈ 40)**
+    Even **at the same temperature**, daily rides bounce around the line by about **±1,280 rides** on average. This real-world volatility dominates single-day predictions.
+
+“From `stan_glm`, the slope’s 95% **credible interval** is **about \[72.2, 92.2\]** rides per °F (using Median = 82.2 and MAD_SD = 5.1). **Given the model, data, and priors, there’s a 95% probability** that the true slope lies in this range.”
+
+## The big idea
+
+-   **Confidence interval (CI)** — *frequentist*\
+    A 95% CI is a **procedure** that, if you repeated the whole data-collection process forever, would produce intervals that **cover the fixed, unknown parameter 95% of the time**. After you’ve seen *this* data, the parameter is not random; the random thing was the interval-making procedure.\
+
+    **You may NOT say:** “there’s a 95% chance the true value is in this specific CI.”
+
+-   **Credible interval (CrI)** — *Bayesian*\
+
+    A 95% CrI is the set of parameter values that have **95% posterior probability** *given your data and your prior*. After you’ve seen the data, it’s valid to say:\
+
+    **You may say:** “there’s a 95% probability the true value lies in this interval (given model + prior).”
+
+## Posterior prediction
+
+Suppose a weather report indicates that tomorrow will be a 75-degree day in D.C. What’s your posterior guess of the number of riders that Capital Bikeshare should anticipate?
+
+```{r}
+# Simulate a set of predictions
+set.seed(84735)
+prediction <- posterior_predict(bike_model, newdata = data.frame(temp_feel = 75))
+```
+
+```{r}
+posterior_interval(prediction, prob = 0.95)
+```
+
+```{r}
+# Plot the approximate predictive model
+mcmc_dens(prediction) + 
+  xlab("predicted ridership on a 75 degree day") +
+  geom_vline(xintercept = 1492, color = "coral") +
+  geom_vline(xintercept = 6502, color = "coral") +
+  theme_minimal()
+```
+
+**Interpretation:** Given your model + priors + the 500 days of data, there’s a **95% probability** that on a 75 degree day ridership will fall between **1,492 and 6,503** rides
+
+### 
+
+How do we feel about the uncertainty in this prediction?
