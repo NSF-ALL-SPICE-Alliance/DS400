@@ -1,0 +1,205 @@
+---
+title: "Bayesian Regression Weather"
+format: html
+editor: visual
+---
+
+## Libraries
+
+```{r}
+library(tidyverse)
+library(bayesrules)
+library(rstanarm)
+library(bayesplot)
+```
+
+## Game Plan
+
+Goal: Predicting temperature at 3:00pm
+
+New skills
+
+-   Utilizing a categorical variable `location`
+
+-   Utilizing multiple variables
+
+-   Interaction effects
+
+-   Bias vs Variance trade offs
+
+## Exploratory Data Analysis
+
+Take 15 minutes to learn about/visualize this dataset
+
+```{r}
+data(weather_WU)
+weather_WU <- weather_WU %>% 
+  select(location, windspeed9am, humidity9am, pressure9am, temp9am, temp3pm)
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+Consider the independent priors utilized by this model:
+
+-   Since 0-degree mornings are rare in Australia, it’s difficult to state our prior understanding of the typical afternoon temperature on such a rare day, β0. Instead, the Normal prior model on the **centered intercept** β0c reflects our prior understanding that the average afternoon temperature on a *typical* day is somewhere between 15 and 35 degrees (25±2∗5).
+
+-   The **weakly informative priors** for β1 and σ are auto-scaled by `stan_glm()` to reflect our lack of prior information about Australian weather, as well as *reasonable* ranges for these parameters based on the simple scales of our temperature data.
+
+-   The fact that the Normal prior for β1 is centered around 0 reflects a default, conservative prior assumption that the relationship between 3 p.m. and 9 a.m. temperatures might be positive (β1\>0), negative (β1\<0), or even non-existent (β1=0).
+
+We simulate the model posterior below
+
+```{r}
+weather_model_1 <- stan_glm(
+  temp3pm ~ temp9am, 
+  data = weather_WU, family = gaussian,
+  prior_intercept = normal(25, 5),
+  prior = normal(0, 2.5, autoscale = TRUE), 
+  prior_aux = exponential(1, autoscale = TRUE),
+  chains = 4, iter = 5000*2, seed = 84735)
+```
+
+```{r}
+posterior_interval(weather_model_1, prob = 0.80)
+```
+
+Interpretation:
+
+-   Per the 80% credible interval for β1, there’s an 80% posterior probability that for every one degree increase in `temp9am`, the average increase in `temp3pm` is somewhere between 0.98 and 1.1 degrees.
+
+-   Further, per the 80% credible interval for standard deviation σ, this relationship is fairly strong – observed afternoon temperatures tend to fall somewhere between only 3.87 and 4.41 degrees from what we’d expect based on the corresponding morning temperature.
+
+But is this a “good” model? We’ll more carefully address this question in Section [11.5](https://www.bayesrulesbook.com/chapter-11#ch11-model-comparison). For now, we’ll leave you with a quick `pp_check()`, which illustrates that *we can do better* (Figure [11.2](https://www.bayesrulesbook.com/chapter-11#fig:ch11-pp-1)). Though the 50 sets of afternoon temperature data simulated from the `weather_model_1` posterior (light blue) tend to capture the general center and spread of the afternoon temperatures we actually observed (dark blue), *none* capture the bimodality in these temperatures. That is, none reflect the fact that there’s a batch of temperatures around 20 degrees and another batch around 35 degrees.
+
+```{r}
+pp_check(weather_model_1)
+```
+
+This comparison of the observed and posterior simulated temperature data indicates that, though `temp9am` contains *some* useful information about `temp3pm`, it doesn’t tell us *everything*.
+
+## Utilizing a categorical predictor
+
+Again, suppose we find ourselves in Australia at 9 a.m. Our exact location can shed some light on what temperature we can expect at 3 p.m. Density plots of the temperatures in both locations indicate that it tends to be colder in the southeastern coastal city of Wollongong than in the desert climate of Uluru:
+
+```{r}
+ggplot(weather_WU, aes(x = temp3pm, fill = location)) + 
+  geom_density(alpha = 0.5)
+```
+
+Given the useful information it provides, we’re tempted to incorporate `location` into our temperature analysis. We can!
+
+```{r}
+weather_model_2 <- stan_glm(
+  temp3pm ~ location,
+  data = weather_WU, family = gaussian,
+  prior_intercept = normal(25, 5),
+  prior = normal(0, 2.5, autoscale = TRUE), 
+  prior_aux = exponential(1, autoscale = TRUE),
+  chains = 4, iter = 5000*2, seed = 84735)
+```
+
+```{r}
+posterior_interval(weather_model_2, prob = 0.80)
+```
+
+Interpretation
+
+-   There’s an 80% posterior probability that Wollongong is between 11.3 and 9 degrees cooler than Uluru
+
+## Utilizing two predictors
+
+```{r}
+weather_model_3 <- stan_glm(
+  temp3pm ~ temp9am + location,
+  data = weather_WU, family = gaussian, 
+  prior_intercept = normal(25, 5),
+  prior = normal(0, 2.5, autoscale = TRUE), 
+  prior_aux = exponential(1, autoscale = TRUE),
+  chains = 4, iter = 5000*2, seed = 84735)
+```
+
+```{r}
+posterior_interval(weather_model_3, prob = 0.80, 
+                   pars = c("temp9am", "locationWollongong"))
+```
+
+Interpretation
+
+-   There’s an 80% chance that for every one degree increase in 9 a.m. temperature, the typical increase in 3 p.m. temperature is somewhere between 0.82 and 0.89 degrees. **When controlling for 9 a.m. temperature**, there’s an 80% chance that the typical 3 p.m. temperature in Wollongong is somewhere between 6.6 and 7.51 degrees *lower* than that in Uluru.
+
+Next, let’s *use* this model to predict 3 p.m. temperature on specific days. For example, consider a day in which it’s 10 degrees at 9 a.m. in both Uluru and Wollongong. To simulate and subsequently plot the posterior predictive models of 3 p.m. temperatures in these locations, we can call `posterior_predict()` and `mcmc_areas()`. Roughly speaking, we can anticipate 3 p.m. temperatures between 15 and 25 degrees in Uluru, and cooler temperatures between 8 and 18 in Wollongong:
+
+```{r}
+# Simulate a set of predictions
+set.seed(84735)
+temp3pm_prediction <- posterior_predict(
+  weather_model_3,
+  newdata = data.frame(temp9am = c(10, 10), 
+                       location = c("Uluru", "Wollongong")))
+
+# Plot the posterior predictive models
+mcmc_areas(temp3pm_prediction) +
+  ggplot2::scale_y_discrete(labels = c("Uluru", "Wollongong")) + 
+  xlab("temp3pm")
+```
+
+## Dreaming bigger: Utilizing more than 2 predictors!
+
+```{r}
+weather_model_4 <- stan_glm(
+  temp3pm ~ .,
+  data = weather_WU, family = gaussian, 
+  prior_intercept = normal(25, 5),
+  prior = normal(0, 2.5, autoscale = TRUE), 
+  prior_aux = exponential(1, autoscale = TRUE),
+  chains = 4, iter = 5000*2, seed = 84735)
+
+```
+
+```{r}
+posterior_interval(weather_model_4, prob = 0.95)
+```
+
+-   To begin, the 95% posterior credible interval for the `temp9am` coefficient β1, (0.73, 0.87), is the only one that lies entirely *above* 0. This provides us with hearty evidence that, even when controlling for the four other predictors in the model, there’s a significant **positive association** between morning and afternoon temperatures.
+
+-   In contrast, the 95% posterior credible intervals for the `locationWollongong` and `humidity9am` coefficients lie entirely *below* 0, suggesting that both factors are **negatively associated** with `temp3pm`. For example, when controlling for the other model factors, there’s a 95% chance that the typical temperature in Wollongong is between 5.67 and 7.2 degrees lower than in Uluru.
+
+-   The `windspeed9am` and `pressure9am` coefficients are the only ones to have 95% credible intervals which straddle 0. Though both intervals lie mostly *below* 0, suggesting afternoon temperature is negatively associated with morning windspeed and atmospheric pressure when controlling for the other model predictors, the waffling evidence invites some skepticism and follow-up questions.
+
+## Evaluating Models
+
+```{r}
+set.seed(84735)
+prediction_summary_cv(model = weather_model_1, data = weather_WU, k = 10)
+prediction_summary_cv(model = weather_model_2, data = weather_WU, k = 10)
+prediction_summary_cv(model = weather_model_3, data = weather_WU, k = 10)
+prediction_summary_cv(model = weather_model_4, data = weather_WU, k = 10)
+
+```
+
+**TABLE 11.1: Cross-validated posterior predictive summaries for four models of temp3pm**
+
+| Model           | MAE   | MAE Scaled | Within 50 | Within 95 |
+|-----------------|-------|------------|-----------|-----------|
+| Weather Model 1 | 3.285 | 0.79       | 0.405     | 0.97      |
+| Weather Model 2 | 3.653 | 0.661      | 0.495     | 0.935     |
+| Weather Model 3 | 1.142 | 0.483      | 0.67      | 0.96      |
+| Weather Model 4 | 1.206 | 0.522      | 0.64      | 0.95      |
+
+### Quiz:
+
+1.  If your goal were to explore the relationship between `temp3pm` and `location` without controlling for any other factors, which model would you use?
+
+2.  If your goal were to maximize the predictive quality of your model and you could only choose *one* predictor to use in your model, would you choose `temp9am` or `location`
+
+3.  Which of the four models produces the best overall predictions?\
