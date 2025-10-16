@@ -1,0 +1,161 @@
+---
+title: "Chapter 13 Logistic Regression"
+format: html
+editor: visual
+---
+
+Consider the following data story. Suppose we again find ourselves in Australia, the city of Perth specifically. Located on the southwest coast, Perth experiences dry summers and wet winters. Our goal will be to predict whether or not it will rain tomorrow. That is, we want to model Y, a **binary categorical response variable**, converted to a 0-1 indicator for convenience
+
+Though there are various potential predictors of rain, we’ll consider just three:
+
+X1=today's humidity at 9 a.m. (percent)
+
+X2= today's humidity at 3 p.m. (percent)
+
+X3= whether or not it rained today.
+
+### Libraries
+
+```{r}
+library(bayesrules)
+library(rstanarm)
+library(bayesplot)
+library(tidyverse)
+library(tidybayes)
+library(broom.mixed)
+```
+
+### Data
+
+```{r}
+data(weather_perth)
+weather <- weather_perth %>% 
+  select(day_of_year, raintomorrow, humidity9am, humidity3pm, raintoday)
+```
+
+### Exploratory Data Analysis 
+
+Take 10 minutes to learn about the data, focusing on `raintomorrow`
+
+### Rain Model 1  
+
+```{r}
+ rain_model_1 <- stan_glm(raintomorrow ~ humidity9am,
+                             data = weather, family = binomial,
+                             prior_intercept = normal(-1.4, 0.7),
+                             prior = normal(0.07, 0.035),
+                             chains = 4, iter = 5000*2, seed = 84735)
+
+```
+
+```{r}
+exp(posterior_interval(rain_model_1, prob = 0.80))
+```
+
+here’s an 80% posterior chance that for every one percentage point increase in today’s 9 a.m. humidity, the *odds* of rain increase by somewhere between 4.2% and 5.6%
+
+-   To turn an **odds ratio (OR)** into a **percent change**, use:
+
+    -   **percent change = (OR − 1) × 100%**
+
+```{r}
+(1.042338958 - 1) * 100
+(1.0564061 - 1) * 100
+```
+
+```{r}
+weather %>%
+  add_fitted_draws(rain_model_1, n = 100) %>%
+  ggplot(aes(x = humidity9am, y = raintomorrow)) +
+    geom_line(aes(y = .value, group = .draw), alpha = 0.15) + 
+    labs(y = "probability of rain")
+```
+
+```{r}
+classification_summary(model = rain_model_1, data = weather, cutoff = 0.5)
+```
+
+Notice that our classification rule, in conjunction with our Bayesian model, correctly classified 817 of the 1000 total test cases (803 + 14). Thus, the **overall classification accuracy rate** is 81.7% (817 / 1000). At face value, this seems pretty good! But look closer. Our model is *much* better at anticipating when it *won’t* rain than when it will. Among the 814 days on which it doesn’t rain, we correctly classify 803, or 98.65%. This figure is referred to as the **true negative rate** or **specificity** of our Bayesian model. In stark contrast, among the 186 days on which it *does* rain, we correctly classify only 14, or 7.53%.
+
+```{r}
+classification_summary(model = rain_model_1, data = weather, cutoff = 0.2)
+```
+
+By making it easier to classify rain, the sensitivity jumped from 7.53% to 63.98% (119 of 186). We’re much less likely to be walking around with wet clothes. Yet this improvement is not without consequences. In lowering the cut-off, we make it more difficult to predict when it *won’t* rain. As a result, the true negative rate dropped from 98.65% to 71.25% (580 of 814) and we’ll carry around an umbrella more often than we need to.
+
+-   As we lower c, sensitivity increases, but specificity decreases.
+
+-   As we increase c, specificity increases, but sensitivity decreases.
+
+### Rain Model 2
+
+```{r}
+rain_model_2 <- stan_glm(
+  raintomorrow ~ humidity9am + humidity3pm + raintoday, 
+  data = weather, family = binomial,
+  prior_intercept = normal(-1.4, 0.7),
+  prior = normal(0, 2.5, autoscale = TRUE), 
+  chains = 4, iter = 5000*2, seed = 84735)
+
+rain_model_2
+```
+
+```{r}
+exp(posterior_interval(rain_model_2, prob = 0.80))
+```
+
+### Interpretation of Key Predictors
+
+#### **humidity9am** (per 1 percentage-point increase)
+
+-   **OR = 0.984 to 1.003** → **−1.6% to +0.25%** change in odds per point\
+-   This interval straddles **1.00**, so the posterior is **compatible with no effect** (possibly slightly negative to null).\
+-   With **humidity3pm** already in the model, early-morning humidity may add little unique signal due to **collinearity** or redundancy.
+
+#### **humidity3pm** (per 1 percentage-point increase)
+
+-   **OR = 1.071 to 1.095** → **+7.1% to +9.5%** higher odds of rain per point\
+-   This is a **clear positive effect**: later-day humidity is strongly associated with **higher odds of rain tomorrow**.
+
+#### **raintoday = Yes (vs No)**
+
+-   **OR = 2.40 to 4.20** → **+140% to +320%** higher odds if it rained today\
+-   Indicates strong **persistence**: rainy days tend to be followed by **higher odds of rain tomorrow**.
+
+```{r}
+classification_summary(model = rain_model_2, data = weather, cutoff = 0.2)
+```
+
+### Exercise 13.6 — Hotel bookings: getting started
+
+Plans change. Hotel room bookings get canceled. In the next exercises, you’ll explore whether hotel cancellations might be predicted based upon the circumstances of a reservation. Throughout, utilize **weakly informative priors** and the `hotel_bookings` data in the **bayesrules** package.
+
+Your analysis will incorporate the following variables on hotel bookings:
+
+| Variable | Notation | Meaning |
+|-------------------------|-------------------------|-----------------------|
+| **is_canceled** | ( Y ) | whether or not the booking was canceled |
+| **lead_time** | ( X_1 ) | number of days between the booking and scheduled arrival |
+| **previous_cancellations** | ( X_2 ) | number of previous times the guest has canceled a booking |
+| **is_repeated_guest** | ( X_3 ) | whether or not the booking guest is a repeat customer at the hotel |
+| **average_daily_rate** | ( X_4 ) | the average per-day cost of the hotel |
+
+Questions:
+
+1.  What proportion of the sample bookings were canceled?
+
+2.  Exploratory Data Analysis: Construct and discuss plots of `is_canceled` vs each of the four potential predictors above
+
+3.  Utilize `stan_glm()` to create a bayesian logistic regression model with is_canceled as your target/response variable
+
+    1.  Your priors will be
+
+        1.  prior_intercept = normal(-0.7, 1.5)
+
+        2.  prior = normal(0, 0.5, autoscale = TRUE)
+
+4.  Use `exp(posterior_interval()` to interpret key predictors
+
+5.  Use `classification_summary` to interpret model accuracy
+
+    1.  Use different values for the cutoff argument and see how sensitivity and specificity change
