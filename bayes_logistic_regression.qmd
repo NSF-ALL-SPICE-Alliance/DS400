@@ -33,11 +33,94 @@ weather <- weather_perth %>%
   select(day_of_year, raintomorrow, humidity9am, humidity3pm, raintoday)
 ```
 
-### Exploratory Data Analysis 
+### Exploratory Data Analysis
 
 Take 10 minutes to learn about the data, focusing on `raintomorrow`
 
-### Rain Model 1  
+```{r}
+ggplot(weather, aes(x = day_of_year, fill = raintoday)) +
+  geom_histogram(bins = 50)
+```
+
+```{r}
+ggplot(weather, aes(x = day_of_year, fill = raintomorrow)) +
+  geom_histogram(bins = 50)
+```
+
+```{r}
+ggplot(weather, aes(x = humidity9am, fill = raintomorrow)) +
+  geom_histogram()
+```
+
+```{r}
+ggplot(weather, aes(x = humidity9am, y = humidity3pm, color = raintomorrow)) +
+  geom_point(alpha = 0.4)
+```
+
+```{r}
+weather %>% 
+  count(raintomorrow) %>% 
+  mutate(prop = n/sum(n)) %>% 
+  ggplot(aes(x = raintomorrow, y = n, fill = raintomorrow)) +
+  geom_col() 
+```
+
+```{r}
+ggplot(weather, aes(x = raintomorrow, fill = raintomorrow)) +
+  geom_bar()
+```
+
+### Rain Model 1
+
+Priors:
+
+✅ From probability → log-odds
+
+-   our prior understanding that on an average day, there’s a roughly 20% chance of rain
+
+Use the logit (log-odds) transformation:
+
+```{r}
+qlogis(0.2)
+```
+
+qlogis(0.2) \# \[1\] -1.386294 → about -1.4 log-odds
+
+✅ From log-odds → probability
+
+Use the **inverse logit** (often called the logistic function):
+
+```{r}
+plogis(-1.4)
+```
+
+SD = 0.7
+
+```{r}
+plogis(-2.8)
+plogis(0)
+```
+
+This says: *before seeing data*, you think an average day’s rain probability is most likely around 20%, but **could reasonably be anywhere from \~6% to \~50%** (quite wide—intentionally weakly informative).
+
+Prior slope
+
+```{r}
+exp(0.07)
+```
+
+```{r}
+(1.072508 - 1) * 100
+```
+
+An odds ratio of ≈ 1.072 means that **for each +1 percentage point increase in humidity**, the **odds of rain multiply by 1.072**, i.e. they increase by about **7.2 %**.
+
+```{r}
+(exp(0.07 - 0.07) - 1) * 100
+(exp(0.07 + 0.07) - 1) * 100
+```
+
+The odds of rain might increase anywhere from 0% to 15% for every extra percentage point in humidity level:
 
 ```{r}
  rain_model_1 <- stan_glm(raintomorrow ~ humidity9am,
@@ -133,7 +216,7 @@ Plans change. Hotel room bookings get canceled. In the next exercises, you’ll 
 Your analysis will incorporate the following variables on hotel bookings:
 
 | Variable | Notation | Meaning |
-|-------------------------|-------------------------|-----------------------|
+|------------------------|------------------------|------------------------|
 | **is_canceled** | ( Y ) | whether or not the booking was canceled |
 | **lead_time** | ( X_1 ) | number of days between the booking and scheduled arrival |
 | **previous_cancellations** | ( X_2 ) | number of previous times the guest has canceled a booking |
