@@ -93,7 +93,7 @@ You will need two files:
 | File | Link |
 |------|------|
 | `master_data_pivot.csv` | https://github.com/NSF-ALL-SPICE-Alliance/MFHC/blob/main/cleaned_data/master_data_pivot.csv |
-| `fishpond_modeling.R` | https://github.com/NSF-ALL-SPICE-Alliance/DS400/ |
+| `fishpond_modeling.R` | https://github.com/NSF-ALL-SPICE-Alliance/DS400/blob/main/fishpond_modeling.R |
 
 Download both files to your laptop, then **drag-and-drop** them into the **File Manager** on your Jetstream2 Web Desktop (e.g., into the *Documents* folder).
 
