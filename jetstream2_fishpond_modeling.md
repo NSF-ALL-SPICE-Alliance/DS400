@@ -66,8 +66,9 @@ This gives you compute resources.
 Recommended settings:
 - **Project**: CIS250924
 - **Image**: Ubuntu 22.04
-- **Instance Size**: `m3.small` (2 vCPU / 8GB RAM)
-- Name it: **fishpond-bayes**
+- **Instance Size**: `m3.medium` (8 vCPU / 30GB RAM)
+- **Enable** Web Desktop (yes)
+- Name it: **your-initials-fishpond-bayes**
 
 Click **Create Instance**
 
@@ -103,8 +104,7 @@ Download both files to your laptop, then **drag-and-drop** them into the **File 
 1️⃣ Open the **Application Menu** → launch **RStudio**  
 2️⃣ Click **File > Open File** and open `fishpond_modeling.R`  
 3️⃣ Install required packages (run the first few lines)  
-4️⃣ Hold **Ctrl + Enter** (Windows/Linux) or **Cmd + Return** (Mac keyboard)  
-   to execute code line-by-line
+4️⃣ Hold **Ctrl + Enter** (Windows/Linux) 
 
 💡 Tip: Run each block and make sure output looks good before continuing.
 
