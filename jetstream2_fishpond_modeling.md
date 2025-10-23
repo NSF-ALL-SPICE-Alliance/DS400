@@ -146,6 +146,6 @@ This Bayesian model estimates how DO changes with:
 
 If you need help:
 📧 connor.flynn@chaminade.edu  
-or contact via course Slack
+
 
 Happy cloud modeling! ☁️🐟📈
