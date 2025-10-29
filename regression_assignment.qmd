@@ -1,0 +1,852 @@
+---
+title: "Bayesian Modeling Assignment"
+subtitle: "Penguin Body Mass Prediction & Fake News Detection"
+author: "DS 400: Bayesian Statistics"
+date: today
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 2
+    code-fold: show
+    code-tools: true
+    df-print: paged
+    fig-width: 10
+    fig-height: 6
+    embed-resources: true
+    smooth-scroll: true
+execute:
+  warning: false
+  message: false
+  cache: true
+---
+
+```{r}
+#| label: setup
+#| include: false
+knitr::opts_chunk$set(
+  fig.align = "center",
+  out.width = "100%"
+)
+```
+
+## 🐧 Introduction: Two Bayesian Modeling Challenges
+
+In this assignment, you'll apply Bayesian statistical methods to two different problems:
+
+1.  **Part A: Penguin Body Mass Prediction** - Build and compare multiple Normal regression models
+2.  **Part B: Fake News Detection** - Build a logistic regression classifier
+
+Both parts will help you practice: - Setting appropriate priors - Simulating Bayesian models with `stan_glm()` - Evaluating model quality - Interpreting posterior distributions - Making predictions
+
+::: {.callout-important icon="📋"}
+## Assignment Requirements
+
+-   ✅ Complete **ALL** challenge sections in both parts
+-   ✅ Provide code AND written interpretations
+-   ✅ Reference the class examples when setting priors
+-   ✅ Answer all reflection questions
+-   ✅ Render to PDF and submit to Canvas
+
+**Due Date**: \[11/6/25\]
+:::
+
+------------------------------------------------------------------------
+
+## 📦 Load Libraries
+
+```{r}
+#| label: load-packages
+#| code-fold: false
+
+library(bayesrules)
+library(dplyr)
+library(rstanarm)
+library(bayesplot)
+library(tidyverse)
+library(tidybayes)
+library(broom.mixed)
+library(ggpubr)
+options(scipen = 99)
+```
+
+------------------------------------------------------------------------
+
+# 🐧 PART A: Penguin Body Mass Prediction
+
+![](https://allisonhorst.github.io/palmerpenguins/reference/figures/lter_penguins.png){width="400"}
+
+## 📊 Introduction to the Penguin Dataset
+
+The `penguins_bayes` dataset contains measurements of 333 penguins from three species in Antarctica. Our goal is to predict penguin body mass using various physical measurements.
+
+### Load and Explore the Data
+
+```{r}
+#| label: load-penguins
+#| code-fold: false
+
+# Load the penguin data
+data(penguins_bayes)
+
+# Clean the data - keep only complete cases for our variables of interest
+penguins_complete <- penguins_bayes %>% 
+  select(flipper_length_mm, body_mass_g, species, 
+         bill_length_mm, bill_depth_mm) %>% 
+  na.omit()
+
+# Check the data
+glimpse(penguins_complete)
+```
+
+::: {.callout-note icon="📏"}
+## Variable Definitions
+
+-   **body_mass_g**: Body mass in grams (our outcome variable)
+-   **flipper_length_mm**: Flipper length in millimeters
+-   **bill_length_mm**: Bill (beak) length in millimeters
+-   **bill_depth_mm**: Bill depth in millimeters
+-   **species**: Adelie, Chinstrap, or Gentoo
+:::
+
+------------------------------------------------------------------------
+
+## 🔍 CHALLENGE 1: Exploratory Data Analysis
+
+::: {.callout-warning icon="🎯"}
+## Your Task
+
+Before building models, explore the relationships between body mass and potential predictors.
+
+**Create the following visualizations:**
+
+1.  **Scatter plot**: `body_mass_g` vs `flipper_length_mm`
+    -   Add a smooth trend line using `geom_smooth()`
+    -   Add correlation statistics using `stat_cor()` from ggpubr
+2.  **Box plot**: `body_mass_g` by `species`
+    -   Use `geom_boxplot()` or `geom_violin()`
+    -   Color by species
+3.  **Scatter plot**: `body_mass_g` vs `flipper_length_mm` colored by `species`
+    -   This shows if the relationship differs by species
+
+**Hints & Resources:** - Review the bike sharing example from class (temp_feel vs rides) - Use `ggplot()` with appropriate geoms - `stat_cor()` from ggpubr adds correlation coefficients automatically
+:::
+
+```{r}
+#| label: challenge-1-eda-1
+#| code-fold: false
+
+# YOUR CODE HERE
+# Plot 1: body_mass_g vs flipper_length_mm with correlation
+
+```
+
+```{r}
+#| label: challenge-1-eda-2
+#| code-fold: false
+
+# YOUR CODE HERE
+# Plot 2: body_mass_g by species
+
+```
+
+```{r}
+#| label: challenge-1-eda-3
+#| code-fold: false
+
+# YOUR CODE HERE
+# Plot 3: body_mass_g vs flipper_length_mm colored by species
+
+```
+
+::: {.callout-note collapse="true"}
+## 💭 Interpretation Questions
+
+Based on your visualizations, answer:
+
+1.  What is the correlation between flipper length and body mass?
+2.  Which species tends to be heaviest? Lightest?
+3.  Does the relationship between flipper length and body mass appear consistent across species?
+4.  Which predictors do you think will be most useful?
+:::
+
+------------------------------------------------------------------------
+
+## 🎯 CHALLENGE 2: Build Model 1 (Simple Regression)
+
+::: {.callout-warning icon="🎯"}
+## Your Task
+
+Build a Bayesian normal regression model predicting body mass from flipper length only.
+
+**Model Formula:** `body_mass_g ~ flipper_length_mm`
+
+**Setting Your Priors:**
+
+Think about reasonable values before seeing the data:
+
+1.  **Intercept Prior** (`prior_intercept`):
+    -   When flipper length = 0mm (not realistic, but mathematically necessary), what would body mass be?
+    -   Penguins typically weigh 3000-5000g, so let's center around 0g (since this is an extrapolation) with large uncertainty
+    -   Try: `normal(0, 2500)`
+2.  **Slope Prior** (`prior`):
+    -   For every 1mm increase in flipper length, how much does body mass increase?
+    -   A penguin with longer flippers is probably heavier - maybe 20-50g per mm?
+    -   Try: `normal(50, 25)` (centered at 50g/mm, but very uncertain)
+3.  **Sigma Prior** (`prior_aux`):
+    -   How much do individual penguins vary from the line?
+    -   Body mass varies quite a bit - maybe 500-1000g?
+    -   Try: `exponential(1/500)` (remember: rate = 1/mean)
+
+**Hints & Resources:** - Review the bike model from class: `bike_model <- stan_glm(rides ~ temp_feel, ...)` - Use `family = gaussian` for normal regression - Set `chains = 4, iter = 5000*2, seed = 84735` for reproducibility - Name your model `penguin_model_1`
+:::
+
+```{r}
+#| label: challenge-2-model-1
+#| code-fold: false
+
+# YOUR CODE HERE
+# Build penguin_model_1 predicting body_mass_g from flipper_length_mm
+# penguin_model_1 <- stan_glm(...)
+
+```
+
+::: {.callout-tip icon="📊"}
+## Interpreting the Output
+
+After your model runs, print it to see: - **Intercept**: Where the line crosses y-axis (at flipper = 0) - **flipper_length_mm**: The slope - change in body mass per 1mm flipper increase - **sigma**: Residual standard deviation - typical prediction error - **MAD_SD**: Uncertainty in each parameter estimate
+
+Look for: - Is the slope positive (heavier penguins have longer flippers)? - What's the typical prediction error (sigma)?
+:::
+
+------------------------------------------------------------------------
+
+## 🎯 CHALLENGE 3: Build Model 2 (Species Only)
+
+::: {.callout-warning icon="🎯"}
+## Your Task
+
+Build a model predicting body mass from species only (no physical measurements).
+
+**Model Formula:** `body_mass_g ~ species`
+
+**Setting Your Priors:**
+
+1.  **Intercept Prior**:
+    -   This will be the body mass for the reference species (Adelie)
+    -   Adelie penguins are smaller, around 3500-4000g
+    -   Try: `normal(3750, 500)`
+2.  **Slope Priors**:
+    -   These represent differences from Adelie for Chinstrap and Gentoo
+    -   Gentoo are larger (maybe +1000g?), Chinstrap similar to Adelie
+    -   Try: `normal(0, 1000)` (centered at no difference, but allows large variation)
+3.  **Sigma Prior**:
+    -   Same reasoning as Model 1
+    -   Try: `exponential(1/500)`
+:::
+
+```{r}
+#| label: challenge-3-model-2
+#| code-fold: false
+
+# YOUR CODE HERE
+# Build penguin_model_2 predicting body_mass_g from species
+# penguin_model_2 <- stan_glm(...)
+
+```
+
+::: {.callout-note collapse="true"}
+## 💭 Understanding Categorical Predictors
+
+When you include `species` in the model: - One species becomes the "reference" (usually alphabetically first = Adelie) - The intercept = mean body mass for Adelie - Other coefficients = **difference** from Adelie - Example: If `speciesChinstrap = 32`, Chinstraps are 32g heavier than Adelies (on average)
+:::
+
+------------------------------------------------------------------------
+
+## 🎯 CHALLENGE 4: Build Model 3 (Flipper + Species)
+
+::: {.callout-warning icon="🎯"}
+## Your Task
+
+Build a model using BOTH flipper length and species as predictors.
+
+**Model Formula:** `body_mass_g ~ flipper_length_mm + species`
+
+**Setting Your Priors:** - Similar to Models 1 and 2, but now we're combining information - **Intercept**: `normal(0, 2500)` (body mass when flipper=0 for reference species) - **Slopes**: `normal(0, 1000, autoscale = TRUE)` (let rstanarm auto-scale based on data units) - **Sigma**: `exponential(1/500)`
+
+**Hint:** Use `autoscale = TRUE` in the `normal()` prior - this automatically adjusts the scale based on your data units, which is helpful when predictors are on different scales.
+:::
+
+```{r}
+#| label: challenge-4-model-3
+#| code-fold: false
+
+# YOUR CODE HERE
+# Build penguin_model_3 with both flipper_length_mm and species
+# penguin_model_3 <- stan_glm(...)
+
+```
+
+::: {.callout-tip icon="🤔"}
+## Think About It
+
+When you include both flipper length AND species: - Does species still matter after accounting for flipper size? - Or is species just a proxy for "big flippers"? - Compare the species coefficients in Model 2 vs Model 3!
+:::
+
+------------------------------------------------------------------------
+
+## 🎯 CHALLENGE 5: Build Model 4 
+
+::: {.callout-warning icon="🎯"}
+## Your Task
+
+Build a model using multiple physical measurements (no species).
+
+**Model Formula:** `body_mass_g ~ flipper_length_mm + bill_length_mm + bill_depth_mm`
+
+**Setting Your Priors:** - Use the autoscaling approach since we have multiple predictors on different scales - **Intercept**: `normal(0, 2500)` - **Slopes**: `normal(0, 1000, autoscale = TRUE)` - **Sigma**: `exponential(1/500)`
+:::
+
+```{r}
+#| label: challenge-5-model-4
+#| code-fold: false
+
+# YOUR CODE HERE
+# Build penguin_model_4 with flipper, bill length, and bill depth
+# penguin_model_4 <- stan_glm(...)
+
+```
+
+------------------------------------------------------------------------
+
+## 📊 CHALLENGE 6: Posterior Predictive Checks
+
+::: {.callout-warning icon="🎯"}
+## Your Task
+
+Use `pp_check()` to visualize how well each model's predictions match the actual data.
+
+**What is a pp_check?** - Generates predicted datasets from your model - Overlays them with the actual data - Good fit = predicted data (light blue) looks similar to actual data (dark blue)
+
+**Create pp_check plots for all 4 models**
+
+**Hints & Resources:** - Simply use: `pp_check(your_model_name)` - The plot shows: - Dark line = actual data distribution - Light lines = simulated predictions from posterior - Want them to overlap!
+:::
+
+```{r}
+#| label: challenge-6-pp-check-1
+#| code-fold: false
+
+# YOUR CODE HERE
+# pp_check for Model 1
+
+```
+
+```{r}
+#| label: challenge-6-pp-check-2
+#| code-fold: false
+
+# YOUR CODE HERE
+# pp_check for Model 2
+
+```
+
+```{r}
+#| label: challenge-6-pp-check-3
+#| code-fold: false
+
+# YOUR CODE HERE
+# pp_check for Model 3
+
+```
+
+```{r}
+#| label: challenge-6-pp-check-4
+#| code-fold: false
+
+# YOUR CODE HERE
+# pp_check for Model 4
+
+```
+
+::: {.callout-note collapse="true"}
+## 💭 Comparing pp_checks
+
+For each model, consider: 1. Do the simulated predictions (light blue) capture the shape of actual data (dark blue)? 2. Are the predictions too narrow? Too wide? Just right? 3. Which model's predictions look most realistic? 4. Do any models miss important features of the data?
+:::
+
+------------------------------------------------------------------------
+
+## 🎯 CHALLENGE 7: Cross-Validation Comparison
+
+::: {.callout-warning icon="🎯"}
+## Your Task
+
+Use 10-fold cross-validation to compare the predictive accuracy of all 4 models.
+
+**What is Cross-Validation?** - Splits data into 10 parts (folds) - Trains model on 9 parts, tests on 1 part - Repeats 10 times so each part gets tested - Measures: **how well does the model predict NEW data it hasn't seen?**
+
+**Key Metrics:** - **mae** (Mean Absolute Error): Average prediction error in grams - lower is better - **mae_scaled**: MAE relative to outcome variability - lower is better\
+- **elpd** (Expected Log Predictive Density): Overall predictive quality - higher is better
+
+**Steps:** 1. Run `prediction_summary_cv(model, data, k = 10)` for each model 2. Compare the `mae` values - which model has the lowest prediction error?
+
+**Hints & Resources:** - Use the same dataset for all: `data = penguins_complete` - Set `k = 10` for 10-fold CV - This may take 2-3 minutes per model - be patient!
+:::
+
+```{r}
+#| label: challenge-7-cv-1
+#| code-fold: false
+
+# YOUR CODE HERE
+# Cross-validation for Model 1
+# prediction_summary_cv(penguin_model_1, data = penguins_complete, k = 10)
+
+```
+
+```{r}
+#| label: challenge-7-cv-2
+#| code-fold: false
+
+# YOUR CODE HERE
+# Cross-validation for Model 2
+
+```
+
+```{r}
+#| label: challenge-7-cv-3
+#| code-fold: false
+
+# YOUR CODE HERE
+# Cross-validation for Model 3
+
+```
+
+```{r}
+#| label: challenge-7-cv-4
+#| code-fold: false
+
+# YOUR CODE HERE
+# Cross-validation for Model 4
+
+```
+
+::: {.callout-important icon="⚡"}
+## Comparing Models
+
+Fill in the comparison table below:
+
+| Model | Predictors        | MAE (grams) | Interpretation |
+|-------|-------------------|-------------|----------------|
+| 1     | flipper only      | ???         | ???            |
+| 2     | species only      | ???         | ???            |
+| 3     | flipper + species | ???         | ???            |
+| 4     | all measurements  | ???         | ???            |
+
+Which model would you choose and why? Consider: - Predictive accuracy (lowest MAE) - Model simplicity (fewer predictors) - Interpretability - The trade-off between complexity and performance
+:::
+
+------------------------------------------------------------------------
+
+## 🎓 Part A Reflection Questions
+
+::: {.callout-note icon="💭"}
+## Answer These Questions
+
+1.  **Model Selection**: Which model performed best in cross-validation? Was it the most complex model?
+
+2.  **Species vs Measurements**: Does knowing the species add information beyond physical measurements? How can you tell?
+
+3.  **Practical Use**: If you were a penguin researcher with limited measurement tools, which model would you use and why?
+
+4.  **Prior Sensitivity**: How might different priors have affected your results? Were your priors informative or vague?
+
+5.  **Assumptions**: What assumptions does normal regression make? Are they reasonable for penguin body mass?
+:::
+
+------------------------------------------------------------------------
+
+# 📰 PART B: Fake News Detection
+
+## 📊 Introduction to Fake News Classification
+
+The `fake_news` dataset contains information about 150 news articles. Our goal is to build a **logistic regression classifier** to distinguish real news from fake news based on article characteristics.
+
+### Load and Explore the Data
+
+```{r}
+#| label: load-fake-news
+#| code-fold: false
+
+# Load the fake news data
+data(fake_news)
+
+# Check the structure
+glimpse(fake_news)
+```
+
+::: {.callout-note icon="📰"}
+## Variable Definitions
+
+-   **type**: "Real" or "Fake" (our outcome variable)
+-   **title_has_excl**: Does the title contain an exclamation point? (TRUE/FALSE)
+-   **title_words**: Number of words in the article title
+-   **negative**: Negative sentiment rating of the article (0-1 scale)
+:::
+
+------------------------------------------------------------------------
+
+## 🔍 CHALLENGE 8: Exploratory Data Analysis for Classification
+
+::: {.callout-warning icon="🎯"}
+## Your Task
+
+Explore how article characteristics differ between real and fake news.
+
+**Create the following visualizations:**
+
+1.  **Bar chart**: Count of Real vs Fake articles
+    -   Use `geom_bar()` with `fill = type`
+2.  **Box plots**: Compare `title_words` and `negative` between Real and Fake
+    -   Create two separate plots using `geom_boxplot()`
+3.  **Proportions**: What percentage of articles with exclamation points are fake?
+    -   Use `count()` and `mutate()` to calculate proportions
+
+**Hints & Resources:** - Review the weather Perth rain examples from class
+:::
+
+```{r}
+#| label: challenge-8-eda-1
+#| code-fold: false
+
+# YOUR CODE HERE
+# Plot 1: Bar chart of Real vs Fake
+
+```
+
+```{r}
+#| label: challenge-8-eda-2
+#| code-fold: false
+
+# YOUR CODE HERE
+# Plot 2: Box plot of title_words by type
+
+```
+
+```{r}
+#| label: challenge-8-eda-3
+#| code-fold: false
+
+# YOUR CODE HERE
+# Plot 3: Box plot of negative sentiment by type
+
+```
+
+```{r}
+#| label: challenge-8-eda-4
+#| code-fold: false
+
+# YOUR CODE HERE
+# Calculate proportion of fake news by exclamation point presence
+
+```
+
+::: {.callout-note collapse="true"}
+## 💭 Patterns to Look For
+
+1.  What proportion of articles in the dataset are fake?
+2.  Do fake news articles use more exclamation points?
+3.  Do fake and real news differ in title length?
+4.  Is negative sentiment associated with fake news?
+:::
+
+------------------------------------------------------------------------
+
+## 🎯 CHALLENGE 9: Build Fake News Classifier
+
+::: {.callout-warning icon="🎯"}
+## Your Task
+
+Build a Bayesian logistic regression model to predict whether an article is fake based on the three predictors.
+
+**Model Formula:** `type ~ title_has_excl + title_words + negative`
+
+**Understanding Logistic Regression Priors:**
+
+Remember: In logistic regression, we model **log-odds**, not probabilities directly!
+
+**Prior for Intercept** (baseline log-odds when all predictors = 0): - Think: What % of articles are fake when they have no exclamation point, average title length, and neutral sentiment? - From your EDA, roughly 50% are fake overall = 50/50 odds = log-odds of 0 - But we're uncertain, so use: `normal(0, 1.5)` - `plogis(0)` = 50% probability - `plogis(-1.5)` ≈ 18%, `plogis(1.5)` ≈ 82% (wide range!)
+
+**Priors for Slopes**: - These represent how much log-odds change per unit increase in predictor - We're uncertain about effect sizes, so use weakly informative priors - Try: `normal(0, 1, autoscale = TRUE)` - This says: effects could be positive or negative, but probably not extreme
+
+**Important:** Use `family = binomial` for logistic regression!
+
+**Hints & Resources:** - Review the rain_model_1 from class: `stan_glm(raintomorrow ~ humidity9am, family = binomial, ...)` - Remember: outcome must be a factor or binary (0/1) - Set `chains = 4, iter = 5000*2, seed = 84735` - Name your model `fake_news_model`
+
+**Your Code:**
+:::
+
+```{r}
+#| label: challenge-9-fake-news-model
+#| code-fold: false
+
+# YOUR CODE HERE
+# Build logistic regression model for fake news detection
+# fake_news_model <- stan_glm(...)
+
+```
+
+::: {.callout-tip icon="📊"}
+## Interpreting Logistic Regression Output
+
+After printing your model: - **Intercept**: Log-odds of **REAL** news at baseline (all predictors = 0) - **Coefficients**: Change in log-odds per unit increase in predictor - **Important:** The model predicts probability of REAL news (coded as 1) - Positive coefficient = increases odds of **REAL** news - Negative coefficient = increases odds of **FAKE** news (decreases odds of real)
+:::
+
+------------------------------------------------------------------------
+
+## 🎯 CHALLENGE 10: Interpret Odds Ratios
+
+::: {.callout-warning icon="🎯"}
+## Your Task
+
+Convert the log-odds coefficients to **odds ratios** to make them interpretable.
+
+**What are Odds Ratios?** - Odds Ratio (OR) = exp(coefficient) - **OR \> 1** means predictor **increases** odds of **REAL** news - **OR \< 1** means predictor **increases** odds of **FAKE** news (decreases odds of real) - OR = 1 means no effect
+
+**Calculate 80% Credible Intervals:**
+
+Use: `exp(posterior_interval(fake_news_model, prob = 0.80))`
+
+**Interpret the results (remember: model predicts REAL news):** - For `title_has_exclTRUE`: If OR \< 1, exclamation points are associated with FAKE news - For `title_words`: How does title length affect the odds of real vs fake? - For `negative`: How does negative sentiment affect the odds of real vs fake?
+
+**Hints & Resources:** - Review the rain model interpretation from class - To convert OR to percent change: `(OR - 1) * 100` - Example: OR = 0.75 means -25% (reduces odds of REAL news by 25% = increases odds of FAKE) - Example: OR = 1.25 means +25% (increases odds of REAL news by 25%)
+:::
+
+```{r}
+#| label: challenge-10-odds-ratios
+#| code-fold: false
+
+# YOUR CODE HERE
+# Calculate and display odds ratios with 80% credible intervals
+# exp(posterior_interval(...))
+
+```
+
+::: {.callout-important icon="⚠️"}
+## CRITICAL: Understanding the Outcome Variable
+
+In R's logistic regression, the outcome is coded alphabetically: - "Fake" (first alphabetically) = 0 - "Real" (second alphabetically) = 1
+
+**This means your model predicts the probability of REAL news, not fake news!**
+
+When interpreting odds ratios: - OR \> 1 means predictor increases odds of **REAL** news - OR \< 1 means predictor increases odds of **FAKE** news
+:::
+
+::: {.callout-note collapse="true"}
+## 💭 Interpretation Questions
+
+For each predictor, write 1-2 sentences interpreting the odds ratio. **Remember: OR \< 1 means the predictor is associated with FAKE news!**
+
+**Example interpretation for title_has_excl (OR = 0.03 to 0.21):**
+
+"Articles with exclamation points have 79-97% **lower odds of being REAL news** (80% CI: 0.03, 0.21). This means exclamation points are **strongly associated with FAKE news** - articles with ! are much more likely to be fake."
+
+To calculate percent change: `(OR - 1) × 100` - (0.03 - 1) × 100 = -97% - (0.21 - 1) × 100 = -79%
+
+**Now write interpretations for:**
+
+1.  **title_words** (OR = 0.83 to 0.96): How does title length relate to fake vs real news?
+
+2.  **negative** (OR = 0.60 to 0.88): How does negative sentiment relate to fake vs real news?
+
+**Summary question:** Based on these odds ratios, what characteristics define fake news in this dataset?
+:::
+
+------------------------------------------------------------------------
+
+## 🎯 CHALLENGE 11: Classification Performance (Cutoff = 0.5)
+
+::: {.callout-warning icon="🎯"}
+## Your Task
+
+Evaluate how well your model classifies articles as real or fake using a 0.5 probability cutoff.
+
+**What does this mean?** - If model predicts P(Fake) \> 0.5, classify as Fake - If model predicts P(Fake) ≤ 0.5, classify as Real
+
+**Use:** `classification_summary(model = fake_news_model, data = fake_news, cutoff = 0.5)`
+
+**Key Metrics to Understand:**
+
+| Metric | Formula | Interpretation |
+|------------------|--------------------|----------------------------------|
+| **Accuracy** | (TP + TN) / Total | Overall % correct |
+| **Sensitivity** (True Positive Rate) | TP / (TP + FN) | \% of fake news correctly identified |
+| **Specificity** (True Negative Rate) | TN / (TN + FP) | \% of real news correctly identified |
+
+Where: - TP = True Positives (correctly identified fake news) - TN = True Negatives (correctly identified real news)\
+- FP = False Positives (real news wrongly called fake) - FN = False Negatives (fake news wrongly called real)
+:::
+
+```{r}
+#| label: challenge-11-classification-50
+#| code-fold: false
+
+# YOUR CODE HERE
+# Evaluate classification at cutoff = 0.5
+# classification_summary(...)
+
+```
+
+::: {.callout-note collapse="true"}
+## 💭 Interpretation Questions
+
+1.  What is the overall accuracy? Is this good?
+2.  What is the sensitivity? Are we good at identifying **real** news?
+3.  What is the specificity? Are we good at catching **fake** news?
+4.  Which type of error is more problematic:
+    -   **False positives** (calling fake news "real")?
+    -   **False negatives** (calling real news "fake")?
+:::
+
+------------------------------------------------------------------------
+
+## 🎯 CHALLENGE 12: Adjusting the Classification Threshold
+
+::: {.callout-warning icon="🎯"}
+## Your Task
+
+Explore how changing the cutoff threshold affects classification performance.
+
+**The Trade-off:** - **Lower cutoff** (e.g., 0.3): Easier to classify as **Real** - ✅ Catches more real news (higher sensitivity) - ❌ More false alarms - labels more fake as real (lower specificity)
+
+-   **Higher cutoff** (e.g., 0.7): Harder to classify as **Real**
+    -   ❌ Misses more real news (lower sensitivity)
+    -   ✅ Fewer false alarms - better at catching fake (higher specificity)
+
+**Remember:** Since model predicts P(Real), lowering the cutoff makes it EASIER to call something real (and thus HARDER to call it fake).
+
+**Try these cutoffs and compare:** 1. `cutoff = 0.3` (liberal - more willing to call articles "real") 2. `cutoff = 0.7` (conservative - more skeptical, flags more as "fake")
+:::
+
+```{r}
+#| label: challenge-12-classification-30
+#| code-fold: false
+
+# YOUR CODE HERE
+# Evaluate classification at cutoff = 0.3
+
+```
+
+```{r}
+#| label: challenge-12-classification-70
+#| code-fold: false
+
+# YOUR CODE HERE
+# Evaluate classification at cutoff = 0.7
+
+```
+
+::: {.callout-important icon="⚡"}
+## Comparison Table
+
+Fill in the comparison table:
+
+| Cutoff | Accuracy | Sensitivity (ID Real) | Specificity (ID Fake) | Best For... |
+|---------------|---------------|---------------|---------------|---------------|
+| 0.3    | ???      | ???                   | ???                   | ???         |
+| 0.5    | ???      | ???                   | ???                   | ???         |
+| 0.7    | ???      | ???                   | ???                   | ???         |
+
+**Discussion:** Which cutoff would you choose if: - You run a social media platform (want to avoid censoring real news)? - You're a fact-checking website (want to flag as much fake news as possible)? - **Remember:** Lowering cutoff = easier to classify as "real" = harder to flag as "fake"
+:::
+
+------------------------------------------------------------------------
+
+## 🎯 CHALLENGE 13: Visualize Model Predictions
+
+::: {.callout-warning icon="🎯"}
+## Your Task
+
+Create a visualization showing how predicted probabilities vary with one or more predictors.
+
+**Fitted Draws Plot**
+
+Use `add_fitted_draws()` to show the relationship between a predictor and predicted probability:
+
+``` r
+fake_news %>%
+  add_fitted_draws(fake_news_model, n = 100) %>%
+  ggplot(aes(x = title_words, y = type)) +
+    geom_line(aes(y = .value, group = .draw), alpha = 0.15) + 
+    labs(y = "probability of REAL news")
+```
+
+**Note:** `.value` will be between 0 and 1, representing P(Real news)
+:::
+
+```{r}
+#| label: challenge-13-visualization
+#| code-fold: false
+
+# YOUR CODE HERE
+# Visualize model predictions
+
+```
+
+::: {.callout-note collapse="true"}
+## 💭 Visual Interpretation
+
+What does this plot tell you about: 1. The relationship between title length and the probability of **real** news? 2. How does this relationship differ for articles with/without exclamation points? 3. Where is the model most/least certain? 4. Does the visualization support your odds ratio interpretations?
+:::
+
+------------------------------------------------------------------------
+
+## 🎓 Part B Reflection Questions
+
+::: {.callout-note icon="💭"}
+## Answer These Questions
+
+1.  **Feature Importance**: Which predictor(s) were most strongly associated with fake news? (Hint: look for OR farthest from 1.0) How can you tell from the odds ratios?
+
+2.  **Classification Trade-offs**: In the context of fake news detection, is it worse to:
+
+    -   Flag real news as fake (false negative - blocks legitimate information)?
+    -   Miss fake news and label it as real (false positive - spreads misinformation)?
+    -   How should this influence your cutoff choice?
+
+3.  **Model Limitations**: What information is this model missing? What other predictors might be useful (e.g., source, author, date)?
+
+4.  **Causality Warning**: Can you say that exclamation points **cause** an article to be fake? Why or why not? What's the difference between association and causation?
+
+5.  **Real-world Application**: How would you deploy this model in practice? What additional validation would you need before using it to flag articles?
+:::
+
+------------------------------------------------------------------------
+
+## 📝 Final Submission Checklist
+
+-   [ ] Part A: All 7 challenges completed with code and interpretations
+-   [ ] Part A: Reflection questions answered
+-   [ ] Part A: Model comparison table completed
+-   [ ] Part B: All 6 challenges (8-13) completed with code and interpretations\
+-   [ ] Part B: Reflection questions answered
+-   [ ] Part B: Classification comparison table completed
+-   [ ] Code is commented and readable
+-   [ ] All plots have appropriate labels
+-   [ ] **Rendered to PDF and uploaded to Canvas**
+
+------------------------------------------------------------------------
+
+## 📤 How to Submit
+
+### Step 1: Render to HTML
+
+Click the blue **"Render"** button in RStudio and wait for completion.
+
+### Step 2: Open in Browser
+
+Click the **"Show in new window"** icon in the Viewer pane.
+
+### Step 3: Save as PDF
+
+Right click to print and then save as pdf. Upload the pdf to canvas
