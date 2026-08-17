@@ -1,0 +1,146 @@
+---
+title: "bayes tidycensus"
+format: html
+editor: visual
+---
+
+```{r}
+library(tidycensus)
+library(tidyverse)
+library(rstanarm)
+library(bayesplot)
+```
+
+```{r}
+
+
+# Fetch data and calculate SNAP participation rate
+census_data <- get_acs(
+  geography = "tract",
+  state = "15", # FIPS code for Hawaii
+  variables = c(
+    percent_snap = "DP03_0088P",       # Percent of households receiving SNAP
+    median_income = "B19013_001",     # Median household income (raw value)
+    percent_employment = "DP03_0004P", # Percent employed in civilian labor force
+    percent_education = "DP02_0068P",  # Percent high school graduate or higher
+    household_size = "B25010_001"     # Average household size (raw value)
+  ),
+  year = 2021,
+  survey = "acs5",
+  output = "wide"
+) 
+
+
+```
+
+```{r}
+vars <- load_variables(2021, "acs5", cache = TRUE)
+```
+
+```{r}
+# Fit a Bayesian regression model with transformed predictors
+model <- stan_glm(
+  snap_participation_rate ~ median_incomeE + education_rate + employment_rate + household_sizeE,
+  data = census_data,
+  family = gaussian(),
+  prior = normal(0, 5),
+  prior_intercept = normal(0, 10),
+  chains = 4, iter = 2000, seed = 1234
+)
+
+# View summary
+summary(model)
+
+
+```
+
+```{r}
+ggplot(census_data, aes(x = median_incomeE, y = snap_participation_rate)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  stat_cor()
+```
+
+```{r}
+lm(snap_participation_rate ~ median_incomeE, census_data)
+```
+
+```{r}
+sd(census_data$median_incomeE)
+```
+
+```{r}
+
+```
+
+### NEW
+
+```{r}
+library(tidycensus)
+library(dplyr)
+library(brms)
+
+# Set census API key (ensure you have registered for one)
+#census_api_key("YOUR_API_KEY_HERE", install = TRUE)
+
+# Load ACS data with relevant variables
+census_data <- get_acs(
+  geography = "tract",
+  state = "15", # FIPS code for Hawaii
+  variables = c(
+    snap_rate = "DP03_0074P",  # Households receiving SNAP
+    total_households = "B22003_001",    # Total households
+    median_income = "B19013_001",       # Median household income
+    percent_employment = "DP03_0004P",  # Employment rate
+    percent_poverty = "DP03_0119P",     # Families below poverty level
+    percent_education = "DP02_0068P",   # High school graduate or higher
+    percent_disability = "DP02_0072P",  # Disability status
+    percent_female_head = "DP02_0018P", # Female-headed households
+    percent_white = "DP05_0037P",       # White population
+    average_household_size = "B25010_001", # Average household size
+    percent_renters = "DP04_0046P"      # Renter-occupied housing
+  ),
+  year = 2021,
+  survey = "acs5",
+  output = "wide"
+)
+
+# Calculate SNAP participation rate
+census_data <- census_data %>%
+  select(snap_rateE, median_incomeE, percent_employmentE, percent_povertyE, 
+         percent_educationE, percent_disabilityE, percent_female_headE, 
+         percent_whiteE, average_household_sizeE, percent_rentersE) %>%
+  rename(
+    median_income = median_incomeE,
+    percent_employment = percent_employmentE,
+    percent_poverty = percent_povertyE,
+    percent_education = percent_educationE,
+    percent_disability = percent_disabilityE,
+    percent_female_head = percent_female_headE,
+    percent_white = percent_whiteE,
+    average_household_size = average_household_sizeE,
+    percent_renters = percent_rentersE
+  )
+
+# Bayesian Model using brms
+bayesian_model <- brm(
+  formula = snap_rateE ~ median_income + percent_employment + percent_poverty + 
+    percent_education + percent_disability + percent_female_head + 
+    percent_white + average_household_size + percent_renters,
+  data = census_data,
+  family = gaussian(),
+  prior = c(
+    prior(normal(0, 10), class = "b"),        # Priors for coefficients
+    prior(normal(50, 10), class = "Intercept") # Prior for intercept
+  ),
+  chains = 4, iter = 4000, seed = 123
+)
+
+# Model Summary
+summary(bayesian_model)
+
+# Posterior Predictions and Plots
+posterior <- posterior_samples(bayesian_model)
+plot(bayesian_model)
+
+```

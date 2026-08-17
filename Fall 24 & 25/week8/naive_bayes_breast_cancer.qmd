@@ -1,0 +1,78 @@
+---
+title: "Naive Bayes Breast Cancer"
+format: html
+editor: visual
+---
+
+## Dataset & Paper:
+
+The ***Breast Cancer Wisconsin (Diagnostic)*** dataset is a renowned collection of data used extensively in machine learning and medical research. Originating from digitized images of fine needle aspirates (FNA) of breast masses, this dataset facilitates the analysis of cell nuclei characteristics to aid in the diagnosis of breast cancer. In this article, we delve into the attributes, statistics, and significance of this dataset.
+
+[*A new classifier for breast cancer detection based on Naïve Bayesian*](https://www.sciencedirect.com/science/article/abs/pii/S0263224115002419)
+
+### Libraries
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(e1071)
+library(here)
+```
+
+### Read in Data
+
+```{r}
+breast_cancer_data <- read_csv(here("data/wisconsin_breast_cancer_data.csv"))
+```
+
+### Exploratory Data Analysis
+
+### Model
+
+```{r}
+breast_cancer_data <- breast_cancer_data %>% 
+  select(-id)
+```
+
+```{r}
+model <- naiveBayes(diagnosis ~., data = breast_cancer_data)
+```
+
+```{r}
+breast_cancer_data <- breast_cancer_data %>% 
+  mutate(predicted_diagnosis = predict(model, newdata = .))
+```
+
+```{r}
+breast_cancer_data %>% 
+  tabyl(diagnosis, predicted_diagnosis) %>% 
+  adorn_percentages("row") %>% 
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns
+```
+
+```{r}
+naive_classification_summary(model, breast_cancer_data, "diagnosis")
+```
+
+```{r}
+ggplot(breast_cancer_data, aes(radius_mean, perimeter_mean)) +
+  geom_point() +
+  geom_smooth()
+```
+
+```{r}
+breast_cancer_data_numeric <- breast_cancer_data %>% 
+  select(-diagnosis, -predicted_diagnosis, -...33)
+```
+
+```{r}
+breast_cancer_data_matrix <- as.matrix(breast_cancer_data_numeric)
+```
+
+```{r}
+breast_cancer_data_matrix <- cor(breast_cancer_data_matrix)
+```
+
+```{r}
+ggcorrplot::ggcorrplot(breast_cancer_data_matrix, method = "circle", type = "lower", lab = TRUE, lab_size = 2)
+```

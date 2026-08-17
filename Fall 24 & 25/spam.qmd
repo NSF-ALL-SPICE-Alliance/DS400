@@ -1,0 +1,107 @@
+---
+title: "Spam"
+format: html
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(bayesrules)
+library(here)
+library(tidymodels)
+library(textrecipes)
+library(e1071) # Naive Bayes implementation
+library(shiny)
+
+```
+
+```{r}
+email_data <- read_csv(here("final_projects/email_classification.csv"))
+```
+
+```{r}
+combined_data <- read_csv(here("final_projects/combined_data.csv"))
+```
+
+```{r}
+# Preprocess data
+email_data <- email_data %>%
+  mutate(label = as.factor(label)) # Ensure label is a factor
+
+# Create a recipe for text preprocessing
+# Preprocess data: Define and prep the recipe once
+email_recipe <- recipe(label ~ email, data = email_data) %>%
+  step_tokenize(email) %>%
+  step_stopwords(email) %>%
+  step_tokenfilter(email, max_tokens = 100) %>%
+  step_tfidf(email) %>%
+  prep() # Prepping the recipe once outside reactive logic
+
+# Prepare data
+prepped_data <- email_recipe %>%
+  prep() %>%
+  bake(new_data = NULL)
+
+# Train a Naive Bayes model
+nb_model <- naiveBayes(label ~ ., data = prepped_data)
+
+# Save the model
+saveRDS(nb_model, "naive_bayes_model.rds")
+```
+
+```{r}
+# Load pre-trained model
+nb_model <- readRDS("naive_bayes_model.rds")
+
+
+
+# Define UI
+ui <- fluidPage(
+  titlePanel("Spam Detection using Bayesian Analysis"),
+  sidebarLayout(
+    sidebarPanel(
+      textAreaInput("email_input", "Enter Email Content:", "", rows = 6),
+      actionButton("predict", "Predict")
+    ),
+    mainPanel(
+      textOutput("result"),
+      plotOutput("prob_plot")
+    )
+  )
+)
+
+# Define server logic
+server <- function(input, output) {
+  observeEvent(input$predict, {
+    # Preprocess user input
+    user_email <- tibble(email = input$email_input)
+    prepped_email <- bake(email_recipe, new_data = user_email)
+    
+    # Simulate slight variations to generate a distribution
+    simulated_probs <- replicate(100, {
+      # Perturb features slightly (simulate noise)
+      noisy_email <- prepped_email + rnorm(n = ncol(prepped_email), mean = 0, sd = 0.01)
+      noisy_email[noisy_email < 0] <- 0  # Keep valid feature values
+      predict(nb_model, noisy_email, type = "raw")[1, "spam"]
+    })
+    
+    # Display median prediction
+    output$result <- renderText({
+      paste("Median Prediction Probability for Spam:", round(median(simulated_probs), 3))
+    })
+    
+    # Plot distribution of probabilities
+    output$prob_plot <- renderPlot({
+      ggplot(data = tibble(probability = simulated_probs), aes(x = probability)) +
+        geom_density(fill = "pink", alpha = 0.6) +
+        labs(title = "Distribution of Predicted Probability of Spam",
+             x = "Probability of Spam", y = "Density") +
+        theme_minimal()
+    })
+  })
+}
+
+# Run the app
+shinyApp(ui = ui, server = server)
+
+```

@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.555">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>airlines</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="airlines_files/libs/clipboard/clipboard.min.js"></script>
+<script src="airlines_files/libs/quarto-html/quarto.js"></script>
+<script src="airlines_files/libs/quarto-html/popper.min.js"></script>
+<script src="airlines_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="airlines_files/libs/quarto-html/anchor.min.js"></script>
+<link href="airlines_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="airlines_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="airlines_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="airlines_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="airlines_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">airlines</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="data" class="level3">
+<h3 class="anchored" data-anchor-id="data">Data</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>here() starts at /Users/connorflynn/Documents/NSF-ALL-SPICE-Alliance/DS400</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(arrow)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'arrow'
+
+The following object is masked from 'package:lubridate':
+
+    duration
+
+The following object is masked from 'package:utils':
+
+    timestamp</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstanarm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: Rcpp
+This is rstanarm version 2.32.1
+- See https://mc-stan.org/rstanarm/articles/priors for changes to default priors!
+- Default priors may change, so it's safest to specify priors, even if equivalent to the defaults.
+- For execution on a local, multicore CPU with excess RAM we recommend calling
+  options(mc.cores = parallel::detectCores())</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom.mixed)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(shiny)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(e1071)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'janitor'
+
+The following objects are masked from 'package:stats':
+
+    chisq.test, fisher.test</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>aviation <span class="ot">&lt;-</span> arrow<span class="sc">::</span><span class="fu">read_parquet</span>(<span class="fu">here</span>(<span class="st">"final_projects/Flight_Delay.parquet"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Take a random sample of 10,000 rows</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>aviation_sample <span class="ot">&lt;-</span> aviation <span class="sc">%&gt;%</span> <span class="fu">sample_n</span>(<span class="dv">10000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>aviation_subset <span class="ot">&lt;-</span> aviation_sample <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ArrDelayBinary =</span> <span class="fu">ifelse</span>(ArrDelay <span class="sc">&gt;</span> <span class="dv">15</span>, <span class="dv">1</span>, <span class="dv">0</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>aviation_subset<span class="sc">$</span>FlightDate <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(aviation_subset<span class="sc">$</span>FlightDate)  <span class="co"># Ensure it's in Date format</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>aviation_subset<span class="sc">$</span>day_of_week <span class="ot">&lt;-</span> <span class="fu">wday</span>(aviation_subset<span class="sc">$</span>FlightDate, <span class="at">label =</span> <span class="cn">TRUE</span>, <span class="at">abbr =</span> <span class="cn">FALSE</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(aviation_subset<span class="sc">$</span>ArrDelayBinary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "numeric"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>aviation_subset<span class="sc">$</span>ArrDelayBinary <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(aviation_subset<span class="sc">$</span>ArrDelayBinary)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(aviation_subset<span class="sc">$</span>ArrDelayBinary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "factor"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(aviation_subset<span class="sc">$</span>DestCityName)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "character"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>aviation_subset<span class="sc">$</span>DestCityName <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(aviation_subset<span class="sc">$</span>DestCityName)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(aviation_subset<span class="sc">$</span>DestCityName)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "factor"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(aviation_subset<span class="sc">$</span>OriginCityName) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "character"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>aviation_subset<span class="sc">$</span>OriginCityName <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(aviation_subset<span class="sc">$</span>OriginCityName)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(aviation_subset<span class="sc">$</span>OriginCityName) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "factor"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(aviation_subset<span class="sc">$</span>day_of_week) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "ordered" "factor" </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>aviation_subset<span class="sc">$</span>day_of_week <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(aviation_subset<span class="sc">$</span>day_of_week)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(aviation_subset<span class="sc">$</span>day_of_week) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "ordered" "factor" </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(aviation_subset<span class="sc">$</span>Marketing_Airline_Network) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "character"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>aviation_subset<span class="sc">$</span>Marketing_Airline_Network <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(aviation_subset<span class="sc">$</span>Marketing_Airline_Network)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(aviation_subset<span class="sc">$</span>Marketing_Airline_Network) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "factor"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>aviation_subset <span class="sc">%&gt;%</span> </span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tabyl</span>(ArrDelayBinary) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> ArrDelayBinary    n percent
+              0 7938  0.7938
+              1 2062  0.2062</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>aviation_subset <span class="sc">%&gt;%</span> </span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tabyl</span>(Marketing_Airline_Network, ArrDelayBinary) <span class="sc">%&gt;%</span> </span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">adorn_percentages</span>(<span class="st">"row"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Marketing_Airline_Network         0         1
+                        AA 0.7914482 0.2085518
+                        AS 0.7954939 0.2045061
+                        B6 0.6985915 0.3014085
+                        DL 0.8277103 0.1722897
+                        F9 0.7524272 0.2475728
+                        G4 0.7115385 0.2884615
+                        HA 0.8021978 0.1978022
+                        NK 0.8082192 0.1917808
+                        UA 0.7763578 0.2236422
+                        VX 0.8000000 0.2000000
+                        WN 0.8009206 0.1990794</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>aviation_subset <span class="sc">%&gt;%</span> </span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tabyl</span>(day_of_week, ArrDelayBinary) <span class="sc">%&gt;%</span> </span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">adorn_percentages</span>(<span class="st">"row"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> day_of_week         0         1
+      Sunday 0.7897649 0.2102351
+      Monday 0.7796961 0.2203039
+     Tuesday 0.8281938 0.1718062
+   Wednesday 0.8192852 0.1807148
+    Thursday 0.7837475 0.2162525
+      Friday 0.7630890 0.2369110
+    Saturday 0.7966238 0.2033762</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>aviation_subset <span class="sc">%&gt;%</span> </span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tabyl</span>(OriginCityName, ArrDelayBinary) <span class="sc">%&gt;%</span> </span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">adorn_percentages</span>(<span class="st">"row"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                     OriginCityName         0          1
+                       Aberdeen, SD 1.0000000 0.00000000
+                        Abilene, TX 1.0000000 0.00000000
+                      Aguadilla, PR 0.5000000 0.50000000
+                          Akron, OH 1.0000000 0.00000000
+                         Albany, NY 0.8571429 0.14285714
+                    Albuquerque, NM 0.8181818 0.18181818
+                     Alexandria, LA 1.0000000 0.00000000
+     Allentown/Bethlehem/Easton, PA 1.0000000 0.00000000
+                         Alpena, MI 1.0000000 0.00000000
+                       Amarillo, TX 0.6666667 0.33333333
+                      Anchorage, AK 0.8709677 0.12903226
+                       Appleton, WI 0.6363636 0.36363636
+                  Arcata/Eureka, CA 1.0000000 0.00000000
+                      Asheville, NC 0.9166667 0.08333333
+                        Ashland, WV 1.0000000 0.00000000
+                          Aspen, CO 0.5833333 0.41666667
+                        Atlanta, GA 0.8423237 0.15767635
+                  Atlantic City, NJ 0.8571429 0.14285714
+                        Augusta, GA 0.8571429 0.14285714
+                         Austin, TX 0.7586207 0.24137931
+                    Bakersfield, CA 1.0000000 0.00000000
+                      Baltimore, MD 0.7647059 0.23529412
+                         Bangor, ME 0.5000000 0.50000000
+                    Baton Rouge, LA 0.8333333 0.16666667
+           Beaumont/Port Arthur, TX 1.0000000 0.00000000
+                     Belleville, IL 0.5000000 0.50000000
+                     Bellingham, WA 1.0000000 0.00000000
+                        Bemidji, MN 0.0000000 1.00000000
+                   Bend/Redmond, OR 0.7857143 0.21428571
+                       Billings, MT 0.7777778 0.22222222
+                     Binghamton, NY 1.0000000 0.00000000
+                     Birmingham, AL 0.8000000 0.20000000
+                Bismarck/Mandan, ND 0.9000000 0.10000000
+             Bloomington/Normal, IL 0.7500000 0.25000000
+                          Boise, ID 0.8235294 0.17647059
+                         Boston, MA 0.7485380 0.25146199
+                        Bozeman, MT 0.7894737 0.21052632
+                       Brainerd, MN 1.0000000 0.00000000
+ Bristol/Johnson City/Kingsport, TN 1.0000000 0.00000000
+                    Brownsville, TX 1.0000000 0.00000000
+                        Buffalo, NY 0.8235294 0.17647059
+                        Burbank, CA 0.9117647 0.08823529
+                     Burlington, VT 0.8666667 0.13333333
+                          Butte, MT 0.6666667 0.33333333
+                 Cape Girardeau, MO 1.0000000 0.00000000
+                         Casper, WY 0.7142857 0.28571429
+                     Cedar City, UT 0.5000000 0.50000000
+         Cedar Rapids/Iowa City, IA 0.7500000 0.25000000
+               Champaign/Urbana, IL 0.6666667 0.33333333
+                     Charleston, SC 0.7872340 0.21276596
+              Charleston/Dunbar, WV 0.8333333 0.16666667
+               Charlotte Amalie, VI 1.0000000 0.00000000
+                      Charlotte, NC 0.7666667 0.23333333
+                Charlottesville, VA 0.7333333 0.26666667
+                    Chattanooga, TN 0.9230769 0.07692308
+                       Cheyenne, WY 1.0000000 0.00000000
+                        Chicago, IL 0.7673611 0.23263889
+                  Christiansted, VI 1.0000000 0.00000000
+                     Cincinnati, OH 0.8095238 0.19047619
+                      Cleveland, OH 0.7966102 0.20338983
+                           Cody, WY 1.0000000 0.00000000
+          College Station/Bryan, TX 0.5000000 0.50000000
+               Colorado Springs, CO 0.6842105 0.31578947
+                       Columbia, MO 1.0000000 0.00000000
+                       Columbia, SC 0.8333333 0.16666667
+                       Columbus, GA 1.0000000 0.00000000
+                       Columbus, MS 1.0000000 0.00000000
+                       Columbus, OH 0.8627451 0.13725490
+                        Concord, NC 1.0000000 0.00000000
+                        CONCORD, NC 1.0000000 0.00000000
+                        Cordova, AK 1.0000000 0.00000000
+                 Corpus Christi, TX 1.0000000 0.00000000
+                         Dallas, TX 0.7468354 0.25316456
+              Dallas/Fort Worth, TX 0.7589041 0.24109589
+                         Dayton, OH 0.7916667 0.20833333
+                  Daytona Beach, FL 1.0000000 0.00000000
+                         Denver, CO 0.7824934 0.21750663
+                     Des Moines, IA 0.7619048 0.23809524
+                        Detroit, MI 0.8526786 0.14732143
+                    Devils Lake, ND 1.0000000 0.00000000
+                      Dickinson, ND 1.0000000 0.00000000
+                         Dothan, AL 0.5000000 0.50000000
+                         Duluth, MN 0.5000000 0.50000000
+                        Durango, CO 0.6666667 0.33333333
+                          Eagle, CO 1.0000000 0.00000000
+                     Eau Claire, WI 1.0000000 0.00000000
+                        El Paso, TX 0.8260870 0.17391304
+                           Elko, NV 0.5000000 0.50000000
+                           Erie, PA 0.6666667 0.33333333
+                         Eugene, OR 0.8000000 0.20000000
+                     Evansville, IN 0.8000000 0.20000000
+                        Everett, WA 0.8571429 0.14285714
+                      Fairbanks, AK 0.5000000 0.50000000
+                          Fargo, ND 0.5555556 0.44444444
+                   Fayetteville, AR 0.9230769 0.07692308
+                   Fayetteville, NC 0.6666667 0.33333333
+                      Flagstaff, AZ 0.5000000 0.50000000
+                          Flint, MI 1.0000000 0.00000000
+                     Fort Dodge, IA 1.0000000 0.00000000
+                Fort Lauderdale, FL 0.7480315 0.25196850
+                     Fort Myers, FL 0.8571429 0.14285714
+                     Fort Smith, AR 1.0000000 0.00000000
+                     Fort Wayne, IN 0.6363636 0.36363636
+                         Fresno, CA 0.8666667 0.13333333
+                    Gainesville, FL 0.7142857 0.28571429
+                    Grand Forks, ND 1.0000000 0.00000000
+                   Grand Island, NE 0.7500000 0.25000000
+                 Grand Junction, CO 0.7500000 0.25000000
+                   Grand Rapids, MI 0.8571429 0.14285714
+                    Great Falls, MT 1.0000000 0.00000000
+                      Green Bay, WI 0.7777778 0.22222222
+          Greensboro/High Point, NC 0.8800000 0.12000000
+                     Greenville, NC 1.0000000 0.00000000
+                          Greer, SC 0.8888889 0.11111111
+                           Guam, TT 1.0000000 0.00000000
+                Gulfport/Biloxi, MS 0.7500000 0.25000000
+                     Hagerstown, MD 1.0000000 0.00000000
+               Hancock/Houghton, MI 1.0000000 0.00000000
+           Harlingen/San Benito, TX 1.0000000 0.00000000
+                     Harrisburg, PA 1.0000000 0.00000000
+                       Hartford, CT 0.8275862 0.17241379
+             Hattiesburg/Laurel, MS 0.0000000 1.00000000
+                         Hayden, CO 0.3333333 0.66666667
+                           Hays, KS 1.0000000 0.00000000
+                         Helena, MT 1.0000000 0.00000000
+                           Hilo, HI 0.8333333 0.16666667
+                       Honolulu, HI 0.8378378 0.16216216
+                       Hoolehua, HI 1.0000000 0.00000000
+                        Houston, TX 0.7752443 0.22475570
+                     Huntsville, AL 0.9333333 0.06666667
+                    Idaho Falls, ID 0.7142857 0.28571429
+                   Indianapolis, IN 0.8714286 0.12857143
+          Iron Mountain/Kingsfd, MI 1.0000000 0.00000000
+                          Islip, NY 0.8000000 0.20000000
+                Ithaca/Cortland, NY 1.0000000 0.00000000
+                        Jackson, WY 0.6000000 0.40000000
+              Jackson/Vicksburg, MS 0.8181818 0.18181818
+                   Jacksonville, FL 0.7948718 0.20512821
+      Jacksonville/Camp Lejeune, NC 0.7500000 0.25000000
+                      Jamestown, ND 1.0000000 0.00000000
+                         Joplin, MO 1.0000000 0.00000000
+                         Juneau, AK 0.4444444 0.55555556
+                        Kahului, HI 0.7096774 0.29032258
+                      Kalamazoo, MI 0.6666667 0.33333333
+                      Kalispell, MT 1.0000000 0.00000000
+                    Kansas City, MO 0.7777778 0.22222222
+                      Ketchikan, AK 1.0000000 0.00000000
+                       Key West, FL 0.6666667 0.33333333
+                        Killeen, TX 1.0000000 0.00000000
+                    King Salmon, AK 1.0000000 0.00000000
+                      Knoxville, TN 0.8571429 0.14285714
+                         Kodiak, AK 1.0000000 0.00000000
+                           Kona, HI 0.8636364 0.13636364
+                       Kotzebue, AK 1.0000000 0.00000000
+                      La Crosse, WI 1.0000000 0.00000000
+                      Lafayette, LA 0.7777778 0.22222222
+                   Lake Charles, LA 1.0000000 0.00000000
+                          Lanai, HI 0.0000000 1.00000000
+                        Lansing, MI 0.5000000 0.50000000
+                         Laredo, TX 0.7500000 0.25000000
+                      Las Vegas, NV 0.7850467 0.21495327
+                        Latrobe, PA 1.0000000 0.00000000
+               Lawton/Fort Sill, OK 1.0000000 0.00000000
+                       Lewiston, ID 1.0000000 0.00000000
+                      Lexington, KY 0.7647059 0.23529412
+                        Liberal, KS 0.7500000 0.25000000
+                          Lihue, HI 0.7777778 0.22222222
+                        Lincoln, NE 0.7500000 0.25000000
+                    Little Rock, AR 1.0000000 0.00000000
+                     Long Beach, CA 0.6000000 0.40000000
+                    Los Angeles, CA 0.8400000 0.16000000
+                     Louisville, KY 0.7714286 0.22857143
+                        Lubbock, TX 0.7647059 0.23529412
+                      Lynchburg, VA 0.5000000 0.50000000
+                        Madison, WI 0.8500000 0.15000000
+                     Manchester, NH 0.8181818 0.18181818
+            Manhattan/Ft. Riley, KS 0.5000000 0.50000000
+                      Marquette, MI 0.0000000 1.00000000
+              Martha's Vineyard, MA 1.0000000 0.00000000
+                        Medford, OR 1.0000000 0.00000000
+                      Melbourne, FL 1.0000000 0.00000000
+                        Memphis, TN 0.8000000 0.20000000
+                       Meridian, MS 0.0000000 1.00000000
+                          Miami, FL 0.7857143 0.21428571
+                 Midland/Odessa, TX 0.8000000 0.20000000
+                      Milwaukee, WI 0.8723404 0.12765957
+                    Minneapolis, MN 0.7412935 0.25870647
+                          Minot, ND 0.3333333 0.66666667
+       Mission/McAllen/Edinburg, TX 0.7500000 0.25000000
+                       Missoula, MT 0.8750000 0.12500000
+                         Mobile, AL 1.0000000 0.00000000
+                         Moline, IL 0.8750000 0.12500000
+                         Monroe, LA 1.0000000 0.00000000
+                       Monterey, CA 1.0000000 0.00000000
+                     Montgomery, AL 0.8333333 0.16666667
+                 Montrose/Delta, CO 0.8000000 0.20000000
+                        Mosinee, WI 0.5000000 0.50000000
+                       Muskegon, MI 1.0000000 0.00000000
+                   Myrtle Beach, SC 0.8750000 0.12500000
+                      Nantucket, MA 1.0000000 0.00000000
+                      Nashville, TN 0.7500000 0.25000000
+                    New Orleans, LA 0.7333333 0.26666667
+                       New York, NY 0.7562327 0.24376731
+                         Newark, NJ 0.7309942 0.26900585
+          Newburgh/Poughkeepsie, NY 0.7500000 0.25000000
+      Newport News/Williamsburg, VA 1.0000000 0.00000000
+                           Nome, AK 1.0000000 0.00000000
+                        Norfolk, VA 0.7333333 0.26666667
+            North Bend/Coos Bay, OR 1.0000000 0.00000000
+                        Oakland, CA 0.8840580 0.11594203
+                  Oklahoma City, OK 0.6842105 0.31578947
+                          Omaha, NE 0.7777778 0.22222222
+                        Ontario, CA 0.8333333 0.16666667
+                        Orlando, FL 0.7554348 0.24456522
+                        Paducah, KY 1.0000000 0.00000000
+                   Palm Springs, CA 0.6842105 0.31578947
+                    Panama City, FL 0.7777778 0.22222222
+       Pasco/Kennewick/Richland, WA 1.0000000 0.00000000
+                      Pensacola, FL 0.8823529 0.11764706
+                         Peoria, IL 0.8888889 0.11111111
+                     Petersburg, AK 0.5000000 0.50000000
+                   Philadelphia, PA 0.8510638 0.14893617
+                        Phoenix, AZ 0.7959184 0.20408163
+                         Pierre, SD 0.5000000 0.50000000
+                     Pittsburgh, PA 0.8644068 0.13559322
+                      Pocatello, ID 1.0000000 0.00000000
+                          Ponce, PR 1.0000000 0.00000000
+                       Portland, ME 0.8333333 0.16666667
+                       Portland, OR 0.8064516 0.19354839
+                       Prescott, AZ 1.0000000 0.00000000
+                     Providence, RI 0.9200000 0.08000000
+                          Provo, UT 0.5000000 0.50000000
+                         Pueblo, CO 1.0000000 0.00000000
+                        Pullman, WA 1.0000000 0.00000000
+                    Punta Gorda, FL 0.8750000 0.12500000
+                 Raleigh/Durham, NC 0.7750000 0.22500000
+                     Rapid City, SD 0.6363636 0.36363636
+                        Redding, CA 0.5000000 0.50000000
+                           Reno, NV 0.7931034 0.20689655
+                       Richmond, VA 0.6944444 0.30555556
+                        Roanoke, VA 0.6000000 0.40000000
+                      Rochester, MN 0.7500000 0.25000000
+                      Rochester, NY 0.8125000 0.18750000
+                       Rockford, IL 0.0000000 1.00000000
+                        Roswell, NM 0.5000000 0.50000000
+                     Sacramento, CA 0.7878788 0.21212121
+       Saginaw/Bay City/Midland, MI 0.8333333 0.16666667
+                         Saipan, TT 1.0000000 0.00000000
+                         Salina, KS 1.0000000 0.00000000
+                      Salisbury, MD 1.0000000 0.00000000
+                 Salt Lake City, UT 0.7922078 0.20779221
+                    San Antonio, TX 0.7368421 0.26315789
+                      San Diego, CA 0.7542373 0.24576271
+                  San Francisco, CA 0.7738693 0.22613065
+                       San Jose, CA 0.8915663 0.10843373
+                       San Juan, PR 0.7674419 0.23255814
+                San Luis Obispo, CA 0.7000000 0.30000000
+                        Sanford, FL 0.7500000 0.25000000
+                      Santa Ana, CA 0.8166667 0.18333333
+                  Santa Barbara, CA 0.8666667 0.13333333
+                       Santa Fe, NM 1.0000000 0.00000000
+                    Santa Maria, CA 0.0000000 1.00000000
+                     Santa Rosa, CA 1.0000000 0.00000000
+             Sarasota/Bradenton, FL 0.6000000 0.40000000
+               Sault Ste. Marie, MI 1.0000000 0.00000000
+                       Savannah, GA 0.5555556 0.44444444
+                    Scottsbluff, NE 1.0000000 0.00000000
+          Scranton/Wilkes-Barre, PA 0.8333333 0.16666667
+                        Seattle, WA 0.8217054 0.17829457
+                     Shreveport, LA 0.8750000 0.12500000
+                    Sioux Falls, SD 0.8125000 0.18750000
+                          Sitka, AK 1.0000000 0.00000000
+                     South Bend, IN 0.9230769 0.07692308
+                        Spokane, WA 0.7027027 0.29729730
+                    Springfield, MO 0.8000000 0.20000000
+                     St. George, UT 0.8000000 0.20000000
+                      St. Louis, MO 0.8240741 0.17592593
+                 St. Petersburg, FL 0.6923077 0.30769231
+                  State College, PA 1.0000000 0.00000000
+                       Staunton, VA 0.0000000 1.00000000
+                       Stockton, CA 0.0000000 1.00000000
+      Sun Valley/Hailey/Ketchum, ID 1.0000000 0.00000000
+                       Syracuse, NY 0.8000000 0.20000000
+                    Tallahassee, FL 1.0000000 0.00000000
+                          Tampa, FL 0.7981651 0.20183486
+                      Texarkana, AR 0.6666667 0.33333333
+                         Toledo, OH 1.0000000 0.00000000
+                  Traverse City, MI 1.0000000 0.00000000
+                        Trenton, NJ 1.0000000 0.00000000
+                         Tucson, AZ 0.9000000 0.10000000
+                          Tulsa, OK 0.8928571 0.10714286
+                          Tyler, TX 0.6666667 0.33333333
+                       Unalaska, AK 1.0000000 0.00000000
+                       Valdosta, GA 1.0000000 0.00000000
+                     Valparaiso, FL 0.7500000 0.25000000
+                       Victoria, TX 1.0000000 0.00000000
+                           Waco, TX 1.0000000 0.00000000
+                    Walla Walla, WA 0.0000000 1.00000000
+                     Washington, DC 0.8012048 0.19879518
+                       Waterloo, IA 0.0000000 1.00000000
+                      Watertown, NY 0.6666667 0.33333333
+                      Wenatchee, WA 1.0000000 0.00000000
+     West Palm Beach/Palm Beach, FL 0.7142857 0.28571429
+                   White Plains, NY 0.7777778 0.22222222
+                  Wichita Falls, TX 1.0000000 0.00000000
+                        Wichita, KS 0.8333333 0.16666667
+                     Wilmington, NC 0.7692308 0.23076923
+                      Worcester, MA 1.0000000 0.00000000
+                       Wrangell, AK 0.5000000 0.50000000
+                           Yuma, AZ 1.0000000 0.00000000</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>aviation_subset <span class="sc">%&gt;%</span> </span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tabyl</span>(DestCityName, ArrDelayBinary) <span class="sc">%&gt;%</span> </span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">adorn_percentages</span>(<span class="st">"row"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                       DestCityName         0          1
+                       Aberdeen, SD 1.0000000 0.00000000
+                        Abilene, TX 1.0000000 0.00000000
+                      Aguadilla, PR 1.0000000 0.00000000
+                          Akron, OH 0.7500000 0.25000000
+                         Albany, GA 1.0000000 0.00000000
+                         Albany, NY 0.6363636 0.36363636
+                    Albuquerque, NM 0.7058824 0.29411765
+                     Alexandria, LA 0.6666667 0.33333333
+     Allentown/Bethlehem/Easton, PA 0.8000000 0.20000000
+                         Alpena, MI 0.5000000 0.50000000
+                       Amarillo, TX 0.7500000 0.25000000
+                      Anchorage, AK 0.8000000 0.20000000
+                       Appleton, WI 0.6666667 0.33333333
+                  Arcata/Eureka, CA 0.5000000 0.50000000
+                      Asheville, NC 1.0000000 0.00000000
+                          Aspen, CO 0.6666667 0.33333333
+                        Atlanta, GA 0.8744856 0.12551440
+                  Atlantic City, NJ 1.0000000 0.00000000
+                        Augusta, GA 0.5000000 0.50000000
+                         Austin, TX 0.6907216 0.30927835
+                    Bakersfield, CA 0.5714286 0.42857143
+                      Baltimore, MD 0.8384615 0.16153846
+                         Bangor, ME 0.7500000 0.25000000
+                    Baton Rouge, LA 0.8000000 0.20000000
+           Beaumont/Port Arthur, TX 1.0000000 0.00000000
+                     Bellingham, WA 0.5000000 0.50000000
+                        Bemidji, MN 1.0000000 0.00000000
+                   Bend/Redmond, OR 0.7272727 0.27272727
+                         Bethel, AK 0.5000000 0.50000000
+                       Billings, MT 0.7500000 0.25000000
+                     Birmingham, AL 0.9600000 0.04000000
+                Bismarck/Mandan, ND 0.6666667 0.33333333
+             Bloomington/Normal, IL 0.8000000 0.20000000
+                          Boise, ID 0.9166667 0.08333333
+                         Boston, MA 0.7708333 0.22916667
+                        Bozeman, MT 0.7894737 0.21052632
+ Bristol/Johnson City/Kingsport, TN 0.8571429 0.14285714
+                    Brownsville, TX 1.0000000 0.00000000
+                      Brunswick, GA 1.0000000 0.00000000
+                        Buffalo, NY 0.8000000 0.20000000
+                        Burbank, CA 0.7647059 0.23529412
+                     Burlington, VT 0.7857143 0.21428571
+                 Cape Girardeau, MO 1.0000000 0.00000000
+                         Casper, WY 0.6666667 0.33333333
+                     Cedar City, UT 1.0000000 0.00000000
+         Cedar Rapids/Iowa City, IA 0.7142857 0.28571429
+               Champaign/Urbana, IL 1.0000000 0.00000000
+                     Charleston, SC 0.6333333 0.36666667
+              Charleston/Dunbar, WV 0.7000000 0.30000000
+               Charlotte Amalie, VI 1.0000000 0.00000000
+                      Charlotte, NC 0.8407643 0.15923567
+                Charlottesville, VA 1.0000000 0.00000000
+                    Chattanooga, TN 0.8571429 0.14285714
+                       Cheyenne, WY 1.0000000 0.00000000
+                        Chicago, IL 0.8017241 0.19827586
+                     Cincinnati, OH 0.7272727 0.27272727
+            Clarksburg/Fairmont, WV 1.0000000 0.00000000
+                      Cleveland, OH 0.8035714 0.19642857
+                           Cody, WY 1.0000000 0.00000000
+               Colorado Springs, CO 0.6315789 0.36842105
+                       Columbia, MO 1.0000000 0.00000000
+                       Columbia, SC 0.7142857 0.28571429
+                       Columbus, GA 0.6666667 0.33333333
+                       Columbus, MS 0.6666667 0.33333333
+                       Columbus, OH 0.7254902 0.27450980
+                        Concord, NC 1.0000000 0.00000000
+                 Corpus Christi, TX 0.3333333 0.66666667
+                         Dallas, TX 0.7868852 0.21311475
+              Dallas/Fort Worth, TX 0.7628866 0.23711340
+                         Dayton, OH 0.7727273 0.22727273
+                  Daytona Beach, FL 1.0000000 0.00000000
+                        Decatur, IL 1.0000000 0.00000000
+                        Del Rio, TX 1.0000000 0.00000000
+                         Denver, CO 0.7734807 0.22651934
+                     Des Moines, IA 0.8000000 0.20000000
+                        Detroit, MI 0.8840580 0.11594203
+                    Devils Lake, ND 1.0000000 0.00000000
+                      Dickinson, ND 1.0000000 0.00000000
+                         Dothan, AL 1.0000000 0.00000000
+                        Dubuque, IA 0.5000000 0.50000000
+                         Duluth, MN 0.3333333 0.66666667
+                        Durango, CO 0.6666667 0.33333333
+                          Eagle, CO 0.5000000 0.50000000
+                     Eau Claire, WI 0.0000000 1.00000000
+                        El Paso, TX 0.7368421 0.26315789
+                           Elko, NV 1.0000000 0.00000000
+                 Elmira/Corning, NY 0.5000000 0.50000000
+                           Erie, PA 0.8333333 0.16666667
+                       Escanaba, MI 1.0000000 0.00000000
+                         Eugene, OR 0.8333333 0.16666667
+                     Evansville, IN 0.8000000 0.20000000
+                        Everett, WA 0.0000000 1.00000000
+                      Fairbanks, AK 0.7500000 0.25000000
+                          Fargo, ND 0.8750000 0.12500000
+                   Fayetteville, AR 0.9333333 0.06666667
+                   Fayetteville, NC 1.0000000 0.00000000
+                      Flagstaff, AZ 0.6666667 0.33333333
+                          Flint, MI 0.7500000 0.25000000
+                       Florence, SC 1.0000000 0.00000000
+                Fort Lauderdale, FL 0.7460317 0.25396825
+              Fort Leonard Wood, MO 1.0000000 0.00000000
+                     Fort Myers, FL 0.7872340 0.21276596
+                     Fort Smith, AR 1.0000000 0.00000000
+                     Fort Wayne, IN 0.8750000 0.12500000
+                         Fresno, CA 0.8000000 0.20000000
+                    Gainesville, FL 0.2500000 0.75000000
+                    Grand Forks, ND 1.0000000 0.00000000
+                   Grand Island, NE 1.0000000 0.00000000
+                 Grand Junction, CO 0.8750000 0.12500000
+                   Grand Rapids, MI 0.8750000 0.12500000
+                    Great Falls, MT 0.3750000 0.62500000
+                      Green Bay, WI 0.8000000 0.20000000
+          Greensboro/High Point, NC 0.7727273 0.22727273
+                          Greer, SC 0.7142857 0.28571429
+                           Guam, TT 1.0000000 0.00000000
+                Gulfport/Biloxi, MS 0.8750000 0.12500000
+                       Gunnison, CO 1.0000000 0.00000000
+           Harlingen/San Benito, TX 0.8000000 0.20000000
+                     Harrisburg, PA 0.7500000 0.25000000
+                       Hartford, CT 0.8108108 0.18918919
+             Hattiesburg/Laurel, MS 0.5000000 0.50000000
+                         Hayden, CO 1.0000000 0.00000000
+                           Hays, KS 0.6666667 0.33333333
+                         Helena, MT 0.5000000 0.50000000
+                           Hilo, HI 0.8750000 0.12500000
+                    Hilton Head, SC 1.0000000 0.00000000
+                          Hobbs, NM 1.0000000 0.00000000
+                       Honolulu, HI 0.7500000 0.25000000
+                       Hoolehua, HI 1.0000000 0.00000000
+                        Houston, TX 0.7935484 0.20645161
+                     Huntsville, AL 0.7500000 0.25000000
+                    Idaho Falls, ID 1.0000000 0.00000000
+                   Indianapolis, IN 0.7746479 0.22535211
+            International Falls, MN 1.0000000 0.00000000
+          Iron Mountain/Kingsfd, MI 1.0000000 0.00000000
+                          Islip, NY 0.8888889 0.11111111
+                Ithaca/Cortland, NY 0.7500000 0.25000000
+                        Jackson, WY 0.5000000 0.50000000
+              Jackson/Vicksburg, MS 0.7058824 0.29411765
+                   Jacksonville, FL 0.7884615 0.21153846
+      Jacksonville/Camp Lejeune, NC 1.0000000 0.00000000
+                      Jamestown, ND 1.0000000 0.00000000
+                      Johnstown, PA 1.0000000 0.00000000
+                         Joplin, MO 1.0000000 0.00000000
+                         Juneau, AK 0.7142857 0.28571429
+                        Kahului, HI 0.8378378 0.16216216
+                      Kalamazoo, MI 1.0000000 0.00000000
+                      Kalispell, MT 1.0000000 0.00000000
+                    Kansas City, MO 0.7777778 0.22222222
+                        Kapalua, HI 1.0000000 0.00000000
+                      Ketchikan, AK 0.5714286 0.42857143
+                       Key West, FL 0.7500000 0.25000000
+                        Killeen, TX 1.0000000 0.00000000
+                    King Salmon, AK 1.0000000 0.00000000
+                      Knoxville, TN 0.7058824 0.29411765
+                         Kodiak, AK 1.0000000 0.00000000
+                           Kona, HI 0.8695652 0.13043478
+                       Kotzebue, AK 1.0000000 0.00000000
+                      La Crosse, WI 0.6666667 0.33333333
+                      Lafayette, LA 0.7142857 0.28571429
+                   Lake Charles, LA 1.0000000 0.00000000
+                        Lansing, MI 1.0000000 0.00000000
+                        Laramie, WY 0.6666667 0.33333333
+                         Laredo, TX 1.0000000 0.00000000
+                      Las Vegas, NV 0.7627119 0.23728814
+                        Latrobe, PA 1.0000000 0.00000000
+               Lawton/Fort Sill, OK 1.0000000 0.00000000
+                      Lewisburg, WV 0.5000000 0.50000000
+                      Lexington, KY 0.8571429 0.14285714
+                          Lihue, HI 0.8750000 0.12500000
+                        Lincoln, NE 0.7500000 0.25000000
+                    Little Rock, AR 0.7777778 0.22222222
+                     Long Beach, CA 0.8461538 0.15384615
+                       Longview, TX 1.0000000 0.00000000
+                    Los Angeles, CA 0.8417508 0.15824916
+                     Louisville, KY 0.7058824 0.29411765
+                        Lubbock, TX 0.8571429 0.14285714
+                      Lynchburg, VA 0.6666667 0.33333333
+                        Madison, WI 0.8461538 0.15384615
+                     Manchester, NH 0.9333333 0.06666667
+            Manhattan/Ft. Riley, KS 0.8000000 0.20000000
+                      Marquette, MI 1.0000000 0.00000000
+                     Mason City, IA 1.0000000 0.00000000
+                        Medford, OR 0.8571429 0.14285714
+                      Melbourne, FL 1.0000000 0.00000000
+                        Memphis, TN 0.8571429 0.14285714
+                       Meridian, MS 0.0000000 1.00000000
+                          Miami, FL 0.7666667 0.23333333
+                 Midland/Odessa, TX 0.6666667 0.33333333
+                      Milwaukee, WI 0.6666667 0.33333333
+                    Minneapolis, MN 0.8284314 0.17156863
+                          Minot, ND 0.6000000 0.40000000
+       Mission/McAllen/Edinburg, TX 0.8571429 0.14285714
+                       Missoula, MT 0.8888889 0.11111111
+                           Moab, UT 1.0000000 0.00000000
+                         Mobile, AL 0.5000000 0.50000000
+                         Moline, IL 0.7142857 0.28571429
+                         Monroe, LA 1.0000000 0.00000000
+                       Monterey, CA 0.8571429 0.14285714
+                     Montgomery, AL 0.5714286 0.42857143
+                 Montrose/Delta, CO 1.0000000 0.00000000
+                        Mosinee, WI 0.6000000 0.40000000
+                   Myrtle Beach, SC 0.8214286 0.17857143
+                      Nantucket, MA 0.7500000 0.25000000
+                      Nashville, TN 0.7768595 0.22314050
+     New Bern/Morehead/Beaufort, NC 1.0000000 0.00000000
+                    New Orleans, LA 0.8461538 0.15384615
+                       New York, NY 0.7428571 0.25714286
+                         Newark, NJ 0.7157360 0.28426396
+          Newburgh/Poughkeepsie, NY 0.6666667 0.33333333
+      Newport News/Williamsburg, VA 1.0000000 0.00000000
+                  Niagara Falls, NY 1.0000000 0.00000000
+                           Nome, AK 1.0000000 0.00000000
+                        Norfolk, VA 0.7600000 0.24000000
+            North Bend/Coos Bay, OR 1.0000000 0.00000000
+                   North Platte, NE 1.0000000 0.00000000
+                        Oakland, CA 0.7692308 0.23076923
+                     Ogdensburg, NY 0.7500000 0.25000000
+                  Oklahoma City, OK 0.8518519 0.14814815
+                          Omaha, NE 0.8157895 0.18421053
+                        Ontario, CA 0.8888889 0.11111111
+                        Orlando, FL 0.7684729 0.23152709
+                        Paducah, KY 1.0000000 0.00000000
+                   Palm Springs, CA 0.8181818 0.18181818
+                    Panama City, FL 0.8333333 0.16666667
+       Pasco/Kennewick/Richland, WA 0.7500000 0.25000000
+                       Pellston, MI 0.3333333 0.66666667
+                      Pensacola, FL 0.7333333 0.26666667
+                         Peoria, IL 0.7272727 0.27272727
+                     Petersburg, AK 0.7500000 0.25000000
+                   Philadelphia, PA 0.7882353 0.21176471
+                        Phoenix, AZ 0.8089431 0.19105691
+                         Pierre, SD 0.0000000 1.00000000
+                     Pittsburgh, PA 0.7037037 0.29629630
+                    Plattsburgh, NY 1.0000000 0.00000000
+                      Pocatello, ID 1.0000000 0.00000000
+                          Ponce, PR 1.0000000 0.00000000
+                       Portland, ME 0.6666667 0.33333333
+                       Portland, OR 0.8285714 0.17142857
+                     Portsmouth, NH 1.0000000 0.00000000
+                       Prescott, AZ 1.0000000 0.00000000
+                     Providence, RI 0.8750000 0.12500000
+                          Provo, UT 0.5000000 0.50000000
+                         Pueblo, CO 1.0000000 0.00000000
+                        Pullman, WA 1.0000000 0.00000000
+                    Punta Gorda, FL 0.5714286 0.42857143
+                 Raleigh/Durham, NC 0.8148148 0.18518519
+                     Rapid City, SD 0.8750000 0.12500000
+                        Redding, CA 1.0000000 0.00000000
+                           Reno, NV 0.7741935 0.22580645
+                    Rhinelander, WI 0.3333333 0.66666667
+                       Richmond, VA 0.7407407 0.25925926
+                        Roanoke, VA 1.0000000 0.00000000
+                      Rochester, MN 0.6666667 0.33333333
+                      Rochester, NY 0.8823529 0.11764706
+                     Sacramento, CA 0.8484848 0.15151515
+       Saginaw/Bay City/Midland, MI 0.6666667 0.33333333
+                         Salina, KS 1.0000000 0.00000000
+                 Salt Lake City, UT 0.7975460 0.20245399
+                     San Angelo, TX 1.0000000 0.00000000
+                    San Antonio, TX 0.7727273 0.22727273
+                      San Diego, CA 0.8018868 0.19811321
+                  San Francisco, CA 0.7945946 0.20540541
+                       San Jose, CA 0.8481013 0.15189873
+                       San Juan, PR 0.6176471 0.38235294
+                San Luis Obispo, CA 0.8000000 0.20000000
+                        Sanford, FL 0.8666667 0.13333333
+                      Santa Ana, CA 0.8793103 0.12068966
+                  Santa Barbara, CA 0.6363636 0.36363636
+                       Santa Fe, NM 1.0000000 0.00000000
+                     Santa Rosa, CA 0.7142857 0.28571429
+             Sarasota/Bradenton, FL 0.6153846 0.38461538
+               Sault Ste. Marie, MI 1.0000000 0.00000000
+                       Savannah, GA 0.7500000 0.25000000
+                    Scottsbluff, NE 0.5000000 0.50000000
+          Scranton/Wilkes-Barre, PA 1.0000000 0.00000000
+                        Seattle, WA 0.7945736 0.20542636
+                     Shreveport, LA 1.0000000 0.00000000
+                     Sioux City, IA 1.0000000 0.00000000
+                    Sioux Falls, SD 0.5384615 0.46153846
+                          Sitka, AK 0.0000000 1.00000000
+                     South Bend, IN 0.5000000 0.50000000
+                        Spokane, WA 0.8787879 0.12121212
+                    Springfield, IL 0.5000000 0.50000000
+                    Springfield, MO 1.0000000 0.00000000
+                     St. George, UT 1.0000000 0.00000000
+                      St. Louis, MO 0.8192771 0.18072289
+                 St. Petersburg, FL 0.7000000 0.30000000
+                  State College, PA 0.8000000 0.20000000
+                     Stillwater, OK 1.0000000 0.00000000
+      Sun Valley/Hailey/Ketchum, ID 0.5000000 0.50000000
+                       Syracuse, NY 0.9523810 0.04761905
+                    Tallahassee, FL 0.8888889 0.11111111
+                          Tampa, FL 0.7717391 0.22826087
+                      Texarkana, AR 0.5000000 0.50000000
+                         Toledo, OH 0.5000000 0.50000000
+                  Traverse City, MI 0.7500000 0.25000000
+                        Trenton, NJ 0.5000000 0.50000000
+                         Tucson, AZ 0.6923077 0.30769231
+                          Tulsa, OK 0.8125000 0.18750000
+                     Twin Falls, ID 1.0000000 0.00000000
+                          Tyler, TX 1.0000000 0.00000000
+                       Valdosta, GA 1.0000000 0.00000000
+                     Valparaiso, FL 0.7142857 0.28571429
+                         Vernal, UT 1.0000000 0.00000000
+                       Victoria, TX 1.0000000 0.00000000
+                           Waco, TX 1.0000000 0.00000000
+                    Walla Walla, WA 1.0000000 0.00000000
+                     Washington, DC 0.7836879 0.21631206
+                       Waterloo, IA 1.0000000 0.00000000
+                      Watertown, NY 1.0000000 0.00000000
+                      Watertown, SD 1.0000000 0.00000000
+                      Wenatchee, WA 0.5000000 0.50000000
+     West Palm Beach/Palm Beach, FL 0.7931034 0.20689655
+                   White Plains, NY 0.6428571 0.35714286
+                  Wichita Falls, TX 1.0000000 0.00000000
+                        Wichita, KS 1.0000000 0.00000000
+                      Williston, ND 1.0000000 0.00000000
+                     Wilmington, NC 0.6666667 0.33333333
+                       Wrangell, AK 1.0000000 0.00000000
+                         Yakima, WA 1.0000000 0.00000000
+                        Yakutat, AK 0.5000000 0.50000000
+                           Yuma, AZ 1.0000000 0.00000000</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>naive_model_ <span class="ot">&lt;-</span> <span class="fu">naiveBayes</span>(ArrDelayBinary <span class="sc">~</span> DestCityName <span class="sc">+</span> OriginCityName <span class="sc">+</span> day_of_week <span class="sc">+</span> Marketing_Airline_Network, <span class="at">data =</span> aviation_subset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>aviation_subset_predictions <span class="ot">&lt;-</span> aviation_subset <span class="sc">%&gt;%</span> </span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">predicted_delay=</span> <span class="fu">predict</span>(naive_model_, <span class="at">newdata =</span> .,))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>aviation_subset_predictions <span class="sc">%&gt;%</span> </span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tabyl</span>(ArrDelayBinary, predicted_delay) <span class="sc">%&gt;%</span> </span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">adorn_percentages</span>(<span class="st">"row"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">adorn_pct_formatting</span>(<span class="at">digits =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  adorn_ns</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> ArrDelayBinary              0           1
+              0 97.10% (7,708) 2.90% (230)
+              1 95.88% (1,977) 4.12%  (85)</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # Load the pre-trained model, assuming it's been saved with the subset of predictors</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="co"># model &lt;- stan_glm(</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   ArrDelayBinary ~ Year + Month + DayofMonth + Marketing_Airline_Network + </span></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="co">#     OriginCityName + DestCityName + CRSDepTime,</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   data = aviation_subset,  # Use the random sample dataset</span></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a><span class="co">#   family = binomial(link = "logit"),</span></span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a><span class="co">#   prior = normal(0, 1),</span></span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a><span class="co">#   iter = 500,             # Iterations for variational inference</span></span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a><span class="co">#   algorithm = "meanfield" # Use variational inference for speed</span></span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a><span class="co"># )</span></span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a><span class="co"># # Save the model for Shiny app use</span></span>
+<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a><span class="co"># saveRDS(model, file = here("final_projects/stan_glm_model.rds"))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # Read the saved model</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="co"># model &lt;- readRDS(here("final_projects/stan_glm_model.rds"))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # Define Shiny app UI and server</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ui &lt;- fluidPage(</span></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   titlePanel("Flight Delay Probability Prediction"),</span></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   sidebarLayout(</span></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="co">#     sidebarPanel(</span></span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a><span class="co">#       numericInput("year", "Year", value = 2023, min = 2018, max = 2023),</span></span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a><span class="co">#       numericInput("month", "Month (1-12)", value = 1, min = 1, max = 12),</span></span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a><span class="co">#       numericInput("day", "Day of Month (1-31)", value = 1, min = 1, max = 31),</span></span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a><span class="co">#       selectInput("airline", "Airline", choices = unique(aviation_subset$Marketing_Airline_Network)),</span></span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a><span class="co">#       selectInput("origin", "Origin City", choices = unique(aviation_subset$OriginCityName)),</span></span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a><span class="co">#       selectInput("destination", "Destination City", choices = unique(aviation_subset$DestCityName)),</span></span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a><span class="co">#       numericInput("departure_time", "Scheduled Departure Time (0000-2359)", value = 1200, min = 0, max = 2359),</span></span>
+<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a><span class="co">#       actionButton("predict", "Predict Delay Probability")</span></span>
+<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a><span class="co">#     ),</span></span>
+<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a><span class="co">#     mainPanel(</span></span>
+<span id="cb51-16"><a href="#cb51-16" aria-hidden="true" tabindex="-1"></a><span class="co">#       textOutput("prediction"),</span></span>
+<span id="cb51-17"><a href="#cb51-17" aria-hidden="true" tabindex="-1"></a><span class="co">#       plotOutput("posterior_plot")</span></span>
+<span id="cb51-18"><a href="#cb51-18" aria-hidden="true" tabindex="-1"></a><span class="co">#     )</span></span>
+<span id="cb51-19"><a href="#cb51-19" aria-hidden="true" tabindex="-1"></a><span class="co">#   )</span></span>
+<span id="cb51-20"><a href="#cb51-20" aria-hidden="true" tabindex="-1"></a><span class="co"># )</span></span>
+<span id="cb51-21"><a href="#cb51-21" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb51-22"><a href="#cb51-22" aria-hidden="true" tabindex="-1"></a><span class="co"># server &lt;- function(input, output) {</span></span>
+<span id="cb51-23"><a href="#cb51-23" aria-hidden="true" tabindex="-1"></a><span class="co">#   observeEvent(input$predict, {</span></span>
+<span id="cb51-24"><a href="#cb51-24" aria-hidden="true" tabindex="-1"></a><span class="co">#     # Create a new data frame with user inputs</span></span>
+<span id="cb51-25"><a href="#cb51-25" aria-hidden="true" tabindex="-1"></a><span class="co">#     new_data &lt;- data.frame(</span></span>
+<span id="cb51-26"><a href="#cb51-26" aria-hidden="true" tabindex="-1"></a><span class="co">#       Year = input$year,</span></span>
+<span id="cb51-27"><a href="#cb51-27" aria-hidden="true" tabindex="-1"></a><span class="co">#       Month = input$month,</span></span>
+<span id="cb51-28"><a href="#cb51-28" aria-hidden="true" tabindex="-1"></a><span class="co">#       DayofMonth = input$day,</span></span>
+<span id="cb51-29"><a href="#cb51-29" aria-hidden="true" tabindex="-1"></a><span class="co">#       Marketing_Airline_Network = input$airline,</span></span>
+<span id="cb51-30"><a href="#cb51-30" aria-hidden="true" tabindex="-1"></a><span class="co">#       OriginCityName = input$origin,</span></span>
+<span id="cb51-31"><a href="#cb51-31" aria-hidden="true" tabindex="-1"></a><span class="co">#       DestCityName = input$destination,</span></span>
+<span id="cb51-32"><a href="#cb51-32" aria-hidden="true" tabindex="-1"></a><span class="co">#       CRSDepTime = input$departure_time</span></span>
+<span id="cb51-33"><a href="#cb51-33" aria-hidden="true" tabindex="-1"></a><span class="co">#     )</span></span>
+<span id="cb51-34"><a href="#cb51-34" aria-hidden="true" tabindex="-1"></a><span class="co">#     </span></span>
+<span id="cb51-35"><a href="#cb51-35" aria-hidden="true" tabindex="-1"></a><span class="co">#     # Get posterior predictive samples</span></span>
+<span id="cb51-36"><a href="#cb51-36" aria-hidden="true" tabindex="-1"></a><span class="co">#     predicted_delay &lt;- posterior_predict(model, newdata = new_data)</span></span>
+<span id="cb51-37"><a href="#cb51-37" aria-hidden="true" tabindex="-1"></a><span class="co">#     </span></span>
+<span id="cb51-38"><a href="#cb51-38" aria-hidden="true" tabindex="-1"></a><span class="co">#     # Display the mean delay probability</span></span>
+<span id="cb51-39"><a href="#cb51-39" aria-hidden="true" tabindex="-1"></a><span class="co">#     output$prediction &lt;- renderText({</span></span>
+<span id="cb51-40"><a href="#cb51-40" aria-hidden="true" tabindex="-1"></a><span class="co">#       paste("Predicted Delay Probability:", round(mean(predicted_delay), 3))</span></span>
+<span id="cb51-41"><a href="#cb51-41" aria-hidden="true" tabindex="-1"></a><span class="co">#     })</span></span>
+<span id="cb51-42"><a href="#cb51-42" aria-hidden="true" tabindex="-1"></a><span class="co">#     </span></span>
+<span id="cb51-43"><a href="#cb51-43" aria-hidden="true" tabindex="-1"></a><span class="co">#     # Plot the distribution of predicted delay probabilities</span></span>
+<span id="cb51-44"><a href="#cb51-44" aria-hidden="true" tabindex="-1"></a><span class="co">#     output$posterior_plot &lt;- renderPlot({</span></span>
+<span id="cb51-45"><a href="#cb51-45" aria-hidden="true" tabindex="-1"></a><span class="co">#   ggplot(data = data.frame(predicted_delay = as.vector(predicted_delay)), aes(x = predicted_delay)) +</span></span>
+<span id="cb51-46"><a href="#cb51-46" aria-hidden="true" tabindex="-1"></a><span class="co">#     geom_density(fill = "skyblue", alpha = 0.7) +</span></span>
+<span id="cb51-47"><a href="#cb51-47" aria-hidden="true" tabindex="-1"></a><span class="co">#     labs(</span></span>
+<span id="cb51-48"><a href="#cb51-48" aria-hidden="true" tabindex="-1"></a><span class="co">#       title = "Posterior Distribution of Predicted Delay Probability",</span></span>
+<span id="cb51-49"><a href="#cb51-49" aria-hidden="true" tabindex="-1"></a><span class="co">#       x = "Predicted Delay Probability",</span></span>
+<span id="cb51-50"><a href="#cb51-50" aria-hidden="true" tabindex="-1"></a><span class="co">#       y = "Density"</span></span>
+<span id="cb51-51"><a href="#cb51-51" aria-hidden="true" tabindex="-1"></a><span class="co">#     ) +</span></span>
+<span id="cb51-52"><a href="#cb51-52" aria-hidden="true" tabindex="-1"></a><span class="co">#     theme_minimal()</span></span>
+<span id="cb51-53"><a href="#cb51-53" aria-hidden="true" tabindex="-1"></a><span class="co"># })</span></span>
+<span id="cb51-54"><a href="#cb51-54" aria-hidden="true" tabindex="-1"></a><span class="co">#   })</span></span>
+<span id="cb51-55"><a href="#cb51-55" aria-hidden="true" tabindex="-1"></a><span class="co"># }</span></span>
+<span id="cb51-56"><a href="#cb51-56" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb51-57"><a href="#cb51-57" aria-hidden="true" tabindex="-1"></a><span class="co"># # Run the Shiny app</span></span>
+<span id="cb51-58"><a href="#cb51-58" aria-hidden="true" tabindex="-1"></a><span class="co"># shinyApp(ui = ui, server = server)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

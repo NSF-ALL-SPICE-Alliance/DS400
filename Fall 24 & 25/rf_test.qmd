@@ -1,0 +1,78 @@
+---
+title: "test rf"
+format: html
+editor: visual
+---
+
+```{r}
+# Libraries
+library(tidyverse)
+library(e1071)
+library(randomForest)
+library(janitor)
+library(ggplot2)
+library(plotly)
+
+# Read in Data
+breast_cancer_data <- read_csv(here("data/wisconsin_breast_cancer_data.csv"))
+
+# Naive Bayes Model (from previous analysis)
+breast_cancer_mod <- naiveBayes(diagnosis ~ ., data = breast_cancer_data)
+
+# Predict diagnosis using Naive Bayes
+breast_cancer_data <- breast_cancer_data %>% 
+  mutate(predicted_diagnosis_nb = predict(breast_cancer_mod, newdata = .))
+
+# Create the confusion matrix for Naive Bayes
+nb_confusion <- breast_cancer_data %>%
+  tabyl(diagnosis, predicted_diagnosis_nb) %>%
+  adorn_percentages("row") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns
+
+print(nb_confusion)
+
+# Investigating False Negatives in Naive Bayes Model
+breast_cancer_data <- breast_cancer_data %>%
+  mutate(confusion_category_nb = case_when(
+    diagnosis == "M" & predicted_diagnosis_nb == "M" ~ "True Positive",
+    diagnosis == "M" & predicted_diagnosis_nb == "B" ~ "False Negative",
+    diagnosis == "B" & predicted_diagnosis_nb == "B" ~ "True Negative",
+    diagnosis == "B" & predicted_diagnosis_nb == "M" ~ "False Positive"
+  ))
+
+# Random Forest Model
+set.seed(123)  # for reproducibility
+rf_model <- randomForest(diagnosis ~ ., data = breast_cancer_data %>% select(-id, -...33))
+
+# Predict diagnosis using Random Forest
+breast_cancer_data <- breast_cancer_data %>%
+  mutate(predicted_diagnosis_rf = predict(rf_model, newdata = .))
+
+# Create the confusion matrix for Random Forest
+rf_confusion <- breast_cancer_data %>%
+  tabyl(diagnosis, predicted_diagnosis_rf) %>%
+  adorn_percentages("row") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns
+
+print(rf_confusion)
+
+# Investigating False Negatives in Random Forest Model
+breast_cancer_data <- breast_cancer_data %>%
+  mutate(confusion_category_rf = case_when(
+    diagnosis == "M" & predicted_diagnosis_rf == "M" ~ "True Positive",
+    diagnosis == "M" & predicted_diagnosis_rf == "B" ~ "False Negative",
+    diagnosis == "B" & predicted_diagnosis_rf == "B" ~ "True Negative",
+    diagnosis == "B" & predicted_diagnosis_rf == "M" ~ "False Positive"
+  ))
+
+# Compare False Negatives between Naive Bayes and Random Forest
+false_negatives_comparison <- breast_cancer_data %>%
+  filter(confusion_category_nb == "False Negative" | confusion_category_rf == "False Negative") %>%
+  select(id, diagnosis, predicted_diagnosis_nb, predicted_diagnosis_rf, confusion_category_nb, confusion_category_rf)
+
+print(false_negatives_comparison)
+
+
+```

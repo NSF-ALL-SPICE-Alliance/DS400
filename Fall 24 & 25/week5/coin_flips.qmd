@@ -1,0 +1,84 @@
+---
+title: "Coin Flips"
+format: html
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(bayesrules)
+```
+
+```{r}
+# Set the seed for reproducibility
+set.seed(123)
+
+# Simulate 10,000 flips for the 'normal' coin with 50% heads and 50% tails
+coin_1_flips <- tibble(
+  coin_type = "coin1",
+  outcome = sample(c("heads", "tails"), size = 10000, replace = TRUE, prob = c(0.5, 0.5))
+)
+
+# Simulate 1,000 flips for the 'janky' coin with 90% heads and 10% tails
+coin_2_flips <- tibble(
+  coin_type = "coin2",
+  outcome = sample(c("heads", "tails"), size = 1000, replace = TRUE, prob = c(0.9, 0.1))
+)
+
+# Combine the two datasets
+coin_flips <- bind_rows(coin_1_flips, coin_2_flips)
+
+# Check the structure of the dataset
+coin_flips %>% 
+  tabyl(coin_type, outcome)
+
+```
+
+#### P(B\|A)
+
+Probability of flipping heads given the use of the janky coin
+
+#### P(B)
+
+```{r}
+coin_flips %>% 
+  tabyl(outcome)
+```
+
+```{r}
+probability_heads <- 0.53
+```
+
+#### P(A\|B)
+
+```{r}
+coin_flips %>% 
+  tabyl(outcome, coin_type) %>% 
+  adorn_percentages("row")
+```
+
+```{r}
+probability_janky_given_heads <- 0.15
+```
+
+P(A)
+
+```{r}
+coin_flips %>% 
+  tabyl(coin_type)
+```
+
+```{r}
+probability_janky <- 0.09
+```
+
+#### P(B\|A)
+
+```{r}
+(probability_heads * probability_janky_given_heads) / probability_janky
+```
+
+```{r}
+plot_beta_binomial(alpha = 4943, beta = 5054, y = 908, n = 1000)
+```

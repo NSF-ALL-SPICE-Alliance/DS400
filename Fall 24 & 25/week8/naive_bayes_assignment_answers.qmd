@@ -1,0 +1,161 @@
+---
+title: "Naive Bayes Assignment"
+format: html
+editor: visual
+---
+
+## Load Libraries
+
+```{r, message=FALSE, warning=FALSE}
+library(bayesrules)
+library(tidyverse)
+library(e1071)
+library(titanic)
+library(janitor)
+```
+
+### True vs Fake News
+
+**Exercise 14.7 (Fake news: three predictors)** Suppose a ***new news article*** is posted online – it has a 15-word title, 6% of its words have negative associations, and its title *doesn’t* have an exclamation point. We want to know if it is fake or real
+
+#### Read in data
+
+```{r}
+data(fake_news)
+```
+
+#### Visualization (Exploratory Data Analysis) - 2 points
+
+Use `ggplot` to visualize the features of the data we are interested in
+
+-   Type (fake vs real)
+
+-   Number of words in the title (numeric value)
+
+-   Negative associations (numeric value)
+
+-   Exclamation point in the title (true vs false)
+
+```{r}
+ggplot(fake_news, aes(x = title_words, y = negative, color = title_has_excl)) +
+  geom_point() +
+  facet_wrap(~type) +
+  geom_vline(xintercept = 15) +
+  geom_hline(yintercept = 6)
+```
+
+#### Interpretation of Visualization - 2 points
+
+Write a few sentences explaining whether or not this ***new news article*** is true or fake solely using your visualization above
+
+#### Perform Naive Bayes Classification - 2 points
+
+Based on these three features (15-word title, 6% of its words have negative associations, and its title *doesn’t* have an exclamation point), utilize naive Bayes classification to calculate the posterior probability that the article is real. Do so using `naiveBayes()` with `predict()`.
+
+```{r}
+naive_model_news <- naiveBayes(type ~ negative + title_words + title_has_excl, data = fake_news)
+```
+
+```{r}
+our_article <- data.frame(negative = 6, title_words = 15, title_has_excl = "FALSE")
+```
+
+```{r}
+predict(naive_model_news, newdata = our_article, type = "raw")
+```
+
+#### Break Down the Model - 6 points
+
+Similar to the penguins example, we are going to break down the model we created above. To do this we need to find:
+
+-   Probability(15 - word title\| article is real) using `dnorm()`
+
+-   Probability(6% of words have negative associations \| article is real) using `dnorm()`
+
+-   Probability(no exclamation point in title \| article is real)
+
+    -   Probability(15 - word title\| article is fake) using `dnorm()`
+
+    -   Probability(6% of words have negative associations \| article is fake) using `dnorm()`
+
+    -   Probability(no exclamation point in title \| article is fake)
+
+```{r}
+naive_model_news
+```
+
+##### Real
+
+Negative Associations
+
+```{r}
+dnorm(6, mean = 2.8, sd = 1.2)
+```
+
+Title Words
+
+```{r}
+dnorm(15, mean = 10.4, sd = 3.2)
+```
+
+```{r}
+probs_true <- 0.6 * 0.009496655 * 0.04436553 * 0.97
+probs_true
+```
+
+##### Fake
+
+Negative Associations
+
+```{r}
+dnorm(6, mean = 3.6, sd = 1.5)
+```
+
+Title Words
+
+```{r}
+dnorm(15, mean = 12.3, sd = 3.7)
+```
+
+```{r}
+probs_false <- 0.4 * 0.07394722 * 0.0826183 * 0.73
+probs_false
+```
+
+```{r}
+probs_true / (probs_false + probs_true)
+```
+
+#### Confusion Matrix
+
+```{r}
+fake_news <- fake_news %>% 
+  mutate(predicted_type = predict(naive_model_news, newdata = .))
+```
+
+```{r}
+fake_news %>% 
+  tabyl(type, predicted_type) %>% 
+  adorn_percentages("row") %>% 
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns
+```
+
+#### How can our model be improved?
+
+```{r}
+naive_model_news_all <- naiveBayes(type ~ ., data = fake_news)
+```
+
+```{r}
+fake_news <- fake_news %>% 
+  mutate(predicted_type_all = predict(naive_model_news_all, newdata = .))
+```
+
+```{r}
+fake_news %>% 
+  tabyl(type, predicted_type_all) %>% 
+  adorn_percentages("row") %>% 
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns
+```

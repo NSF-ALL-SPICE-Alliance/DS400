@@ -1,0 +1,226 @@
+---
+title: "bayes_tract_vdlc"
+author: "Victoria DelaCruz"
+date: "2024-11-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Libraries
+```{r}
+library(tidycensus)
+library(bayesrules)
+library(tidyverse)
+library(janitor)
+library(plotly)
+library(naniar)
+library(rstanarm)
+library(here)
+```
+
+
+# Reading in Data
+```{r}
+snap_data <- read_csv(here("data/snapdata_final.csv"))
+```
+This data came directly from the Census website, was downloaded, and put in this project.
+
+# Data Preprocessing
+
+```{r}
+snap_data_preprocess <- snap_data %>% row_to_names(row_number = 1) # making first row column names
+```
+
+```{r}
+snap_data_preprocess <- clean_names(snap_data_preprocess) # cleaning column names
+```
+
+```{r}
+snap_data_clean <- snap_data_preprocess %>% select(geography, geographic_area_name, starts_with("estimate_percent")) # selecting columns only starting with estimate_percent
+```
+
+```{r}
+snap_data_clean <- snap_data_clean %>% select(-starts_with(c("estimate_percent_households_receiving_food_stamps_snap", "estimate_percent_households_not_receiving_food_stamps_snap"))) # removing columns that start with these
+```
+
+```{r}
+snap_columns <- snap_data_preprocess %>% select(c("geography", "geographic_area_name", "estimate_percent_households_receiving_food_stamps_snap_households", "estimate_percent_households_not_receiving_food_stamps_snap_households")) # subsetting for SNAP TOTAL columns
+```
+
+```{r}
+snap_data_merged <- right_join(snap_columns, snap_data_clean, by = c("geography", "geographic_area_name")) # merging SNAP data and clean SNAP data by those columns
+
+snap_data_merged <- snap_data_merged %>% select(-estimate_percent_households) # deleting that column
+
+```
+
+```{r}
+snap_data_merged %>% 
+  miss_var_summary() %>% 
+  arrange(desc(pct_miss))
+```
+
+```{r}
+snap_data_merged[3:41] <- lapply(snap_data_merged[3:41], as.numeric)
+```
+```{r}
+snap_data_merged %>% 
+  miss_var_summary() %>% 
+  arrange(desc(pct_miss))
+```
+
+## Dealing with Missing Data
+
+```{r}
+snap_data_merged <- snap_data_merged %>% select(-c("estimate_percent_households_household_income_in_the_past_12_months_in_2022_inflation_adjusted_dollars_median_income_dollars",	
+"estimate_percent_work_status_families")) # deleting columns with 100% missing data
+```
+
+Okay so I'm guessing that the tracts that having missing data are what composes the same NA values in each column, so I'm gonna filter for NA values (aka row wise!)
+
+```{r}
+snap_data_merged_clean <- snap_data_merged %>% 
+  filter(complete.cases(.))
+```
+
+We went from 461 -> 424 rows, which sounds about right seeing that a lot of columns were missing 36 values.
+
+# Data Cleaning for Modeling
+Since we're going with a logistic regression model, we're create a "categorical" variable based on households that receive SNAP. To do this, we're going to use the median to define a threshold. 
+
+```{r}
+median_snap <- median(snap_data_merged_clean$estimate_percent_households_receiving_food_stamps_snap_households) # calculating the median
+
+print(median_snap)
+```
+
+Damn this median is lowkey LOW. 
+** IF ANYONE WANTS TO CHANGE THE THRESHOLD, JUST CHANGE THE VALUE STORED IN median_snap, AND RUN THE REST OF THE CODE!!!! **
+
+```{r}
+snap_data_merged_clean$high_snap_rate <- ifelse(snap_data_merged_clean$estimate_percent_households_receiving_food_stamps_snap_households > median_snap, 1, 0) # created a new column for high snap rate, 1 if yes 0 if no
+```
+
+Quickly let's check out the distribution.
+```{r}
+table(snap_data_merged_clean$high_snap_rate)
+```
+
+Okay lowkey want to graph the distribution - let's do that real quick!
+
+```{r}
+p <- ggplot(data = snap_data_merged_clean, aes(x = estimate_percent_households_disability_status_with_one_or_more_people_with_a_disability)) +
+  geom_histogram() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplotly(p)
+```
+
+```{r}
+ggplot(data = snap_data_merged_clean, aes(y = estimate_percent_households_disability_status_with_one_or_more_people_with_a_disability, x = as.factor(high_snap_rate))) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+# Bayes!
+
+Building the model
+```{r}
+log_model <- stan_glm(
+  high_snap_rate ~ estimate_percent_households_no_children_under_18_years +
+estimate_percent_households_married_couple_family +
+estimate_percent_households_poverty_status_in_the_past_12_months_below_poverty_level +
+estimate_percent_households_disability_status_with_one_or_more_people_with_a_disability + 
+  estimate_percent_work_status_families_no_workers_in_past_12_months,
+
+data = snap_data_merged_clean,
+family = binomial,
+seed = 123,
+prior = normal(0,1), 
+prior_intercept = normal(0,1),
+chains = 4, iter = 5000*2, seed = 84735)
+```
+```{r}
+log_model
+```
+```{r}
+binary_prediction <- posterior_predict(
+  log_model, newdata = data.frame(estimate_percent_households_no_children_under_18_years = 70.5, 
+	   estimate_percent_households_married_couple_family = 20.3, estimate_percent_households_poverty_status_in_the_past_12_months_below_poverty_level = 30.8, 
+	   estimate_percent_households_disability_status_with_one_or_more_people_with_a_disability = 10.4, 
+	   estimate_percent_work_status_families_no_workers_in_past_12_months = 60.4
+))
+```
+
+```{r}
+table(binary_prediction)
+```
+
+```{r}
+colMeans(binary_prediction)
+```
+
+# Model Evaluation
+
+```{r}
+proportion_snap <- function(x){mean(x == 1)}
+pp_check(log_model, nreps = 100,
+         plotfun = "stat", stat = "proportion_snap") + 
+  xlab("proportion of snap")
+```
+This plot shows the distribution of predicted proportions. In other words, looks about right seeing that it's about 50/50 since we made the threshold for SNAP rate at the median of 8. So looks like the model fits the data well! 
+
+```{r}
+snap_pred_1 <- posterior_predict(log_model, newdata = snap_data_merged_clean)
+```
+
+```{r}
+snap_rates <- snap_data_merged_clean %>% 
+  mutate(snap_prob = colMeans(snap_pred_1),
+         snap_class_1 = as.numeric(snap_prob >= 0.5)) %>% 
+  select(estimate_percent_households_no_children_under_18_years,
+estimate_percent_households_married_couple_family,
+estimate_percent_households_poverty_status_in_the_past_12_months_below_poverty_level,
+estimate_percent_households_disability_status_with_one_or_more_people_with_a_disability, 
+  estimate_percent_work_status_families_no_workers_in_past_12_months, snap_prob, snap_class_1, high_snap_rate)
+```
+
+```{r}
+head(snap_rates)
+```
+
+```{r}
+snap_rates %>% 
+  tabyl(high_snap_rate, snap_class_1) %>%
+  adorn_totals(c("row", "col"))
+```
+Based on this confusion matrix, the model guessed correctly for 324 out of 425 census tracts in Hawai'i (whether or not they have high snap rate at 8%). 
+
+# Analyzing the Relationship Between Predictos Based on the Model!
+```{r}
+library(broom.mixed)
+
+# Tidy the model output using broom.mixed
+tidy_log_model <- broom.mixed::tidy(log_model)
+
+ggplot(tidy_log_model, aes(x = term, y = estimate)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = estimate - std.error, ymax = estimate + std.error)) +
+  coord_flip() +
+  labs(title = "Model Coefficients with Confidence Intervals",
+       x = "Predictors", y = "Estimated Coefficient") +
+  theme_minimal()
+
+```
+Sooo based on this graph, the values on the x-axis represent estimated coefficients for each predictor.
+
+A positive coefficient indicates a *positive relationship* between the predictor and liklehood of a high snap rate (for example, a higher rate of households w/one or more people w/a disability and households in poverty status in the past 12 months below poverty level are more likely to have higher snap rates.) 
+
+Vice-versa, for the *negative relationship*, as the predictor increases, high SNAP rate decreases (for example, as no workers in the past 2 months, no children under 18 years old, and married couple family increases, SNAP rates decrease).
+
+The bars are confidence intervals aka error bars. 
+

@@ -1,0 +1,111 @@
+---
+title: "model choices"
+format: html
+editor: visual
+---
+
+```{r}
+library(bayesrules)
+library(here)
+library(tidyverse)
+```
+
+### Alex & Fletcher
+
+-   Modeling the average attendance at an MLB game
+
+Prior belief
+
+-   The average attendance is 30,000 fans, ranging between 29,500 and 30,500.
+    -   sd = √a/b = 174
+    -   95% of the data falls within 29,652 and 30,348
+
+```{r}
+plot_gamma(shape = 300000, rate = 1, mean = TRUE, mode = TRUE)
+```
+
+New data (Likelihood)
+
+```{r}
+y_mlb = c(31876,30500,33210,28900,35000,31050,32000,32800,29500,34000,
+         36000,30000,31500,33000,31000,32500,33500,29900,34500,32200)
+mlb_attendance <- data.frame(
+  game = 1:length(y_mlb),
+  attendance = y_mlb
+)
+```
+
+```{r}
+ggplot(mlb_attendance, aes(x = attendance)) +
+  geom_histogram(bins = 5)
+```
+
+Posterior
+
+```{r}
+plot_gamma_poisson(shape = 30000, rate = 1, sum_y = 642936, n = 20)
+```
+
+```{r}
+summarize_gamma_poisson(shape = 30000, rate = 1, sum_y = 642936, n = 20)
+```
+
+Challenge
+
+-   Pull in some real MLB data on stadium attendance
+
+```{r}
+sea_attendance <- read_csv(here("data/sportsref_download.csv"))
+```
+
+```{r}
+ggplot(sea_attendance, aes(x = Attendance)) +
+  geom_density()
+```
+
+-   Try modeling average attendance with a normal-normal model
+
+```{r}
+plot_normal(mean = 30000, sd = 5000)
+```
+
+```{r}
+sd(sea_attendance$Attendance)
+```
+
+```{r}
+plot_normal_likelihood(y = sea_attendance$Attendance)
+```
+
+```{r}
+plot_normal_normal(mean = 30000, sd = 1000, sigma = 9838,
+                   y_bar = 29406, n = 162)
+```
+
+```{r}
+summarize_normal_normal(mean = 30000, sd = 5000, sigma = 9838,
+                   y_bar = 29406, n = 162)
+```
+
+-   Try utilizing a beta-binomial model with *stadium capacity* and *fill rate*.
+
+```{r}
+plot_beta(10, 2)
+```
+
+```{r}
+plot_beta_binomial(alpha = 100, beta = 20, y = 1000, n = 2000)
+
+```
+
+```{r}
+capacity <- 53000
+sea_attendance <- sea_attendance %>%
+  mutate(fill = Attendance / capacity)
+```
+
+```{r}
+
+```
+
+-   Which model makes the most sense and why?

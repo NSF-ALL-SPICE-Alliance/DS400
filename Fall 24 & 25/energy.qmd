@@ -1,0 +1,72 @@
+---
+title: "energy"
+format: html
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(here)
+library(janitor)
+library(plotly)
+```
+
+```{r}
+weather <- read_csv(here("final_projects/weather_features.csv"))
+```
+
+```{r}
+energy <- read_csv(here("final_projects/energy_dataset.csv"))
+```
+
+```{r}
+weather <- weather %>% 
+  dplyr::rename(time = dt_iso)
+```
+
+```{r}
+joined <- right_join(weather, energy, by = "time")
+```
+
+```{r}
+joined <- joined %>%
+  mutate(
+    time = ymd_hms(time),         # Parse datetime in format YYYY-MM-DD HH:MM:SS
+    hour = hour(time),            # Extract hour (0-23)
+    day_of_week = wday(time, label = TRUE, abbr = FALSE), # Day of the week (e.g., Monday)
+    month = month(time, label = TRUE, abbr = FALSE),      # Month name (e.g., January)
+    season = case_when(           # Derive season based on month
+      month %in% c("December", "January", "February") ~ "Winter",
+      month %in% c("March", "April", "May") ~ "Spring",
+      month %in% c("June", "July", "August") ~ "Summer",
+      month %in% c("September", "October", "November") ~ "Fall"
+    )
+  )
+```
+
+```{r}
+joined <- joined %>% 
+  clean_names()
+
+```
+
+```{r}
+joined <- joined %>% 
+  filter(city_name == "Barcelona")
+```
+
+Viz
+
+```{r}
+forecasts_vs_true <- joined %>% 
+  group_by(time) %>% 
+  summarise(difference = total_load_actual - total_load_forecast)
+```
+
+```{r}
+difference_plot <- ggplot(data = forecasts_vs_true, aes(x = time, y = difference)) +
+  geom_line(linewidth = 0.2) +
+  theme_minimal()
+
+ggplotly(difference_plot)
+```

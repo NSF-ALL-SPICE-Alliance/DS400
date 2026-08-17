@@ -1,0 +1,293 @@
+---
+title: "Homework 1"
+format: html
+editor: visual
+---
+
+#### Load Libraries
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(car)
+library(tidyverse)
+library(haven)
+library(here)
+library(ggplot2)
+library(janitor)
+library(scales)
+library(bayesrules)
+library(shiny)
+```
+
+#### Read-in Datasets for this Analysis:
+
+-   DR1TOT_J.xpt as 'diet_behavior'
+-   2017-2018_Hg-Blood.XPT as 'blood_hg'
+-   2017-2018_Hg-Urine.XPT as 'urine_hg'
+-   2017-2018_Diabetes.XPT as 'diabetes'
+
+```{r}
+diet_behavior <- read_xpt(here("data/nhanes_data/DR1TOT_J.XPT"))
+blood_hg <- read_xpt(here("data/nhanes_data/2017-2018_Hg-Blood.XPT"))
+urine_hg <- read_xpt(here("data/nhanes_data/2017-2018_Hg-Urine.XPT"))
+diabetes <- read_xpt(here("data/nhanes_data/2017-2018_Diabetes.XPT"))
+demographics <- read_xpt(here("data/nhanes_data/2017-2018_Demographics.XPT"))
+```
+
+#### Subset Read-in Datasets
+
+Subset 'diet_behavior' as 'diet'
+
+```{r}
+diet <- select(diet_behavior, SEQN, DRD360, DRD370B, DRD370BQ, DRD370Q, DRD370QQ)
+```
+
+Subset 'diabetes' as 'tiid'
+
+```{r}
+tiid <- select(diabetes, SEQN, DIQ010)
+```
+
+Subset 'blood_hg' as 'bhg'
+
+```{r}
+bhg <- select(blood_hg, SEQN, LBXIHG, LBDIHGSI, LBXBGE, LBXBGM)
+```
+
+Subset "urine_hg' as 'uhg'
+
+```{r}
+uhg <- select(urine_hg, SEQN, URXUHG)
+```
+
+#### Merge Subsets Into A Working Dataframe as 'df'
+
+```{r}
+df <- list(diet, tiid, bhg, uhg)
+
+df <- df %>% reduce(full_join, by = 'SEQN')
+```
+
+Filter Dataframe
+
+```{r}
+# Assuming your dataframe is named `nhanes_data`
+df <- df %>%
+  # Filter out rows where DIQ010 or DRD360 are NA
+  filter(!is.na(DIQ010), !is.na(DRD370B)) %>%
+  # Keep only rows where DIQ010 and DRD360 are 1 or 2
+  filter(DIQ010 %in% c(1, 2), DRD370B %in% c(1, 2)) %>%
+  # Recode 1 to "Yes" and 2 to "No" for DIQ010 and DRD360
+  mutate(
+    DIQ010 = ifelse(DIQ010 == 1, "Has Diabetes", "No Diabetes"),
+    DRD370B = ifelse(DRD370B == 1, "Consumes Ahi", "No Ahi")
+  )
+  
+```
+
+#### Bayes Theorem
+
+$$
+P(B \mid A) = \frac{P(B) L(B \mid A)}{P(A)} 
+$$
+
+A \<- consumes ahi
+
+-   Ac \<- no ahi
+
+B \<- has diabetes
+
+-   Bc \<- no diabetes
+
+#### P(B)
+
+Prior Probability that a person has diabetes
+
+-   [check national average outside dataset](https://www.cdc.gov/diabetes/php/data-research/index.html#:~:text=Prevalence%20of%20both%20diagnosed%20and%20undiagnosed%20diabetes&text=Among%20the%20U.S.%20population%20overall,or%20older%20(Table%201a).)
+
+```{r}
+df %>% 
+  tabyl(DIQ010) 
+```
+
+```{r}
+prior_probability_has_diabetes = 0.13
+```
+
+#### L(B\|A) = P(A\|B)
+
+The probability of a person consuming ahi given that they have diabetes
+
+```{r}
+df %>% 
+  tabyl(DIQ010, DRD370B) %>% 
+  adorn_percentages("row")
+```
+
+```{r}
+nhanes_percent <- df %>%
+  tabyl(DIQ010, DRD370B) %>%
+  adorn_percentages("row")
+
+# Step 2: Convert the wide format into a long format
+nhanes_long <- nhanes_percent %>%
+  pivot_longer(cols = -DIQ010, names_to = "DRD370B", values_to = "percentage")
+
+
+# Step 3: Create the bar plot with percentages
+ggplot(nhanes_long, aes(x = DIQ010, y = percentage, fill = DRD370B)) +
+  geom_bar(stat = "identity", position = "fill") +
+  geom_text(aes(label = percent(percentage, accuracy = 0.1)), 
+            position = position_fill(vjust = 0.5)) +
+  scale_y_continuous(labels = percent_format()) +
+  labs(y = "Percentage", x = "Diabetes", fill = "Ahi Consumption") +
+  theme_minimal()
+```
+
+```{r}
+likelihood_diabetes_ahi = 0.36
+ 
+
+```
+
+#### P(A)
+
+The probability that a person consumes ahi
+
+```{r}
+df %>% 
+  tabyl(DRD370B)
+```
+
+```{r}
+probability_consumes_ahi <- 0.36
+```
+
+#### P(B\|A)
+
+The posterior probability that a person has diabetes given that they eat ahi
+
+```{r}
+(prior_probability_has_diabetes * likelihood_diabetes_ahi) / probability_consumes_ahi
+```
+
+#### Other nhanes variables
+
+```{r}
+demographics <- demographics %>% 
+  select(SEQN, RIDRETH1, RIAGENDR, RIDAGEYR)
+```
+
+```{r}
+df2 <- left_join(df, demographics, by = "SEQN")
+```
+
+```{r}
+ggplot(df2, aes(x = RIDAGEYR, fill = DIQ010)) +
+  geom_density(alpha = 0.5)
+```
+
+```{r}
+df2 <- df2 %>% 
+  mutate(age_bracket = ifelse(RIDAGEYR > 40, "old", "young"))
+```
+
+```{r}
+table(df2$age_bracket)
+```
+
+```{r}
+nhanes_age_percent <- df2 %>%
+  tabyl(DIQ010, age_bracket) %>%
+  adorn_percentages("row")
+
+# Step 2: Convert the wide format into a long format
+nhanes_age_long <- nhanes_age_percent %>%
+  pivot_longer(cols = -DIQ010, names_to = "age_bracket", values_to = "percentage")
+
+
+# Step 3: Create the bar plot with percentages
+ggplot(nhanes_age_long, aes(x = DIQ010, y = percentage, fill = age_bracket)) +
+  geom_bar(stat = "identity", position = "fill") +
+  geom_text(aes(label = percent(percentage, accuracy = 0.1)), 
+            position = position_fill(vjust = 0.5)) +
+  scale_y_continuous(labels = percent_format()) +
+  labs(y = "Percentage", x = "Diabetes", fill = "Age Bracket") +
+  theme_minimal()
+```
+
+Bayes Theorem
+
+P(B)
+
+```{r}
+prior_probability_has_diabetes <- 0.13
+```
+
+L(B\|A) = P(A\|B)
+
+```{r}
+df2 %>% 
+  tabyl(DIQ010, age_bracket) %>% 
+  adorn_percentages("row")
+```
+
+```{r}
+likelihood_old_given_diabetes <- 0.96
+```
+
+P(A)
+
+```{r}
+df2 %>% 
+  tabyl(age_bracket) 
+```
+
+```{r}
+probability_old <- 0.53
+```
+
+P(B\|A)
+
+```{r}
+(prior_probability_has_diabetes * likelihood_old_given_diabetes) / probability_old
+```
+
+### TESTS
+
+```{r}
+df %>% 
+  tabyl('DIQ010')
+
+prior_probabilioty_has_diabetes <- 0.13
+```
+
+P(A)
+
+```{r}
+probability_over_40 <- mean(demographics$RIDAGEYR > 40, na.rm = TRUE)
+probability_over_40
+```
+
+```{r}
+demographics %>% 
+  mutate(age_bracket = ifelse(RIDAGEYR > 40, "old", "young")) %>% 
+  tabyl(age_bracket)
+```
+
+P(A\|B)
+
+```{r}
+joined <- inner_join(demographics, diabetes, by = "SEQN")
+
+probabability_over_40_and_diabetes <- mean(joined$RIDAGEYR[joined$DIQ010 == 1] > 40, na.rm = TRUE)
+probabability_over_40_and_diabetes
+
+```
+
+Probability Via Bayes
+
+```{r}
+Posterior_prob <- (probabability_over_40_and_diabetes * prior_probabilioty_has_diabetes) / probability_over_40
+Posterior_prob
+```

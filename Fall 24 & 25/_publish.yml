@@ -1,0 +1,4 @@
+- source: regression_assignment.qmd
+  quarto-pub:
+    - id: 4e32b732-67d6-4869-9211-bde73da6f97f
+      url: https://connorflynn.quarto.pub/bayesian-modeling-assignment-ad82

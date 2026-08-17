@@ -1,0 +1,327 @@
+---
+title: "Test Results"
+format: html
+editor: visual
+---
+
+### Load Libraries
+
+```{r, message=FALSE}
+library(tidyverse)
+library(janitor)
+library(plotly)
+```
+
+### The Story
+
+You test positive for a rare disease that only effects 0.001 (One in one thousand people).
+
+So you ask the doctor:
+
+-   How certain is it that I have this disease?
+
+    -   The test correctly identifies 99% of people that have the disease and only incorrectly identifies 1% of people that don't have the disease
+
+What are the chances that you actually have this disease?
+
+-   Some would say 99%, the accuracy of the test
+
+    -   What does bayes say?
+
+$$
+P(B \mid A) = \frac{P(B) L(B \mid A)}{P(A)} 
+$$
+
+B \<- Has Disease
+
+A \<- Positive test result
+
+P(B\|A) - The probability of having the disease given a positive test result
+
+### Simulate the Data
+
+```{r}
+
+set.seed(70)  # For reproducibility
+
+# Parameters
+n_patients <- 10000  # Total population size
+n_diseased <- 10     # Number of patients with the disease
+sensitivity <- 0.99  # True positive rate (sensitivity)
+false_positive_rate <- 0.01  # False positive rate
+
+# Step 1: Create the DataFrame with patients
+patients <- data.frame(
+  patient_id = 1:n_patients,
+  has_disease = c(rep(1, n_diseased), rep(0, n_patients - n_diseased))  # 10 with the disease, rest without
+)
+
+# Shuffle the DataFrame to randomize patient order
+patients <- patients %>%
+  sample_frac(size = 1)
+
+# Step 2: Simulate the test results based on disease status
+patients <- patients %>%
+  mutate(
+    # Test result is positive if the person has the disease and the test is sensitive,
+    # or if they don't have the disease but it's a false positive
+    test_result = case_when(
+      has_disease == 1 & rbinom(n_patients, size = 1, prob = sensitivity) == 1 ~ "positive",
+      has_disease == 0 & rbinom(n_patients, size = 1, prob = false_positive_rate) == 1 ~ "positive",
+      TRUE ~ "negative"
+    )
+  )
+
+
+
+
+```
+
+```{r}
+patients %>% 
+  tabyl(has_disease, test_result)
+```
+
+### Bayes Theorem
+
+#### P(B)
+
+```{r}
+patients %>% 
+  tabyl(has_disease)
+```
+
+```{r}
+probability_disease <- 0.001
+```
+
+#### L(B\|A) = P(A\|B)
+
+```{r}
+patients %>% 
+  tabyl(has_disease, test_result) %>% 
+  adorn_percentages("row")
+  
+```
+
+```{r}
+probability_positive_result_given_disease <- 1
+```
+
+#### P(A)
+
+```{r}
+patients %>% 
+  tabyl(test_result)
+```
+
+```{r}
+probabilty_positive_test_result <- 0.0112
+```
+
+#### P(B\|A)
+
+```{r}
+(probability_positive_result_given_disease * probability_disease) / probabilty_positive_test_result
+```
+
+### What about 2 positive test results?
+
+#### Update P(B)
+
+```{r}
+# First test posterior probability
+updated_probability_having_disease <- (probability_positive_result_given_disease * probability_disease) / probabilty_positive_test_result
+
+updated_probability_having_disease
+```
+
+#### Update P(A)
+
+Lets think through this:
+
+##### To find P(A) **before** the second positive test, we simply used:
+
+```{r}
+patients %>% 
+  tabyl(test_result)
+```
+
+This indicated that the probability of a positive test is very low (0.0112%)
+
+But now, we need to update P(A) as the probability of a second positive test
+
+[In the text we see](https://www.bayesrulesbook.com/chapter-2#building-a-bayesian-model-for-events:~:text=)
+
+P(A)=P(A∩B)+P(A∩Bc) = P(A\|B)P(B)+P(A\|Bc)P(Bc) 😨 but we got this 😎
+
+-   P(True Positive) \* P(having disease) + P(False Positive) \* P(not having disease)
+
+First lets test this based on the first test result and see if we get the same 0.0112% as above
+
+-   P(A\|B)P(B)+P(A\|Bc)P(Bc)
+
+    -   P(A\|B)P(B)
+
+```{r}
+probability_positive_result_given_disease * probability_disease
+```
+
+-   P(A\|B)P(B) = 0.001
+-   P(A\|Bc)P(Bc)
+
+```{r}
+patients %>% 
+  tabyl(has_disease, test_result) %>% 
+  adorn_percentages("row")
+```
+
+-   P(A\|Bc) = 0.01021
+
+```{r}
+patients %>% 
+  tabyl(test_result)
+```
+
+-   P(Bc) = 0.9888
+
+```{r}
+0.01021 * 0.9888
+```
+
+-   P(A\|Bc)P(Bc) = 0.01009565
+
+P(A\|B)P(B)+P(A\|Bc)P(Bc)
+
+```{r}
+0.01009565 + 0.001
+```
+
+P(A)=P(A∩B)+P(A∩Bc) = P(A\|B)P(B)+P(A\|Bc)P(Bc) = 0.0111
+
+-   Very close to our 0.0112% from the tabyl function
+
+##### To find P(A) for the **second** positive test - We need some changes
+
+P(A)=P(A∩B)+P(A∩Bc) = P(A\|B)P(B)+P(A\|Bc)P(Bc) 😨 but we got this 😎
+
+-   P(A\|B)P(B) = 0.089
+
+```{r}
+probability_positive_result_given_disease * updated_probability_having_disease
+```
+
+-   P(A\|Bc)P(Bc)
+
+    -   P(A\|Bc) Stays the same
+
+```{r}
+patients %>% 
+  tabyl(has_disease, test_result) %>% 
+  adorn_percentages("row")
+```
+
+-   P(A\|Bc) = 0.01021
+
+    -   P(Bc) changes
+
+```{r}
+1 - updated_probability_having_disease
+```
+
+-   P(A\|Bc)P(Bc) = 0.009298393
+
+```{r}
+0.01021 * 0.9107143
+```
+
+P(A\|B)P(B)+P(A\|Bc)P(Bc) 😨
+
+```{r}
+ 0.08928571 + 0.009298393
+```
+
+##### Bayes Theorem
+
+```{r}
+(updated_probability_having_disease * probability_positive_result_given_disease) / 0.0986
+```
+
+#### What if we had data for second test results?
+
+```{r}
+set.seed(70)  # For reproducibility
+
+# Parameters
+n_patients <- 10000  # Total population size
+n_diseased <- 10     # Number of patients with the disease
+sensitivity <- 0.99  # True positive rate (sensitivity)
+false_positive_rate <- 0.01  # False positive rate
+second_test_sensitivity <- 0.90  # Second test: 90% of positives have the disease
+
+# Step 1: Create the DataFrame with patients
+patients_updated <- data.frame(
+  patient_id = 1:n_patients,
+  has_disease = c(rep(1, n_diseased), rep(0, n_patients - n_diseased))  # 10 with the disease, rest without
+)
+
+# Shuffle the DataFrame to randomize patient order
+patients_updated <- patients_updated[sample(n_patients), ]
+
+# Step 2: Simulate the first test results based on disease status
+patients_updated <- patients_updated %>%
+  mutate(
+    # First test result: positive if the person has the disease and the test is sensitive,
+    # or if they don't have the disease but it's a false positive
+    test_result = case_when(
+      has_disease == 1 & rbinom(n(), 1, sensitivity) == 1 ~ "positive",
+      has_disease == 0 & rbinom(n(), 1, false_positive_rate) == 1 ~ "positive",
+      TRUE ~ "negative"
+    )
+  )
+
+# Step 3: Simulate the second test results based on the first test result
+patients_updated <- patients_updated %>%
+  mutate(
+    # Second test result logic:
+    second_test_result = case_when(
+      # If they tested positive in the first test and have the disease
+      test_result == "positive" & has_disease == 1 ~ ifelse(rbinom(n(), 1, second_test_sensitivity) == 1, "positive", "negative"),
+      
+      # If they tested positive in the first test but don't have the disease (false positive)
+      test_result == "positive" & has_disease == 0 ~ ifelse(rbinom(n(), 1, false_positive_rate) == 1, "positive", "negative"),
+      
+      # If they tested negative in the first test, they test negative in the second
+      TRUE ~ "negative"
+    )
+  )
+
+
+
+```
+
+```{r}
+patients_updated %>% 
+  tabyl(has_disease, second_test_result) %>% 
+  adorn_percentages("col")
+```
+
+```{r}
+patients_updated_longer <- patients_updated %>% 
+  pivot_longer(cols = c("test_result", "second_test_result"),
+               names_to = "test",
+               values_to = "result")
+```
+
+```{r}
+patients_updated_longer$has_disease <- as.factor(patients_updated_longer$has_disease)
+```
+
+```{r}
+stacked <- ggplot(patients_updated_longer, aes(x = result, fill = has_disease)) +
+  geom_bar() +
+  facet_wrap(~test)
+ggplotly(stacked)
+```
+
+#### 

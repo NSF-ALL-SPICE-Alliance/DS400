@@ -1,0 +1,393 @@
+---
+title: "airlines"
+format: html
+editor: visual
+---
+
+### Data
+
+```{r}
+library(tidyverse)
+library(here)
+library(arrow)
+library(rstanarm)
+library(broom.mixed)
+library(shiny)
+library(lubridate)
+library(e1071)
+library(janitor)
+options(scipen = 99)
+```
+
+```{r}
+aviation <- arrow::read_parquet(here("final_projects/Flight_Delay.parquet"))
+```
+
+```{r}
+# Take a random sample of 10,000 rows
+aviation_sample <- aviation %>% sample_n(10000)
+```
+
+```{r}
+aviation_subset <- aviation_sample %>%
+  mutate(ArrDelayBinary = ifelse(ArrDelay > 15, 1, 0)) 
+```
+
+```{r}
+aviation_subset$FlightDate <- as.Date(aviation_subset$FlightDate)  # Ensure it's in Date format
+aviation_subset$day_of_week <- wday(aviation_subset$FlightDate, label = TRUE, abbr = FALSE) 
+```
+
+```{r}
+class(aviation_subset$ArrDelayBinary)
+aviation_subset$ArrDelayBinary <- as.factor(aviation_subset$ArrDelayBinary)
+class(aviation_subset$ArrDelayBinary)
+
+class(aviation_subset$DestCityName)
+aviation_subset$DestCityName <- as.factor(aviation_subset$DestCityName)
+class(aviation_subset$DestCityName)
+
+class(aviation_subset$OriginCityName) 
+aviation_subset$OriginCityName <- as.factor(aviation_subset$OriginCityName)
+class(aviation_subset$OriginCityName) 
+
+class(aviation_subset$day_of_week) 
+aviation_subset$day_of_week <- as.factor(aviation_subset$day_of_week)
+class(aviation_subset$day_of_week) 
+
+class(aviation_subset$Marketing_Airline_Network) 
+aviation_subset$Marketing_Airline_Network <- as.factor(aviation_subset$Marketing_Airline_Network)
+class(aviation_subset$Marketing_Airline_Network) 
+```
+
+```{r}
+aviation_subset %>% 
+  tabyl(ArrDelayBinary) 
+```
+
+```{r}
+aviation_subset %>% 
+  tabyl(Marketing_Airline_Network, ArrDelayBinary) %>% 
+  adorn_percentages("col")
+  
+```
+
+```{r}
+
+```
+
+```{r}
+aviation_subset %>% 
+  tabyl(day_of_week, ArrDelayBinary) %>% 
+  adorn_percentages("col")
+```
+
+```{r}
+aviation_subset %>% 
+  tabyl(OriginCityName, ArrDelayBinary) %>% 
+  adorn_percentages("col")
+```
+
+```{r}
+aviation_subset %>% 
+  tabyl(DestCityName, ArrDelayBinary) %>% 
+  adorn_percentages("col")
+```
+
+```{r}
+aviation_subset %>% 
+  tabyl(DestCityName, ArrDelayBinary) %>% 
+  adorn_percentages("col")
+```
+
+```{r}
+naive_model_ <- naiveBayes(ArrDelayBinary ~ DestCityName + OriginCityName + day_of_week + Marketing_Airline_Network, data = aviation_subset, laplace = 0.00001)
+```
+
+```{r}
+aviation_subset_predictions <- aviation_subset %>% 
+  mutate(predicted_delay= predict(naive_model_, newdata = ., type = "raw"))
+```
+
+```{r}
+aviation_subset_predictions %>% 
+  tabyl(ArrDelayBinary, predicted_delay) %>% 
+  adorn_percentages("row") %>% 
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns
+```
+
+```{r}
+
+# Load the pre-trained model, assuming it's been saved with the subset of predictors
+model <- stan_glm(
+  ArrDelayBinary ~ Year + Month + DayofMonth + Marketing_Airline_Network +
+    OriginCityName + DestCityName + CRSDepTime,
+  data = balanced_data,  # Use the random sample dataset
+  family = binomial(link = "logit"),
+  prior = normal(0, 1),
+  iter = 500,             # Iterations for variational inference
+  algorithm = "meanfield" # Use variational inference for speed
+)
+
+# Save the model for Shiny app use
+saveRDS(model, file = here("final_projects/stan_glm_model.rds"))
+
+
+
+```
+
+```{r}
+# # Read the saved model
+model <- readRDS(here("final_projects/stan_glm_model.rds"))
+```
+
+```{r}
+# # Define Shiny app UI and server
+# ui <- fluidPage(
+#   titlePanel("Flight Delay Probability Prediction"),
+#   sidebarLayout(
+#     sidebarPanel(
+#       numericInput("year", "Year", value = 2023, min = 2018, max = 2023),
+#       numericInput("month", "Month (1-12)", value = 1, min = 1, max = 12),
+#       numericInput("day", "Day of Month (1-31)", value = 1, min = 1, max = 31),
+#       selectInput("airline", "Airline", choices = unique(aviation_subset$Marketing_Airline_Network)),
+#       selectInput("origin", "Origin City", choices = unique(aviation_subset$OriginCityName)),
+#       selectInput("destination", "Destination City", choices = unique(aviation_subset$DestCityName)),
+#       numericInput("departure_time", "Scheduled Departure Time (0000-2359)", value = 1200, min = 0, max = 2359),
+#       actionButton("predict", "Predict Delay Probability")
+#     ),
+#     mainPanel(
+#       textOutput("prediction"),
+#       plotOutput("posterior_plot")
+#     )
+#   )
+# )
+# 
+# server <- function(input, output) {
+#   observeEvent(input$predict, {
+#     # Create a new data frame with user inputs
+#     new_data <- data.frame(
+#       Year = input$year,
+#       Month = input$month,
+#       DayofMonth = input$day,
+#       Marketing_Airline_Network = input$airline,
+#       OriginCityName = input$origin,
+#       DestCityName = input$destination,
+#       CRSDepTime = input$departure_time
+#     )
+#     
+#     # Get posterior predictive samples
+#     predicted_delay <- posterior_predict(model, newdata = new_data)
+#     
+#     # Display the mean delay probability
+#     output$prediction <- renderText({
+#       paste("Predicted Delay Probability:", round(mean(predicted_delay), 3))
+#     })
+#     
+#     # Plot the distribution of predicted delay probabilities
+#     output$posterior_plot <- renderPlot({
+#   ggplot(data = data.frame(predicted_delay = as.vector(predicted_delay)), aes(x = predicted_delay)) +
+#     geom_density(fill = "skyblue", alpha = 0.7) +
+#     labs(
+#       title = "Posterior Distribution of Predicted Delay Probability",
+#       x = "Predicted Delay Probability",
+#       y = "Density"
+#     ) +
+#     theme_minimal()
+# })
+#   })
+# }
+# 
+# # Run the Shiny app
+# shinyApp(ui = ui, server = server)
+```
+
+```{r}
+model <- readRDS(here("final_projects/stan_glm_model.rds"))
+
+```
+
+```{r}
+model
+```
+
+```{r}
+library(bayesplot)
+
+# Compare observed vs. predicted
+y_pred <- posterior_predict(model, newdata = aviation_subset)
+
+# Confusion Matrix
+table(Predicted = colMeans(y_pred) > 0.5, Actual = aviation_subset$ArrDelayBinary)
+
+```
+
+```{r}
+# Predict posterior probabilities
+predictions <- posterior_predict(model, newdata = balanced_data, summary = TRUE)
+
+# Use a custom threshold (e.g., 0.3) for classifying delays
+balanced_data <- balanced_data %>%
+  mutate(predicted_delay = ifelse(predictions[, "Estimate"] > 0.3, 1, 0))
+
+# Confusion Matrix
+table(aviation_subset$ArrDelayBinary, aviation_subset$predicted_delay)
+```
+
+Undersampling
+
+```{r}
+# Split data into delayed and non-delayed flights
+delayed <- aviation_subset %>% filter(ArrDelayBinary == 1)
+non_delayed <- aviation_subset %>% filter(ArrDelayBinary == 0)
+
+# Undersample non-delayed flights
+set.seed(123)
+undersampled_non_delayed <- non_delayed %>% sample_n(size = nrow(delayed))
+
+# Combine the balanced dataset
+balanced_data <- bind_rows(undersampled_non_delayed, delayed)
+
+```
+
+```{r}
+
+
+# Generate predictions and confusion matrix
+predictions_balanced <- posterior_predict(model, newdata = aviation_subset)
+aviation_subset <- aviation_subset %>%
+  mutate(predicted_delay = ifelse(rowMeans(predictions_balanced) > 0.5, 1, 0))
+
+table(Predicted = aviation_subset$predicted_delay, Actual = aviation_subset$ArrDelayBinary)
+
+```
+
+### Features Added, No Weather Delay
+
+```{r}
+aviation <- arrow::read_parquet(here("final_projects/features_added.parquet"))
+```
+
+```{r}
+aviation_sample <- aviation %>% sample_n(10000)
+```
+
+```{r}
+aviation_sample <- aviation_sample %>% 
+   mutate(DepDelayBinary = ifelse(DepDelay > 15, 1, 0)) 
+```
+
+```{r}
+aviation_sample %>% 
+  group_by(DepDelayBinary) %>% 
+  count()
+```
+
+```{r}
+aviation_sample_no_weather <- aviation_sample %>% 
+  filter(WeatherDelay == 0)
+```
+
+```{r}
+aviation_sample_no_weather %>% 
+  group_by(DepDelayBinary) %>% 
+  count()
+```
+
+```{r}
+aviation_sample_no_weather_features <- aviation_sample_no_weather %>% 
+  select(DepDelayBinary, OriginCityName, DestCityName, Marketing_Airline_Network, DayofWeek, Holidays, CRSDepTimeHourDis)
+```
+
+```{r}
+class(aviation_sample_no_weather_features$OriginCityName)
+aviation_sample_no_weather_features$OriginCityName <- as.factor(aviation_sample_no_weather_features$OriginCityName)
+
+class(aviation_sample_no_weather_features$DestCityName)
+aviation_sample_no_weather_features$DestCityName <- as.factor(aviation_sample_no_weather_features$DestCityName)
+
+class(aviation_sample_no_weather_features$Marketing_Airline_Network)
+aviation_sample_no_weather_features$Marketing_Airline_Network <- as.factor(aviation_sample_no_weather_features$Marketing_Airline_Network)
+
+class(aviation_sample_no_weather_features$DayofWeek) 
+aviation_sample_no_weather_features$DayofWeek <- as.factor(aviation_sample_no_weather_features$DayofWeek)
+
+
+class(aviation_sample_no_weather_features$Holidays)
+aviation_sample_no_weather_features$Holidays <- as.factor(aviation_sample_no_weather_features$Holidays)
+
+class(aviation_sample_no_weather_features$CRSDepTimeHourDis)
+aviation_sample_no_weather_features$CRSDepTimeHourDis <- as.factor(aviation_sample_no_weather_features$CRSDepTimeHourDis)
+
+aviation_sample_no_weather_features$DepDelayBinary <- as.factor(aviation_sample_no_weather_features$DepDelayBinary)
+```
+
+```{r}
+# class_weights <- table(aviation_sample_no_weather_features$ArrDelayBinary)
+# class_weights <- class_weights / sum(class_weights)
+```
+
+```{r}
+naive_model_ <- naiveBayes(DepDelayBinary ~ DestCityName + OriginCityName + DayofWeek + Holidays + Marketing_Airline_Network + CRSDepTimeHourDis, data = aviation_sample_no_weather_features, laplace = 0.001)
+```
+
+```{r}
+aviation_subset_predictions <- aviation_sample_no_weather_features %>%
+  mutate(predicted_delay = predict(naive_model_, newdata = .,))  # Probability of delay
+```
+
+```{r}
+# ggplot(aviation_subset_predictions, aes(x = predicted_prob, fill = as.factor(ArrDelayBinary))) +
+#   geom_histogram()
+```
+
+```{r}
+aviation_subset_predictions %>%
+  tabyl(DepDelayBinary, predicted_delay) %>%
+  adorn_percentages("row") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns()
+```
+
+```{r}
+aviation_subset_predictions %>% 
+  tabyl(ArrDelayBinary, predicted_delay) %>% 
+  adorn_percentages("row") %>% 
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns
+```
+
+### Logistic Regression
+
+```{r}
+# Fit the logistic regression model using rstanarm
+logistic_model <- stan_glm(
+  ArrDelayBinary ~ DestCityName + OriginCityName + Marketing_Airline_Network + 
+    DayofWeek + Holidays + CRSDepTimeHourDis, 
+  data = aviation_sample_no_weather_features, 
+  family = binomial(link = "logit"),
+  prior = normal(0, 2),       # Weakly informative prior
+  prior_intercept = normal(0, 2),
+  chains = 4, 
+  iter = 2000, 
+  seed = 123
+)
+
+# Summarize the model
+summary(logistic_model)
+
+# Generate predictions
+new_aviation_subset_predictions <- aviation_sample_no_weather_features %>%
+  mutate(
+    predicted_prob = predict(logistic_model, newdata = ., type = "response"),
+    predicted_delay = ifelse(predicted_prob > 0.5, 1, 0)
+  )
+
+# Create the confusion matrix
+new_aviation_subset_predictions %>% 
+  tabyl(ArrDelayBinary, predicted_delay) %>%
+  adorn_percentages("row") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns()
+```

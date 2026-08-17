@@ -1,0 +1,193 @@
+---
+title: "CHR"
+format: html
+editor: visual
+---
+
+### Libraries
+
+```{r}
+library(tidyverse)
+library(here)
+library(rstanarm)
+library(readxl)
+library(janitor)
+```
+
+### Data
+
+```{r}
+chr_data <- read_excel(here("data", "2025_County_Health_Rankings_Data.xlsx"), sheet = 2, skip = 1)
+```
+
+```{r}
+chr_data <- chr_data %>% 
+  clean_names()
+```
+
+#### Regression Variables of Interest
+
+-   `food_environment_index`
+
+    -   The **Food Environment Index (FEI)** is a **County Health Rankings** composite (0–10 scale, where **10 = best**) that summarizes how easy it is for people in a county to get enough **healthy, affordable food**.
+
+        It combines two pieces of information:
+
+        1.  **Food insecurity** – the estimated share of residents who lack reliable access to enough food.
+
+        2.  **Limited access to healthy foods** – the share of people who are **low-income and far from a grocery store** (typically ≥1 mile in urban areas or ≥10 miles in rural areas).
+
+            These components are blended and rescaled to 0–10:
+
+            **Higher FEI (closer to 10)** → lower food insecurity and better physical access to healthy food.
+
+            **Lower FEI (closer to 0)** → more food insecurity and poorer access (more “food deserts”).
+
+-   `percent_fair_or_poor_health`
+
+    -   a County Health Rankings (CHR) indicator from the BRFSS survey:
+
+        -   **What it is:** the **percentage of adults** who answer **“fair” or “poor”** to the question, “In general, would you say your health is excellent, very good, good, fair, or poor?”
+
+Simplify dataframe to select columns of interest
+
+```{r}
+chr_data_simplified <- chr_data %>% 
+  select(state, county, food_environment_index, percent_fair_or_poor_health)
+```
+
+### Simple scatter plot, linear model
+
+```{r}
+ggplot(chr_data_simplified, aes(x = food_environment_index, percent_fair_or_poor_health)) +
+  geom_point(alpha = 0.1) +
+  geom_smooth() +
+  stat_cor()
+```
+
+```{r}
+lm(percent_fair_or_poor_health ~ food_environment_index,chr_data_simplified)
+```
+
+**What it says:** For every **+1 point** increase in the **Food Environment Index (0–10, higher = better)**, the share of adults reporting **fair or poor health** is **about 2.6 percentage points lower**.
+
+### Priors
+
+Literature-Informed Priors: Fair/Poor Health \~ Food Environment Index
+
+Empirical Background
+
+Several studies using BRFSS, County Health Rankings (CHR), or linked datasets find that better local food access is associated with lower rates of poor self-rated health.
+
+| Parameter | Prior (percent scale) | What it encodes | Literature tie-in |
+|----|----|----|----|
+| **Intercept (β₀)** | `Normal(17, 4)` | At **average FEI**, a typical county has \~**17%** fair/poor health (95% prior ≈ **9–25%**) | BRFSS/CHR descriptive range (≈14–20% typical); compatible with Berkowitz (food insecurity ↔ higher % fair/poor) |
+| **Slope (β₁)** | `Normal(-1.3, 0.6)` *(pp per +1 FEI)* | Each **+1 FEI** is expected to **reduce** fair/poor health by **\~1.3 percentage points** on average (95% prior ≈ **−2.5 to −0.1** pp) | **Fan & Jin (2022)** report −**1.3 pp** per +1 FEI; **Liese et al. (2014)** (odds ≈1.1× worse per unit) implies ≈ **−1 to −1.6 pp** per +1 FEI near 15–20% baseline |
+| **Residual SD (σ)** | `Exponential(1/4.5)` | Mean residual scatter ≈ **4.5 percentage points** (allows substantial county heterogeneity) | County-level BRFSS/CHR models often show **4–6 pp** residual SD after single-predictor adjustment |
+
+### Simulation with rstanarm
+
+```{r}
+fei_model <- stan_glm(
+  percent_fair_or_poor_health ~ food_environment_index,
+  data = chr_data_simplified,
+  family = gaussian(),
+  prior_intercept = normal(17, 4),
+  prior           = normal(-1.3, 0.6) ,
+  prior_aux       = exponential(1/4.5),
+  chains = 4, iter = 4000, seed = 84735
+)
+```
+
+```{r}
+fei_model
+```
+
+→ Each **+1** in **Food Environment Index** is associated with **\~2.6 percentage-point lower** fair/poor health, on average.
+
+**Residual SD (sigma)** = **3.6 pp**: after accounting for FEI, counties typically vary by about ±3–4 percentage points around the line.
+
+```{r}
+library(tidyverse)
+library(rstanarm)
+library(bayesplot)
+library(broom)
+
+# 1) Prep data (percent scale)
+df <- chr_data_simplified |>
+  mutate(
+    FEI   = food_environment_index,
+    fair  = percent_fair_or_poor_health
+  ) |>
+  drop_na(FEI, fair)
+
+# 2) Specify your percent-scale priors (center FEI if you want intercept at typical county)
+prior_intercept <- normal(17, 4)      # % at average FEI (if you center FEI; see note below)
+prior_slope     <- normal(-1.3, 0.6)  # pp per +1 FEI
+prior_sigma     <- exponential(1/4.5)
+
+# (Optional) center FEI so β0 is “typical county”; if you do this, also change formula below to fair ~ FEI_c
+# df <- df |> mutate(FEI_c = FEI - mean(FEI, na.rm = TRUE))
+
+# 3) Posterior fit (your actual model)
+fit_post <- stan_glm(
+  fair ~ FEI,
+  data = df,
+  family = gaussian(),
+  prior_intercept = prior_intercept,
+  prior           = prior_slope,
+  prior_aux       = prior_sigma,
+  chains = 4, iter = 4000, seed = 84735
+)
+
+# 4) Prior-only draws (set prior_PD=TRUE). This samples parameters from the prior.
+fit_prior <- stan_glm(
+  fair ~ FEI,
+  data = df,
+  family = gaussian(),
+  prior_intercept = prior_intercept,
+  prior           = prior_slope,
+  prior_aux       = prior_sigma,
+  prior_PD = TRUE,
+  chains = 4, iter = 4000, seed = 84735
+)
+
+# Extract slope draws
+post_slope  <- as.matrix(fit_post)[,"FEI"]
+prior_slope_draws <- as.matrix(fit_prior)[,"FEI"]
+
+# 5) Likelihood (simple normal approximation) for the slope:
+#    Use OLS to get beta_hat and its SE; likelihood(β1|data) ∝ Normal(beta_hat, SE^2).
+ols <- lm(fair ~ FEI, data = df)
+beta_hat <- coef(ols)[["FEI"]]
+se_hat   <- coef(summary(ols))[["FEI","Std. Error"]]
+
+# Make a common grid over slope values to plot all three
+rng <- range(c(prior_slope_draws, post_slope, beta_hat + c(-6,6)*se_hat))
+grid <- seq(rng[1], rng[2], length.out = 800)
+
+dens_prior <- density(prior_slope_draws, n = 1024)
+dens_post  <- density(post_slope,        n = 1024)
+lik_curve  <- tibble(
+  x = grid,
+  y = dnorm(grid, mean = beta_hat, sd = se_hat)
+)
+
+# Normalize curves so they’re comparable visually
+scale_to_one <- function(y) y / max(y, na.rm = TRUE)
+prior_df <- tibble(x = dens_prior$x, y = scale_to_one(dens_prior$y), which = "Prior")
+post_df  <- tibble(x = dens_post$x,  y = scale_to_one(dens_post$y),  which = "Posterior")
+lik_df   <- tibble(x = lik_curve$x,  y = scale_to_one(lik_curve$y),  which = "Likelihood (Normal approx)")
+
+plot_df <- bind_rows(prior_df, lik_df, post_df)
+
+ggplot(plot_df, aes(x, y, color = which)) +
+  geom_line(size = 1) +
+  labs(
+    title = "Slope (percentage-point change per +1 FEI)",
+    x = "β₁ (pp per +1 FEI)",
+    y = "Scaled density"
+  ) +
+  theme_minimal()
+
+```

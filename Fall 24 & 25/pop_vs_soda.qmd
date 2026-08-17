@@ -1,0 +1,127 @@
+---
+title: "pop_vs_soda"
+format: html
+editor: visual
+---
+
+```{r, message=FALSE}
+library(bayesrules)
+library(tidyverse)
+library(janitor)
+library(scales)
+```
+
+#### Import data with bayesrules package
+
+```{r}
+data("pop_vs_soda")
+```
+
+#### Bring up dataset documentation
+
+```{r}
+?pop_vs_soda
+```
+
+#### Columns of Interest
+
+1\) region
+
+-   region in which the state that the respondent is from falls
+
+```{r}
+unique(pop_vs_soda$region)
+```
+
+2\) pop
+
+-   whether or not the respondent refers to fizzy cola drinks as "pop"
+
+-   we will change the values to be "says pop" or "no pop"
+
+```{r}
+unique(pop_vs_soda$pop)
+```
+
+```{r}
+pop_vs_soda <- pop_vs_soda %>%
+  mutate(pop = ifelse(pop, "says pop", "no pop"))
+```
+
+```{r}
+unique(pop_vs_soda$pop)
+```
+
+#### Bayes Theorem
+
+$$
+P(B \mid A) = \frac{P(B) L(B \mid A)}{P(A)} 
+$$
+
+A \<- says pop
+
+-   Ac \<- no pop
+
+B \<- from the south
+
+-   Bc \<- from somewhere else
+
+#### P(A)
+
+These priors are given to us by the textbook from the US Census
+
+-   Represent the united states regional distributions better than our dataset
+
+```{r}
+priors <- c(
+  midwest = 0.21,
+  northeast = 0.17,
+  south = 0.38,
+  west = 0.24
+)
+
+priors
+```
+
+```{r}
+prior_probability_from_south <- 0.38
+```
+
+#### L(B\|A) = P(A\|B)
+
+The probability that the respondent says pop given that they are from the south
+
+```{r}
+pop_vs_soda %>% 
+  tabyl(pop, region) %>% 
+  adorn_percentages("col")
+```
+
+```{r}
+likelihoods <- pop_vs_soda %>%
+  tabyl(pop, region) %>%
+  adorn_percentages("col") %>%
+  filter(pop == "says pop") %>%
+  select(-pop) %>%
+  unlist()
+
+likelihoods
+```
+
+3\) Marginal prior probability that a person uses the word pop
+
+```{r}
+prior_probability_says_pop <- sum(priors * likelihoods)
+prior_probability_says_pop
+```
+
+```{r}
+pop_vs_soda %>% 
+  tabyl(pop)
+```
+
+4\) Finding our posterior probability P(S\|A)
+
+```{r}
+(priors[3] * likelihoods[3]) / prior_probability_says_pop
+```

@@ -1,0 +1,292 @@
+---
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+# Conjugate Families in Bayesian Analysis
+
+## Learning Objectives (5 minutes)
+
+By the end of this session, you will: - Identify when to use
+Beta-Binomial, Gamma-Poisson, and Normal-Normal models - Apply conjugate
+prior update formulas to real data - Interpret the balance between prior
+beliefs and observed data in posterior distributions
+
+------------------------------------------------------------------------
+
+## Introduction to Conjugate Families (10 minutes)
+
+### The Challenge of Bayesian Updating
+
+Standard Bayesian updating requires:
+
+```         
+Posterior ∝ Prior × Likelihood
+```
+
+followed by integration to normalize the posterior distribution. This
+integration is often mathematically intractable.
+
+### Definition: Conjugate Prior
+
+A **conjugate prior** is a prior distribution that, when combined with a
+specific likelihood function, produces a posterior distribution from the
+same family as the prior.
+
+**Key advantage**: No integration required - posterior parameters can be
+computed directly through simple formulas.
+
+### Interactive Exercise: Data Type Identification
+
+Examine each scenario and identify the data type:
+
+``` r
+# Scenario 1: Coin flips - 12 heads out of 20 tosses
+# Data type: _______________
+
+# Scenario 2: Daily fraud calls over 4 days: 6, 2, 2, 1
+# Data type: _______________  
+
+# Scenario 3: Hippocampal volumes: 5.2, 6.1, 5.8, 6.0 cm³
+# Data type: _______________
+```
+
+------------------------------------------------------------------------
+
+## Beta-Binomial Conjugate Family (15 minutes)
+
+### Application Context
+
+-   **Data**: Success/failure counts from fixed number of trials
+-   **Parameter**: Probability π ∈ \[0,1\]
+
+### Update Formula
+
+```         
+Prior: Beta(α, β)
+Data: y successes out of n trials
+Posterior: Beta(α + y, β + n - y)
+```
+
+### Example: Medical Test Accuracy (from text concepts)
+
+``` r
+library(bayesrules)
+library(tidyverse)
+
+# Prior belief about test accuracy
+# Beta(7, 3) represents moderate confidence in 70% accuracy
+alpha_prior <- 7
+beta_prior <- 3
+
+# Plot prior
+plot_beta(alpha = alpha_prior, beta = beta_prior)
+
+# Observed data: 18 correct diagnoses out of 20 tests
+y <- 18
+n <- 20
+
+# Calculate posterior parameters
+alpha_post <- alpha_prior + y
+beta_post <- beta_prior + (n - y)
+
+print(paste("Posterior: Beta(", alpha_post, ",", beta_post, ")"))
+
+# Visualize complete analysis
+plot_beta_binomial(alpha = alpha_prior, beta = beta_prior, y = y, n = n)
+```
+
+### Practice Problem
+
+Calculate the posterior for a proportion parameter: - Prior: Beta(2,
+3) - Data: 8 successes out of 12 trials
+
+``` r
+# Fill in the calculations
+alpha_new <- _____ + _____
+beta_new <- _____ + _____
+```
+
+------------------------------------------------------------------------
+
+## Gamma-Poisson Conjugate Family (15 minutes)
+
+### Application Context
+
+-   **Data**: Count data with no upper bound
+-   **Parameter**: Rate λ \> 0
+
+### Update Formula
+
+```         
+Prior: Gamma(s, r)
+Data: ∑yi total events in n time periods  
+Posterior: Gamma(s + ∑yi, r + n)
+```
+
+### Example: Fraud Risk Phone Calls (from text)
+
+``` r
+# Prior belief: expect 5 calls/day, range 2-7
+# Gamma(10, 2) gives mean = 10/2 = 5
+s_prior <- 10
+r_prior <- 2
+
+plot_gamma(shape = s_prior, rate = r_prior)
+
+# Observed data over 4 days: 6, 2, 2, 1 calls
+fraud_calls <- c(6, 2, 2, 1)
+n_days <- length(fraud_calls)
+total_calls <- sum(fraud_calls)
+
+print(paste("Total calls:", total_calls))
+print(paste("Sample mean:", total_calls/n_days))
+
+# Update parameters using conjugate formula
+s_post <- s_prior + total_calls
+r_post <- r_prior + n_days
+
+print(paste("Posterior: Gamma(", s_post, ",", r_post, ")"))
+print(paste("Posterior mean:", s_post/r_post))
+
+# Visualize the complete analysis
+plot_gamma_poisson(shape = s_prior, rate = r_prior, 
+                   sum_y = total_calls, n = n_days)
+
+# Summary statistics
+summarize_gamma_poisson(shape = s_prior, rate = r_prior,
+                       sum_y = total_calls, n = n_days)
+```
+
+### Key Insight
+
+The posterior mean (3.5) lies between the prior mean (5.0) and the
+sample mean (2.75), closer to the sample mean due to the strength of the
+data relative to the prior.
+
+------------------------------------------------------------------------
+
+## Normal-Normal Conjugate Family (10 minutes)
+
+### Application Context
+
+-   **Data**: Continuous measurements
+-   **Parameter**: Mean μ ∈ (-∞, ∞)
+-   **Assumption**: Known standard deviation σ
+
+### Update Formula (Simplified)
+
+The posterior mean is a precision-weighted average of the prior mean and
+sample mean, with precision = 1/variance.
+
+### Example: Hippocampal Volume Analysis (from text)
+
+``` r
+# Prior belief about mean hippocampal volume
+# Normal(6.5, 0.4²) based on general population data
+theta_prior <- 6.5
+tau_prior <- 0.4
+
+# Observed data from concussion patients
+y_bar <- 5.735  # sample mean
+n <- 25         # sample size  
+sigma <- 0.5    # assumed known standard deviation
+
+# The complex formula simplifies to:
+plot_normal_normal(mean = theta_prior, sd = tau_prior, 
+                   sigma = sigma, y_bar = y_bar, n = n)
+
+# Summary of results
+summarize_normal_normal(mean = theta_prior, sd = tau_prior,
+                       sigma = sigma, y_bar = y_bar, n = n)
+```
+
+------------------------------------------------------------------------
+
+## Pattern Recognition Across Families (5 minutes)
+
+### Common Structure
+
+| Family        | Data Type        | Prior        | Update Rule      |
+|---------------|------------------|--------------|------------------|
+| Beta-Binomial | Successes/trials | Beta(α,β)    | α+y, β+n-y       |
+| Gamma-Poisson | Count totals     | Gamma(s,r)   | s+∑y, r+n        |
+| Normal-Normal | Continuous       | Normal(θ,τ²) | Weighted average |
+
+### Universal Principle
+
+In all conjugate families, the posterior represents a balance between: -
+Prior beliefs (weighted by prior precision) - Sample data (weighted by
+sample size and data precision)
+
+More data → posterior moves closer to sample statistics Stronger prior →
+posterior retains more prior influence
+
+------------------------------------------------------------------------
+
+## Hands-On Application (20 minutes)
+
+### Choose One Scenario to Analyze Completely
+
+#### Option A: Milgram Obedience Study Context
+
+Analyze the proportion of participants who would obey an authority
+figure. - Historical data suggests 50% compliance rate - New study
+observes 8 compliance events out of 15 participants - Use Beta-Binomial
+analysis
+
+#### Option B: Phone Call Rate Analysis
+
+Extend the fraud call example with new data. - Original posterior:
+Gamma(21, 6) from 4 days of observation - Additional 3 days yield: 4, 1,
+5 calls - Update the posterior sequentially
+
+#### Option C: Hippocampal Volume Comparison
+
+Compare volumes between concussion and control groups. - Use the same
+prior: Normal(6.5, 0.4²)\
+- Control group data: n=25, mean=6.2, σ=0.5 - Analyze and compare to the
+concussion group results
+
+### Implementation Framework
+
+``` r
+# Step 1: Specify your conjugate family
+# Step 2: Define prior parameters based on context
+# Step 3: Identify your data summary statistics
+# Step 4: Apply the conjugate update formula  
+# Step 5: Interpret results in context
+```
+
+------------------------------------------------------------------------
+
+## Summary and Assessment (5 minutes)
+
+### Key Takeaways
+
+1.  **Conjugate families** provide exact analytical solutions for
+    posterior distributions
+2.  **Model selection** depends on data type:
+    -   Bounded counts → Beta-Binomial
+    -   Unbounded counts → Gamma-Poisson
+    -   Continuous data → Normal-Normal
+3.  **Posterior balance** reflects the relative strength of prior
+    beliefs and sample data
+4.  **Computational efficiency** makes conjugate families attractive for
+    real-time applications
+
+### Limitations to Remember
+
+-   Prior distributions may not capture true beliefs
+-   Assumptions (e.g., known variance in Normal-Normal) may be
+    unrealistic
+-   Limited flexibility compared to general Bayesian methods
+
+### Self-Assessment Questions
+
+-   Can you identify the appropriate conjugate family for different data
+    scenarios?
+-   Do you understand how to interpret the balance between prior and
+    data in the posterior?
+-   Can you apply the update formulas correctly?

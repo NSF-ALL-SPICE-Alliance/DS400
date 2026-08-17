@@ -1,0 +1,103 @@
+---
+title: "Hierarchical Models w/ Running Data"
+format: html
+editor: visual
+---
+
+```{r, warning=FALSE, message=FALSE}
+library(bayesrules)
+library(tidyverse)
+library(rstanarm)
+library(broom.mixed)
+library(plotly)
+```
+
+```{r}
+data(cherry_blossom_sample)
+```
+
+```{r}
+running <- cherry_blossom_sample %>% 
+  select(runner, age, net)
+```
+
+```{r}
+ggplot(running, aes(x = runner, y = net)) + 
+  geom_boxplot() +
+  theme_minimal()
+```
+
+```{r}
+ggplot(running, aes(x = net, fill = as.factor(age))) +
+  geom_histogram()
+```
+
+```{r}
+ggplot(running, aes(x = as.factor(age), y = net)) + 
+  geom_boxplot() +
+  theme_minimal()
+```
+
+```{r}
+ggplot(running, aes(y = net, x = age)) + 
+  geom_point() 
+```
+
+```{r}
+a <- ggplot(running, aes(x = age, y = net, group = runner, color = runner)) + 
+  geom_line() +
+  geom_point() +
+  scale_colour_viridis_d(option = "plasma") +
+  theme_minimal()
+
+ggplotly(a)
+```
+
+```{r}
+b <- ggplot(running, aes(x = age, y = net, color = runner)) + 
+  geom_point() + 
+  geom_smooth(method = "lm", se = FALSE, fullrange = TRUE) +
+  scale_colour_viridis_d(option = "plasma") +
+  theme_minimal()
+
+ggplotly(b)
+```
+
+```{r}
+hierarchical_model <- stan_glmer(
+  net ~ age + (age | runner),  # Predict net time using age with varying intercepts and slopes for each runner
+  data = running,              # Your dataset
+  family = gaussian(),          # Assuming the outcome (net time) is normally distributed
+  chains = 4,                   # Number of Markov chains
+  iter = 2000                   # Number of iterations per chain
+)
+```
+
+```{r}
+hierarchical_model
+```
+
+```{r}
+# Step 1: Filter out rows with missing 'net' values to match the model's data
+running_clean <- running %>% filter(!is.na(net))
+
+# Step 2: Generate posterior predictions for the filtered dataset
+predictions <- posterior_predict(hierarchical_model)
+
+# Step 3: Compute the median of the posterior predictions
+running_clean$predicted_net <- apply(predictions, 2, median)
+
+# Step 4: Plot the original data and predicted values
+b <- ggplot(running_clean, aes(x = age, y = net, color = factor(runner))) + 
+  geom_point(alpha = 0.6) +  # Original data points
+  geom_line(aes(y = predicted_net), size = 1) +  # Predicted values
+  scale_colour_viridis_d(option = "plasma") +  # Use a color palette for runners
+  theme_minimal() + 
+  labs(title = "Hierarchical Model Predictions for Each Runner",
+       x = "Age",
+       y = "Net Time",
+       color = "Runner")
+
+# Step 5: Make the plot interactive
+ggplotly(b)
+```
