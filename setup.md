@@ -22,7 +22,7 @@ By the end of class, you will have:
 
 Make sure you have the latest version of R installed:  
 - Check in console with R.version
-- R version 4.5.1 (2025-06-13)
+- R version 4.6.1 
 - [Download R here](https://cran.r-project.org/)
 
 ---
