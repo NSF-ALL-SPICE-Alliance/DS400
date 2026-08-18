@@ -1,4 +1,4 @@
-# Welcome to DS400, Bayesian Statistics 🌊 🌱 🌎
+# Welcome to DS400, Bayesian Statistics 
 
 
 <img width="235" alt="Screen Shot 2024-08-22 at 4 26 52 PM" src="https://github.com/user-attachments/assets/20e929e1-18ea-4cc7-a15e-9ed24af27f31">
@@ -6,26 +6,59 @@
 
 
 #### Class Location & Times
-🏫 Upstairs Data Science Center, Tuesdays & Thursdays | 10:00 - 11:20 
+🏫 Data Science Center, Tuesdays & Thursdays | 2:30 - 3:50 
 
 #### Office Hours
 
-🕥 Tuesdays 11:20 - 12:30
+🕥 Tuesdays 1:30 - 2:30
 
 
 📆 By appointment, email connor.flynn@chaminade.edu
 
 
-💻 I **strongly reccommed attending office hours** for any of the following:
-
-- Reviewing bayesian theory
-- Troubleshooting code
-- Help building your personal data science portfolio
-- Chatting about opportunities in data science with the All-SPICE Alliance & other orgs
-
-#### Resources
+#### Text
 
 📕 [Bayes Rules!](https://www.bayesrulesbook.com/)
+
+#### Points Breakdown
+
+| Assignment              | Points |
+|-------------------------|--------|
+| 3 Assignments            | 30     |
+| 1 Presentation           | 15     |
+| Class Code & Completed Challenges pushed to Github   | 25 |
+| Attendance               | 10     |
+| Final Project            | 20     |
+
+
+
+
+#### Course Schedule
+
+ Unit | Timing | Concept | Dataset | Guiding Questions |
+|---|---|---|---|---|
+| 1 | Late Aug | Bayes' Theorem — priors, likelihoods, posteriors | Screening-test statistics | Given a positive test result, what's the real probability of having the disease? How does prior prevalence change the answer? |
+| 2 | Late Aug – Early Sep | Beta-Binomial rate estimation; Normal model & credible intervals; intro to partial pooling | Waikiki Roughwater Swim | Will I finish? How fast? What place, given my age group's history? |
+| 3 | Early–Mid Sep | Naive Bayes classification | Enron-Spam corpus | Is this email spam? How do we combine evidence from many features, and where does the model fail? |
+| 4 | Mid Sep | Bayes factors & likelihood ratios | AI text watermarking | How much evidence does a detection score provide? When is it "strong" vs. "decisive"? |
+| 5 | Mid–Late Sep | Hierarchical / multilevel models, partial pooling formalized | Public polling data | How do we combine polls of different sizes and sources into one estimate, without over-trusting small samples? |
+| 6 | Late Sep – Early Oct | Bayesian logistic regression; intro to MCMC | Telco Customer Churn | Which features predict churn? How do priors regularize the model, and how do we sample a posterior with no closed form? |
+| 7 | Early–Mid Oct | Bayesian A/B (and A/B/*n*) testing | Upworthy Research Archive | Which variant actually performs better, and with what probability? |
+| — | **Tue 10/13 & Thu 10/15** | **Fall Break — No Class** | — | — |
+| 8 | Mid–Late Oct | Bayesian time series & changepoint detection | NOAA temperature anomalies | When did a trend actually shift, and how confident are we in that changepoint? |
+| — | Late Oct | Review, synthesis, and midterm project checkpoint | All course datasets | — |
+| — | **Tue 11/3, Thu 11/5, Tue 11/10** | **Guest Lectures — Dr. Helen Turner** | — | — |
+| — | Mid Nov | Open lab / applied practice | Student's choice | — |
+| — | **Tue 11/17 – Tue 11/24** | **Final Project Prep** | — | — |
+| — | **Thu 11/26** | **Thanksgiving — No Class** | — | — |
+| — | **Tue 12/1** | **Final Presentations** | — | — |
+| — | **Thu 12/3** | **Feedback Implementation Workshop** | — | — |
+
+
+
+
+
+
 
 #### 2024 Final Projects Showcases
 
@@ -39,56 +72,5 @@
 [BayesBikes-Bikeshare-analytics](https://github.com/aekau21/BayesBikes-Bikeshare-analytics)
 
 
-
-#### Course Schedule
-
-
-| Week         | Day       | Module                                                             | Assignment Due |
-|--------------|-----------|--------------------------------------------------------------------|----------------|
-| 8/24-8/30    | Tuesday   | Class Intro, R & Github Setup                                    |                |
-| 8/24-8/30    | Thursday  | Big Picture, Preface of Bayes Rules                              |                |
-| 8/31-9/6     | Tuesday   | Coding in R                                                      |                |
-| 8/31-9/6     | Thursday  |  Coding in R                                                     |                |
-| 9/7-9/13     | Tuesday   |   Coding in R                                                    |                |
-| 9/7-9/13     | Thursday  | Bayes Theorem: Fake News                                         |                |
-| 9/14-9/20    | Tuesday   | Bayes Theorem: Pop vs Soda                                       |                |
-| 9/14-9/20    | Thursday  | Bayes Theorem: NHANES, Diabetes and Ahi Consumption              |                |
-| 9/21-9/27    | Tuesday   | Bayes Theorem: NHANES, Diabetes and Age                          |                |
-| 9/21-9/27    | Thursday  | Election Results, Beta Binomial Model                            | [nhanes.qmd challenge](https://chaminade.instructure.com/courses/36857/assignments/369280) due before class (10:00am) |
-| 9/28-10/4    | Tuesday   | Positive Test Result                                             |                |
-| 9/28-10/4    | Thursday  | Second Positive Test Result                                      | Write predictions of second positive test result due before class (10:00am) |
-| 10/5-10/11   | Tuesday   | Naive Bayes Classification Penguins                              |                |
-| 10/5-10/11   | Thursday  | Naive Bayes Classification Penguins                              |                |
-| 10/12-10/18  | Tuesday   | Naive Bayes Breast Cancer                                        |                |
-| 10/12-10/18  | Thursday  | Naive Bayes Spam                                                 |                |
-| 10/19-10/25  | Tuesday   | Hierarchial Models                                               | Naive Bayes Assignment (2X) due before class (10:00am) |
-| 10/19-10/25  | Thursday  | Hierarchial Models                                               |                |
-| 10/26-11/1   | Tuesday   | Hierarchial Models                                               |                |
-| 10/26-11/1   | Thursday  | Hierarchial Models                                               |                |
-| 11/2-11/8    | Tuesday   | Presentations                                                    |                |
-| 11/2-11/8    | Thursday  | Presentations                                                    |                |
-| 11/9-11/15   | Tuesday   | Time Series Bayes                                                |                |
-| 11/9-11/15   | Thursday  | Use Cases                                                        |                |
-| 11/16-11/22  | Tuesday   | Final Projects Workshop                                          |                |
-| 11/16-11/22  | Thursday  | Final Projects Workshop                                          |                |
-| 11/23-11/29  | Tuesday   | Final Projects Workshop                                          |                |
-| 11/23-11/29  | Thursday  | Thanksgiving                                                     |                |
-| 11/30-12/5   | Tuesday   | Final Project Presentations                                      |                |
-| 11/30-12/5   | Thursday  | Final Project Presentations                                      |                |
-| 12/5        | Thursday  | **Final Project Due!)**                              |                |
-
-
-
-#### Assignments and Points Breakdown
-
-| Assignment              | Points |
-|-------------------------|--------|
-| NHANES                  | 8      |
-| Two Positive Results     | 8      |
-| Naive Bayes Fake News    | 16     |
-| Hierarchical Models      | 16     |
-| Presentations            | 16     |
-| Final Project            | 24     |
-| GitHub                   | 12     |
 
 
