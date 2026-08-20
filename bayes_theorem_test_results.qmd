@@ -1,0 +1,118 @@
+---
+title: "Test Results"
+format: html
+editor: visual
+---
+
+#### Load Libraries
+
+```{r, message=FALSE}
+library(tidyverse)
+library(vembedr)
+```
+
+```{r}
+embed_url("https://www.youtube.com/watch?v=R13BD8qKeTg")
+```
+
+#### The Story
+
+You test positive for a rare disease that only effects 0.001 (One in one thousand people).
+
+So you ask the doctor:
+
+- How certain is it that I have this disease?
+  - The test correctly identifies 99% of people that have the disease and only incorrectly identifies 1% of people that don't have the disease
+
+What are the chances that you actually have this disease?
+
+- Some would say 99%, the accuracy of the test What does bayes say?
+
+$$P(B \mid A) = \frac{P(B) P(A \mid B)}{P(A)}$$
+
+B \<- Has Disease
+
+A \<- Positive test result
+
+P(B\|A) \<- The probability of having the disease given a positive test result
+
+#### Simulate the Data
+
+```{r}
+set.seed(70)  # For reproducibility
+
+# Parameters
+n_patients <- 10000  # Total population size
+n_diseased <- 10     # Number of patients with the disease
+sensitivity <- 0.99  # True positive rate (sensitivity)
+false_positive_rate <- 0.01  # False positive rate
+
+# Step 1: Create the DataFrame with patients
+patients <- data.frame(
+  patient_id = 1:n_patients,
+  has_disease = c(rep("yes", n_diseased), rep("no", n_patients - n_diseased))  # 10 with the disease, rest without
+)
+
+# Shuffle the DataFrame to randomize patient order
+patients <- patients %>%
+  sample_frac(size = 1)
+
+# Step 2: Simulate the test results based on disease status
+patients <- patients %>%
+  mutate(
+    # Test result is positive if the person has the disease and the test is sensitive,
+    # or if they don't have the disease but it's a false positive
+    test_result = case_when(
+      has_disease == "yes" & rbinom(n_patients, size = 1, prob = sensitivity) == 1 ~ "positive",
+      has_disease == "no" & rbinom(n_patients, size = 1, prob = false_positive_rate) == 1 ~ "positive",
+      TRUE ~ "negative"
+    )
+  )
+```
+
+#### Apply Bayes Theorem in Class
+
+##### P(B)
+
+```{r}
+patients %>% 
+  count(has_disease) %>% 
+  mutate(percent = n / sum(n))
+```
+
+```{r}
+probability_disease <- 0.001
+```
+
+##### P(A\|B)
+
+```{r}
+patients %>% 
+  count(has_disease, test_result) %>% 
+  group_by(has_disease) %>% 
+  mutate(percent = n / sum(n)) 
+```
+
+```{r}
+probability_positive_result_given_disease <- 1
+```
+
+##### P(A)
+
+```{r}
+patients %>% 
+  count(test_result) %>% 
+  mutate(percent = n / sum(n))
+```
+
+```{r}
+probability_positive_test_result <- 0.0102
+```
+
+##### P(B\|A)
+
+```{r}
+(probability_positive_result_given_disease * probability_disease) / probability_positive_test_result
+```
+
+#### 
