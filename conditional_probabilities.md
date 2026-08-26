@@ -13,8 +13,8 @@
 ### Exploratory Data Analysis
 - Download the data 
 - Open an new QMD and name it conditional_probability_workshop
-- Read the data in with <read_csv> and <here>
-- Write R Code to create these 4 visualizations with <ggplot>
+- Read the data in with `read_csv()` and `here()`
+- Write R Code to create these 4 visualizations with `ggplot`
 
 
 
