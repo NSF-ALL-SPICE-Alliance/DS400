@@ -1,0 +1,1501 @@
+swimmer_id,race_year,age,lifeguard_cert,years_coached,years_ow_experience,race_id,race_name,location,distance_mi,swell_ft_typical,water_temp_f,current_strength,difficulty_rating,finished,finish_time_min
+SW0001,2019,67,N,4,9.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,62.2
+SW0001,2019,67,N,4,9.1,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,52.6
+SW0001,2020,68,N,4,10.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,80.7
+SW0001,2022,70,N,4,12.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,68.7
+SW0001,2022,70,N,4,12.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0001,2023,71,N,5,13.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,21.3
+SW0001,2024,72,N,4,14.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,22.2
+SW0002,2022,53,N,2,5.9,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,89.1
+SW0002,2022,53,N,1,5.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,94.8
+SW0002,2023,54,N,1,6.9,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,69.7
+SW0002,2024,55,N,1,7.9,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0003,2019,53,N,2,0.7,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,66.8
+SW0003,2020,54,N,2,1.7,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0003,2020,54,N,2,1.7,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0003,2022,56,N,2,3.7,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0003,2024,58,N,2,5.7,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0004,2019,64,N,2,6.3,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,84.3
+SW0004,2020,65,N,3,7.3,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0004,2021,66,N,2,8.3,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0004,2021,66,N,2,8.3,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0004,2022,67,N,2,9.3,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,26.2
+SW0005,2019,48,N,1,1.3,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0005,2022,51,N,1,4.3,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,31.7
+SW0005,2024,53,N,1,6.3,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,33.7
+SW0005,2024,53,N,1,6.3,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,59.2
+SW0006,2019,58,N,3,5.7,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,24.4
+SW0006,2020,59,N,3,6.7,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,31.4
+SW0006,2022,61,N,4,8.7,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0006,2024,63,N,3,10.7,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,20.7
+SW0007,2019,61,N,5,6.5,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0007,2020,62,N,5,7.5,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,32.5
+SW0007,2021,63,N,5,8.5,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0007,2022,64,N,5,9.5,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0007,2023,65,N,6,10.5,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,79.5
+SW0007,2023,65,N,6,10.5,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0007,2023,65,N,5,10.5,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0007,2023,65,N,6,10.5,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,79.5
+SW0007,2023,65,N,5,10.5,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0008,2020,30,N,3,18.7,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0008,2020,30,N,3,18.7,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0008,2021,31,N,3,19.7,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0008,2022,32,N,3,20.7,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,53.4
+SW0008,2023,33,N,3,21.7,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0008,2023,33,N,3,21.7,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,24.0
+SW0009,2019,20,N,1,1.7,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0009,2020,21,N,1,2.7,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0009,2023,24,N,2,5.7,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,35.9
+SW0010,2020,34,N,1,6.4,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,53.9
+SW0010,2020,34,N,1,6.4,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,32.4
+SW0010,2022,36,N,1,8.4,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,27.0
+SW0010,2022,36,N,1,8.4,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,32.1
+SW0010,2024,38,N,2,10.4,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0010,2024,38,N,1,10.4,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,57.9
+SW0011,2019,32,N,1,5.2,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,47.0
+SW0011,2021,34,N,1,7.2,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,23.4
+SW0011,2021,34,N,1,7.2,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,23.4
+SW0011,2023,36,N,1,9.2,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,44.6
+SW0011,2023,36,N,1,9.2,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,39.0
+SW0012,2019,63,N,3,8.2,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,52.3
+SW0012,2020,64,N,3,9.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,85.7
+SW0012,2020,64,N,3,9.2,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0012,2024,68,N,4,13.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0013,2019,65,N,2,11.2,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,55.5
+SW0013,2020,66,N,2,12.2,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,29.8
+SW0013,2020,66,N,2,12.2,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0013,2021,67,N,2,13.2,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,45.0
+SW0013,2022,68,N,2,14.2,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,62.3
+SW0013,2023,69,N,3,15.2,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,25.2
+SW0014,2019,18,N,3,3.5,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0014,2022,21,N,3,6.5,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0014,2022,21,N,4,6.5,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0014,2023,22,N,3,7.5,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,30.3
+SW0014,2024,23,N,4,8.5,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,29.2
+SW0015,2019,43,N,3,1.9,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0015,2020,44,N,4,2.9,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0015,2021,45,N,3,3.9,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0015,2022,46,N,3,4.9,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0015,2022,46,N,4,4.9,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,119.1
+SW0015,2023,47,N,4,5.9,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0015,2023,47,N,3,5.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0016,2019,60,N,1,0.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0016,2019,60,N,1,0.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0016,2020,61,N,1,1.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0016,2021,62,N,2,2.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0016,2022,63,N,1,3.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0016,2023,64,N,1,4.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0016,2023,64,N,1,4.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0017,2020,25,Y,3,2.4,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,70.9
+SW0017,2020,25,Y,2,2.4,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0017,2020,25,Y,3,2.4,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,43.4
+SW0017,2021,26,Y,2,3.4,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,50.0
+SW0017,2021,26,Y,2,3.4,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,25.2
+SW0017,2023,28,Y,3,5.4,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,25.2
+SW0018,2020,60,N,3,9.7,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,78.7
+SW0018,2020,60,N,4,9.7,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,75.8
+SW0018,2021,61,N,4,10.7,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,19.5
+SW0018,2021,61,N,4,10.7,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,42.2
+SW0018,2021,61,N,4,10.7,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,42.2
+SW0018,2022,62,N,3,11.7,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,62.1
+SW0018,2023,63,N,4,12.7,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,54.8
+SW0018,2024,64,N,3,13.7,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,45.2
+SW0018,2024,64,N,3,13.7,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,53.7
+SW0019,2019,24,N,4,6.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0019,2022,27,N,4,9.2,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,24.4
+SW0019,2024,29,N,4,11.2,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0019,2024,29,N,4,11.2,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0020,2019,42,N,3,0.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0020,2020,43,N,3,1.9,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0020,2020,43,N,3,1.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,126.2
+SW0020,2021,44,N,4,2.9,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0021,2019,60,N,2,4.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,25.4
+SW0021,2020,61,N,3,5.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0021,2021,62,N,2,6.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,56.2
+SW0021,2023,64,N,3,8.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,27.0
+SW0021,2024,65,N,3,9.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,74.0
+SW0021,2024,65,N,2,9.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,63.6
+SW0022,2019,33,N,2,6.2,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0022,2023,37,N,3,10.2,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,28.7
+SW0022,2023,37,N,2,10.2,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0023,2019,35,N,4,8.5,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0023,2019,35,N,4,8.5,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,26.7
+SW0023,2020,36,N,4,9.5,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0023,2024,40,N,5,13.5,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0024,2021,34,N,1,5.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0024,2023,36,N,1,7.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0024,2023,36,N,1,7.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0025,2019,55,N,3,4.7,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0025,2019,55,N,3,4.7,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0025,2022,58,N,3,7.7,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,48.8
+SW0025,2022,58,N,3,7.7,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0025,2022,58,N,3,7.7,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0025,2022,58,N,3,7.7,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,48.8
+SW0025,2024,60,N,3,9.7,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,71.3
+SW0026,2019,31,N,3,0.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0026,2019,31,N,3,0.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,89.1
+SW0026,2020,32,N,3,1.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0026,2021,33,N,4,2.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0026,2022,34,N,3,3.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0026,2022,34,N,3,3.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,65.2
+SW0026,2024,36,N,4,5.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,48.2
+SW0026,2024,36,N,4,5.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,48.2
+SW0027,2020,70,N,1,1.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0027,2022,72,N,2,3.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,79.2
+SW0027,2022,72,N,1,3.2,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0027,2023,73,N,1,4.2,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0028,2020,42,N,1,15.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,98.0
+SW0028,2020,42,N,2,15.1,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,58.3
+SW0028,2021,43,N,2,16.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0028,2022,44,N,1,17.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,69.8
+SW0028,2022,44,N,1,17.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,91.4
+SW0029,2019,42,Y,3,0.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0029,2020,43,Y,3,1.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0029,2020,43,Y,4,1.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,31.8
+SW0029,2022,45,Y,3,3.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0029,2023,46,Y,3,4.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0029,2024,47,Y,3,5.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0029,2024,47,Y,4,5.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,103.9
+SW0030,2020,45,Y,5,5.3,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0030,2021,46,Y,5,6.3,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,26.6
+SW0030,2021,46,Y,4,6.3,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,23.1
+SW0030,2022,47,Y,5,7.3,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0030,2022,47,Y,5,7.3,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,104.6
+SW0030,2023,48,Y,4,8.3,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0030,2023,48,Y,4,8.3,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,83.3
+SW0030,2024,49,Y,4,9.3,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,27.3
+SW0031,2020,49,Y,3,8.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0031,2020,49,Y,3,8.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,31.5
+SW0031,2021,50,Y,3,9.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,29.8
+SW0031,2022,51,Y,3,10.1,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,78.6
+SW0031,2024,53,Y,3,12.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0031,2024,53,Y,3,12.1,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,91.7
+SW0032,2020,47,N,2,5.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,84.1
+SW0032,2020,47,N,3,5.1,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,61.9
+SW0032,2020,47,N,2,5.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0032,2020,47,N,2,5.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,29.2
+SW0032,2021,48,N,3,6.1,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0032,2021,48,N,2,6.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,60.6
+SW0032,2023,50,N,2,8.1,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,61.1
+SW0033,2019,44,N,1,2.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0033,2020,45,N,1,3.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,29.9
+SW0033,2023,48,N,1,6.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,56.9
+SW0034,2019,69,Y,4,5.7,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0034,2023,73,Y,4,9.7,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,26.1
+SW0034,2024,74,Y,5,10.7,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,91.4
+SW0035,2020,60,N,2,7.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,45.2
+SW0035,2020,60,N,2,7.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0035,2021,61,N,3,8.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0035,2022,62,N,2,9.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0035,2022,62,N,2,9.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,93.3
+SW0035,2023,63,N,3,10.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,50.7
+SW0036,2019,59,N,3,5.6,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0036,2021,61,N,3,7.6,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0036,2023,63,N,4,9.6,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0037,2020,55,N,3,1.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0037,2020,55,N,3,1.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0037,2020,55,N,4,1.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0037,2021,56,N,4,2.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0037,2022,57,N,3,3.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0037,2022,57,N,3,3.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0037,2023,58,N,4,4.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,53.3
+SW0037,2023,58,N,3,4.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0038,2020,51,N,2,6.3,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,86.3
+SW0038,2021,52,N,2,7.3,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,57.5
+SW0038,2023,54,N,2,9.3,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,94.1
+SW0038,2024,55,N,2,10.3,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0038,2024,55,N,2,10.3,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0039,2020,36,N,3,2.7,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0039,2020,36,N,3,2.7,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,24.1
+SW0039,2023,39,N,2,5.7,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,79.8
+SW0039,2024,40,N,3,6.7,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,62.9
+SW0040,2020,70,N,3,4.3,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,26.3
+SW0040,2020,70,N,3,4.3,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,41.3
+SW0040,2021,71,N,3,5.3,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,50.2
+SW0040,2024,74,N,3,8.3,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0040,2024,74,N,4,8.3,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,24.9
+SW0041,2021,44,N,2,9.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,64.9
+SW0041,2021,44,N,3,9.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,87.8
+SW0041,2022,45,N,2,10.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,61.3
+SW0041,2023,46,N,2,11.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,65.3
+SW0042,2019,29,N,1,9.2,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,88.2
+SW0042,2019,29,N,1,9.2,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,31.7
+SW0042,2020,30,N,1,10.2,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0042,2020,30,N,1,10.2,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0043,2019,61,N,3,10.5,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,45.2
+SW0043,2019,61,N,3,10.5,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0043,2020,62,N,3,11.5,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,22.9
+SW0043,2021,63,N,4,12.5,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0043,2022,64,N,4,13.5,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,65.0
+SW0043,2022,64,N,4,13.5,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,49.1
+SW0043,2023,65,N,4,14.5,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,61.5
+SW0043,2024,66,N,3,15.5,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0044,2019,26,Y,1,3.5,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,113.4
+SW0044,2020,27,Y,1,4.5,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0044,2021,28,Y,1,5.5,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,71.9
+SW0044,2022,29,Y,2,6.5,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0044,2023,30,Y,1,7.5,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0044,2023,30,Y,1,7.5,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0045,2019,62,Y,5,10.6,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,60.7
+SW0045,2019,62,Y,5,10.6,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,36.2
+SW0045,2019,62,Y,5,10.6,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,21.2
+SW0045,2019,62,Y,5,10.6,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,73.2
+SW0045,2023,66,Y,5,14.6,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,18.6
+SW0045,2023,66,Y,5,14.6,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,41.1
+SW0045,2024,67,Y,5,15.6,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,17.6
+SW0046,2019,49,N,2,11.9,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0046,2019,49,N,2,11.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0046,2020,50,N,2,12.9,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,23.4
+SW0046,2022,52,N,3,14.9,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,27.5
+SW0046,2022,52,N,3,14.9,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0046,2022,52,N,2,14.9,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,60.7
+SW0046,2024,54,N,3,16.9,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,29.6
+SW0047,2020,24,N,3,12.7,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0047,2020,24,N,2,12.7,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0047,2022,26,N,3,14.7,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0047,2022,26,N,2,14.7,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0047,2023,27,N,2,15.7,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,62.8
+SW0047,2023,27,N,2,15.7,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0047,2024,28,N,3,16.7,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0048,2020,21,N,2,13.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,63.0
+SW0048,2020,21,N,2,13.9,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,20.9
+SW0048,2021,22,N,3,14.9,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,30.5
+SW0048,2021,22,N,2,14.9,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,27.3
+SW0048,2021,22,N,2,14.9,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,27.3
+SW0048,2023,24,N,3,16.9,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,61.0
+SW0048,2023,24,N,2,16.9,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,14.0
+SW0049,2019,41,N,1,5.3,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,23.8
+SW0049,2021,43,N,1,7.3,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0049,2021,43,N,2,7.3,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,52.9
+SW0049,2023,45,N,1,9.3,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0049,2023,45,N,1,9.3,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,85.7
+SW0049,2024,46,N,1,10.3,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,24.1
+SW0050,2019,19,Y,2,5.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,30.8
+SW0050,2020,20,Y,2,6.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0050,2022,22,Y,2,8.1,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0050,2022,22,Y,3,8.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0050,2023,23,Y,2,9.1,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0050,2024,24,Y,3,10.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,27.2
+SW0051,2019,25,N,1,10.1,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0051,2021,27,N,1,12.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0051,2021,27,N,2,12.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,59.4
+SW0051,2023,29,N,1,14.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,27.5
+SW0051,2023,29,N,1,14.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,28.1
+SW0051,2024,30,N,2,15.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0052,2019,44,N,1,0.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0052,2019,44,N,1,0.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,58.6
+SW0052,2021,46,N,2,2.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0053,2019,68,N,1,7.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0053,2020,69,N,1,8.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0053,2021,70,N,1,9.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0053,2024,73,N,2,12.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,29.8
+SW0054,2020,43,N,3,4.3,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0054,2020,43,N,2,4.3,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0054,2020,43,N,2,4.3,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0054,2021,44,N,2,5.3,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,31.9
+SW0054,2022,45,N,3,6.3,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0054,2023,46,N,2,7.3,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,70.6
+SW0054,2024,47,N,2,8.3,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0055,2019,60,N,2,4.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,100.3
+SW0055,2019,60,N,2,4.2,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,32.3
+SW0055,2019,60,N,2,4.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0055,2020,61,N,2,5.2,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,69.6
+SW0055,2021,62,N,3,6.2,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0055,2021,62,N,2,6.2,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0055,2023,64,N,3,8.2,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,31.8
+SW0056,2020,66,Y,1,1.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,26.8
+SW0056,2022,68,Y,1,3.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,81.3
+SW0056,2023,69,Y,2,4.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,77.0
+SW0056,2023,69,Y,2,4.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0056,2023,69,Y,1,4.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,45.0
+SW0056,2023,69,Y,1,4.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,45.0
+SW0057,2019,60,Y,3,1.5,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0057,2020,61,Y,3,2.5,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,60.8
+SW0057,2021,62,Y,3,3.5,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,22.1
+SW0057,2023,64,Y,3,5.5,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0057,2023,64,Y,3,5.5,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,28.7
+SW0057,2024,65,Y,3,6.5,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,27.0
+SW0057,2024,65,Y,3,6.5,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0058,2019,50,Y,3,5.9,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,24.8
+SW0058,2019,50,Y,3,5.9,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,66.5
+SW0058,2020,51,Y,4,6.9,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,58.8
+SW0058,2021,52,Y,3,7.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,69.3
+SW0058,2021,52,Y,3,7.9,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,19.8
+SW0058,2021,52,Y,3,7.9,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,22.6
+SW0058,2021,52,Y,4,7.9,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,66.0
+SW0059,2020,41,N,2,11.4,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0059,2022,43,N,2,13.4,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,32.4
+SW0059,2022,43,N,2,13.4,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0059,2023,44,N,2,14.4,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,88.8
+SW0059,2023,44,N,2,14.4,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,39.2
+SW0059,2023,44,N,2,14.4,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,94.7
+SW0059,2024,45,N,2,15.4,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0059,2024,45,N,2,15.4,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0060,2019,44,Y,1,11.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0060,2019,44,Y,1,11.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0060,2019,44,Y,1,11.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,67.9
+SW0060,2021,46,Y,1,13.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,30.9
+SW0060,2021,46,Y,2,13.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,16.6
+SW0060,2024,49,Y,1,16.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,35.4
+SW0061,2019,31,Y,6,5.6,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0061,2019,31,Y,6,5.6,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,30.1
+SW0061,2023,35,Y,6,9.6,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,60.4
+SW0062,2021,45,N,4,7.1,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0062,2021,45,N,4,7.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,94.0
+SW0062,2022,46,N,4,8.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,27.7
+SW0062,2022,46,N,3,8.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0062,2023,47,N,4,9.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0062,2023,47,N,3,9.1,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,47.8
+SW0063,2019,37,Y,0,1.8,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0063,2019,37,Y,0,1.8,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0063,2024,42,Y,0,6.8,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0064,2022,33,N,6,11.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0064,2023,34,N,5,12.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,57.1
+SW0064,2023,34,N,5,12.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,35.5
+SW0064,2023,34,N,6,12.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0065,2019,69,Y,0,4.8,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,49.1
+SW0065,2019,69,Y,0,4.8,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,25.5
+SW0065,2020,70,Y,1,5.8,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,82.7
+SW0065,2020,70,Y,0,5.8,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,82.7
+SW0065,2021,71,Y,0,6.8,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,92.8
+SW0065,2023,73,Y,1,8.8,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0065,2023,73,Y,0,8.8,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,60.3
+SW0065,2024,74,Y,0,9.8,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,55.3
+SW0066,2019,18,N,0,9.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0066,2020,19,N,0,10.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0066,2021,20,N,0,11.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0066,2022,21,N,0,12.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0066,2022,21,N,0,12.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0067,2020,24,Y,2,15.8,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,48.5
+SW0067,2020,24,Y,2,15.8,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,48.5
+SW0067,2022,26,Y,1,17.8,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,77.7
+SW0067,2022,26,Y,2,17.8,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,21.9
+SW0067,2022,26,Y,2,17.8,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,21.9
+SW0067,2024,28,Y,1,19.8,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,20.9
+SW0067,2024,28,Y,1,19.8,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,42.9
+SW0068,2019,28,N,2,5.8,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,29.2
+SW0068,2020,29,N,2,6.8,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0068,2020,29,N,2,6.8,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0068,2021,30,N,2,7.8,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0068,2024,33,N,2,10.8,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,24.8
+SW0068,2024,33,N,2,10.8,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0069,2021,70,N,5,2.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0069,2021,70,N,5,2.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0069,2022,71,N,4,3.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0069,2022,71,N,5,3.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0069,2022,71,N,4,3.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0069,2024,73,N,4,5.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,64.5
+SW0069,2024,73,N,4,5.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,61.6
+SW0070,2020,54,N,2,2.7,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,29.1
+SW0070,2021,55,N,3,3.7,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,29.0
+SW0070,2021,55,N,2,3.7,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,100.9
+SW0070,2022,56,N,3,4.7,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0070,2022,56,N,3,4.7,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0070,2023,57,N,3,5.7,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,28.6
+SW0070,2024,58,N,2,6.7,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0070,2024,58,N,2,6.7,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0071,2019,63,N,2,0.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0071,2019,63,N,2,0.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,69.4
+SW0071,2020,64,N,2,1.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,80.7
+SW0071,2021,65,N,2,2.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0071,2022,66,N,3,3.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,62.7
+SW0071,2022,66,N,2,3.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0071,2023,67,N,2,4.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0072,2019,28,N,2,0.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0072,2020,29,N,2,1.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,82.0
+SW0072,2021,30,N,2,2.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0072,2022,31,N,2,3.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0072,2023,32,N,2,4.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0072,2023,32,N,2,4.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0073,2021,57,N,1,14.5,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0073,2021,57,N,1,14.5,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,21.6
+SW0073,2023,59,N,1,16.5,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,29.3
+SW0073,2023,59,N,2,16.5,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,89.5
+SW0073,2023,59,N,1,16.5,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,25.1
+SW0073,2024,60,N,2,17.5,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,60.2
+SW0074,2019,37,Y,1,7.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,27.9
+SW0074,2021,39,Y,2,9.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,25.1
+SW0074,2022,40,Y,2,10.1,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0074,2023,41,Y,2,11.1,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,40.3
+SW0075,2019,43,N,1,0.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0075,2019,43,N,1,0.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0075,2019,43,N,1,0.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0075,2020,44,N,1,1.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,51.8
+SW0075,2023,47,N,1,4.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,31.9
+SW0075,2024,48,N,1,5.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0076,2019,18,Y,2,9.3,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,64.5
+SW0076,2020,19,Y,2,10.3,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,62.0
+SW0076,2020,19,Y,3,10.3,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0076,2020,19,Y,2,10.3,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0076,2021,20,Y,3,11.3,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0076,2022,21,Y,2,12.3,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0077,2019,50,N,2,12.3,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,29.5
+SW0077,2022,53,N,3,15.3,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0077,2023,54,N,2,16.3,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0077,2024,55,N,2,17.3,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,69.7
+SW0077,2024,55,N,3,17.3,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,27.6
+SW0078,2019,61,N,2,4.2,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,27.9
+SW0078,2020,62,N,2,5.2,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,56.3
+SW0078,2022,64,N,3,7.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0078,2024,66,N,2,9.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0078,2024,66,N,2,9.2,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,27.6
+SW0079,2020,53,N,4,3.6,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0079,2020,53,N,3,3.6,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,49.6
+SW0079,2021,54,N,3,4.6,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,59.1
+SW0079,2022,55,N,4,5.6,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,27.4
+SW0079,2023,56,N,3,6.6,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,78.6
+SW0080,2019,26,Y,4,4.3,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,49.5
+SW0080,2022,29,Y,5,7.3,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,37.4
+SW0080,2022,29,Y,5,7.3,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,37.4
+SW0080,2024,31,Y,4,9.3,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,77.4
+SW0080,2024,31,Y,4,9.3,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,55.4
+SW0080,2024,31,Y,4,9.3,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,32.3
+SW0080,2024,31,Y,4,9.3,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,32.3
+SW0081,2019,45,N,0,7.4,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,25.0
+SW0081,2019,45,N,0,7.4,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,29.4
+SW0081,2020,46,N,0,8.4,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,30.4
+SW0081,2020,46,N,0,8.4,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0081,2020,46,N,0,8.4,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0081,2020,46,N,0,8.4,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,33.1
+SW0081,2021,47,N,0,9.4,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0081,2022,48,N,0,10.4,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,20.5
+SW0082,2019,31,N,3,9.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0082,2020,32,N,3,10.2,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,53.8
+SW0082,2020,32,N,3,10.2,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,87.5
+SW0082,2022,34,N,4,12.2,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0082,2022,34,N,4,12.2,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0082,2023,35,N,4,13.2,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,31.7
+SW0082,2024,36,N,4,14.2,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0082,2024,36,N,4,14.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0083,2019,68,Y,1,11.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0083,2022,71,Y,1,14.9,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,22.5
+SW0083,2024,73,Y,1,16.9,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,28.4
+SW0083,2024,73,Y,1,16.9,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,28.4
+SW0084,2019,63,N,2,12.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0084,2021,65,N,3,14.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,27.2
+SW0084,2021,65,N,2,14.1,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,61.6
+SW0084,2022,66,N,3,15.1,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0084,2022,66,N,3,15.1,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0084,2023,67,N,2,16.1,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,54.8
+SW0085,2019,27,N,1,11.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0085,2020,28,N,1,12.9,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0085,2022,30,N,1,14.9,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,64.0
+SW0085,2023,31,N,2,15.9,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0085,2024,32,N,2,16.9,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0086,2019,44,N,1,12.8,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,30.6
+SW0086,2021,46,N,1,14.8,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0086,2021,46,N,2,14.8,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0086,2022,47,N,1,15.8,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,29.1
+SW0086,2022,47,N,1,15.8,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0086,2022,47,N,2,15.8,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,62.0
+SW0086,2022,47,N,1,15.8,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0086,2023,48,N,2,16.8,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0087,2019,66,N,1,9.3,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,65.9
+SW0087,2020,67,N,2,10.3,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0087,2020,67,N,2,10.3,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0087,2020,67,N,2,10.3,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0087,2023,70,N,1,13.3,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0087,2024,71,N,1,14.3,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0087,2024,71,N,2,14.3,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0088,2020,63,N,1,1.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0088,2021,64,N,1,2.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0088,2021,64,N,1,2.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0088,2021,64,N,2,2.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,103.0
+SW0088,2022,65,N,1,3.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0088,2023,66,N,1,4.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0088,2023,66,N,1,4.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,32.3
+SW0089,2021,56,Y,3,7.3,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0089,2021,56,Y,3,7.3,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0089,2023,58,Y,3,9.3,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,27.8
+SW0090,2019,51,N,1,7.6,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0090,2019,51,N,1,7.6,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0090,2019,51,N,1,7.6,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0090,2019,51,N,1,7.6,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0090,2021,53,N,1,9.6,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,31.6
+SW0090,2021,53,N,2,9.6,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,62.4
+SW0090,2024,56,N,1,12.6,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0091,2019,20,N,0,4.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,25.8
+SW0091,2019,20,N,0,4.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,32.3
+SW0091,2020,21,N,1,5.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,76.0
+SW0091,2020,21,N,0,5.1,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,71.4
+SW0091,2020,21,N,1,5.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0091,2021,22,N,0,6.1,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0091,2021,22,N,0,6.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0091,2021,22,N,0,6.1,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0092,2019,56,Y,3,10.6,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0092,2020,57,Y,3,11.6,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,30.4
+SW0092,2022,59,Y,4,13.6,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,77.7
+SW0092,2022,59,Y,3,13.6,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,24.8
+SW0092,2023,60,Y,3,14.6,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0092,2023,60,Y,3,14.6,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0092,2024,61,Y,4,15.6,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,63.6
+SW0092,2024,61,Y,3,15.6,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0092,2024,61,Y,3,15.6,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0092,2024,61,Y,3,15.6,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0093,2019,42,N,3,4.2,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,22.1
+SW0093,2020,43,N,4,5.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,77.1
+SW0093,2020,43,N,3,5.2,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,41.8
+SW0093,2021,44,N,4,6.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0093,2022,45,N,4,7.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,80.4
+SW0094,2019,22,N,3,1.4,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,73.4
+SW0094,2020,23,N,3,2.4,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0094,2021,24,N,4,3.4,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,86.8
+SW0094,2024,27,N,4,6.4,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0095,2019,30,N,2,13.2,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,26.0
+SW0095,2019,30,N,2,13.2,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,73.0
+SW0095,2020,31,N,2,14.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,75.3
+SW0095,2021,32,N,2,15.2,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,80.7
+SW0095,2021,32,N,3,15.2,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,71.5
+SW0095,2022,33,N,2,16.2,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,40.3
+SW0096,2019,46,Y,3,9.3,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,72.7
+SW0096,2021,48,Y,3,11.3,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,72.5
+SW0096,2021,48,Y,3,11.3,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,85.8
+SW0096,2022,49,Y,3,12.3,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0097,2019,55,N,1,7.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,22.2
+SW0097,2019,55,N,1,7.1,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,53.0
+SW0097,2020,56,N,2,8.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,82.4
+SW0097,2023,59,N,2,11.1,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,40.3
+SW0097,2023,59,N,2,11.1,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,40.3
+SW0098,2019,44,N,0,10.6,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,72.8
+SW0098,2020,45,N,0,11.6,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,55.6
+SW0098,2021,46,N,1,12.6,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0098,2021,46,N,1,12.6,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0098,2024,49,N,0,15.6,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0098,2024,49,N,0,15.6,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0099,2019,49,N,4,11.3,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,82.9
+SW0099,2020,50,N,5,12.3,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,37.7
+SW0099,2020,50,N,4,12.3,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,83.0
+SW0099,2021,51,N,5,13.3,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,53.4
+SW0099,2022,52,N,4,14.3,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,56.1
+SW0099,2022,52,N,4,14.3,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,62.9
+SW0099,2022,52,N,5,14.3,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,64.6
+SW0099,2022,52,N,4,14.3,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,74.4
+SW0100,2019,63,N,4,7.7,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,18.6
+SW0100,2019,63,N,4,7.7,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,38.6
+SW0100,2022,66,N,4,10.7,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,19.6
+SW0100,2022,66,N,4,10.7,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,26.9
+SW0100,2023,67,N,4,11.7,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,37.1
+SW0101,2020,54,N,1,1.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,93.0
+SW0101,2021,55,N,1,2.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0101,2022,56,N,1,3.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0101,2022,56,N,1,3.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,54.8
+SW0101,2023,57,N,1,4.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0101,2024,58,N,1,5.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0101,2024,58,N,1,5.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0102,2021,38,N,1,4.6,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0102,2022,39,N,1,5.6,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,54.8
+SW0102,2022,39,N,2,5.6,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,69.1
+SW0103,2020,52,N,2,4.7,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,59.7
+SW0103,2020,52,N,2,4.7,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,47.1
+SW0103,2021,53,N,3,5.7,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,42.9
+SW0103,2021,53,N,3,5.7,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,53.6
+SW0103,2021,53,N,2,5.7,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,47.1
+SW0103,2022,54,N,2,6.7,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0103,2024,56,N,3,8.7,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,19.9
+SW0104,2019,49,N,3,1.1,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,63.6
+SW0104,2022,52,N,3,4.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0104,2023,53,N,3,5.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,25.2
+SW0104,2024,54,N,4,6.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0105,2020,24,Y,4,8.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,54.1
+SW0105,2020,24,Y,3,8.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,26.8
+SW0105,2021,25,Y,4,9.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,94.5
+SW0105,2021,25,Y,3,9.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0105,2022,26,Y,3,10.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,75.3
+SW0105,2022,26,Y,3,10.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,27.0
+SW0105,2023,27,Y,4,11.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,37.4
+SW0106,2019,21,Y,0,12.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,66.3
+SW0106,2020,22,Y,0,13.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,61.1
+SW0106,2021,23,Y,0,14.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,62.3
+SW0106,2021,23,Y,0,14.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,20.5
+SW0106,2022,24,Y,0,15.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,46.9
+SW0106,2022,24,Y,0,15.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,21.0
+SW0106,2024,26,Y,1,17.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,22.4
+SW0106,2024,26,Y,1,17.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0107,2019,52,N,2,3.6,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0107,2021,54,N,3,5.6,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0107,2021,54,N,3,5.6,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0107,2021,54,N,3,5.6,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0107,2022,55,N,2,6.6,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,56.6
+SW0107,2022,55,N,2,6.6,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0107,2024,57,N,2,8.6,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0107,2024,57,N,2,8.6,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0107,2024,57,N,2,8.6,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0108,2020,39,Y,1,1.3,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,78.0
+SW0108,2021,40,Y,1,2.3,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0108,2021,40,Y,1,2.3,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,45.5
+SW0108,2021,40,Y,2,2.3,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0108,2021,40,Y,2,2.3,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0108,2024,43,Y,1,5.3,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,49.1
+SW0109,2019,49,N,2,16.1,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,54.9
+SW0109,2020,50,N,2,17.1,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0109,2020,50,N,3,17.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0109,2023,53,N,2,20.1,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0110,2020,35,N,1,4.7,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0110,2020,35,N,1,4.7,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0110,2021,36,N,1,5.7,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0110,2022,37,N,2,6.7,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0110,2024,39,N,2,8.7,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0110,2024,39,N,1,8.7,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0111,2019,29,N,2,0.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0111,2020,30,N,2,1.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,91.9
+SW0111,2021,31,N,2,2.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0111,2022,32,N,2,3.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,31.4
+SW0111,2023,33,N,3,4.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0112,2019,25,N,1,7.2,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,87.8
+SW0112,2020,26,N,1,8.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,85.8
+SW0112,2020,26,N,1,8.2,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0112,2021,27,N,1,9.2,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,43.6
+SW0112,2021,27,N,1,9.2,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,73.5
+SW0112,2022,28,N,1,10.2,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,73.2
+SW0112,2024,30,N,1,12.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0113,2019,37,N,3,8.1,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0113,2019,37,N,3,8.1,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0113,2021,39,N,3,10.1,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0113,2021,39,N,4,10.1,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0113,2021,39,N,3,10.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,24.5
+SW0113,2022,40,N,3,11.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0113,2024,42,N,3,13.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0114,2020,61,N,3,3.5,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0114,2021,62,N,4,4.5,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,108.8
+SW0114,2021,62,N,3,4.5,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,30.0
+SW0114,2023,64,N,3,6.5,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0114,2024,65,N,3,7.5,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0114,2024,65,N,3,7.5,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0115,2021,40,Y,4,12.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,99.2
+SW0115,2022,41,Y,3,13.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,58.1
+SW0115,2022,41,Y,3,13.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0115,2023,42,Y,3,14.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0116,2019,37,N,2,3.6,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0116,2019,37,N,2,3.6,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,44.1
+SW0116,2021,39,N,2,5.6,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0116,2023,41,N,2,7.6,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0116,2023,41,N,3,7.6,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0116,2024,42,N,3,8.6,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,51.6
+SW0116,2024,42,N,2,8.6,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,42.5
+SW0117,2019,47,Y,2,1.4,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,77.0
+SW0117,2019,47,Y,2,1.4,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,77.0
+SW0117,2020,48,Y,2,2.4,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,56.9
+SW0117,2022,50,Y,2,4.4,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,25.3
+SW0117,2022,50,Y,2,4.4,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,44.9
+SW0117,2022,50,Y,2,4.4,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,27.5
+SW0117,2022,50,Y,2,4.4,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,79.2
+SW0117,2024,52,Y,2,6.4,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,45.4
+SW0118,2021,70,N,2,8.9,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,66.3
+SW0118,2021,70,N,1,8.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,83.5
+SW0118,2022,71,N,2,9.9,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,24.2
+SW0118,2023,72,N,1,10.9,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,56.9
+SW0119,2019,38,N,0,9.9,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,33.9
+SW0119,2019,38,N,0,9.9,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,86.6
+SW0119,2022,41,N,1,12.9,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,58.6
+SW0119,2023,42,N,0,13.9,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0120,2019,48,N,1,2.8,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,82.0
+SW0120,2019,48,N,1,2.8,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,77.1
+SW0120,2020,49,N,1,3.8,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,31.5
+SW0120,2021,50,N,2,4.8,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0120,2021,50,N,2,4.8,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0120,2021,50,N,1,4.8,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,62.6
+SW0120,2022,51,N,1,5.8,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0121,2019,40,N,2,7.7,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0121,2020,41,N,2,8.7,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0121,2021,42,N,2,9.7,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0121,2024,45,N,3,12.7,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0121,2024,45,N,2,12.7,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0122,2019,49,N,1,5.5,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0122,2020,50,N,2,6.5,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0122,2021,51,N,2,7.5,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,76.6
+SW0122,2021,51,N,1,7.5,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,27.8
+SW0122,2022,52,N,1,8.5,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,76.1
+SW0122,2023,53,N,1,9.5,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,54.0
+SW0122,2023,53,N,1,9.5,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,54.0
+SW0123,2019,41,Y,2,20.1,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0123,2020,42,Y,3,21.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0123,2020,42,Y,2,21.1,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0123,2020,42,Y,3,21.1,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0123,2020,42,Y,2,21.1,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0123,2022,44,Y,2,23.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0123,2023,45,Y,2,24.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,33.7
+SW0124,2019,51,Y,2,2.5,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0124,2022,54,Y,2,5.5,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0124,2023,55,Y,3,6.5,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,65.6
+SW0124,2024,56,Y,2,7.5,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,76.9
+SW0125,2020,47,N,5,13.9,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,28.0
+SW0125,2022,49,N,5,15.9,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,52.0
+SW0125,2024,51,N,5,17.9,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,14.0
+SW0126,2020,54,N,1,6.7,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,68.5
+SW0126,2020,54,N,1,6.7,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0126,2023,57,N,1,9.7,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0126,2024,58,N,1,10.7,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0127,2019,67,Y,2,5.4,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0127,2022,70,Y,2,8.4,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,38.8
+SW0127,2022,70,Y,2,8.4,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,24.4
+SW0127,2023,71,Y,2,9.4,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0127,2023,71,Y,3,9.4,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,41.5
+SW0127,2023,71,Y,2,9.4,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,54.1
+SW0127,2024,72,Y,2,10.4,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,41.6
+SW0127,2024,72,Y,2,10.4,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0128,2020,26,N,2,10.6,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,25.4
+SW0128,2020,26,N,2,10.6,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,25.0
+SW0128,2020,26,N,2,10.6,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,68.1
+SW0128,2021,27,N,2,11.6,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0128,2023,29,N,2,13.6,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0128,2023,29,N,3,13.6,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,42.2
+SW0129,2020,48,N,2,11.5,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,51.2
+SW0129,2020,48,N,2,11.5,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,103.0
+SW0129,2021,49,N,2,12.5,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0129,2022,50,N,2,13.5,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,108.8
+SW0129,2022,50,N,3,13.5,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,64.1
+SW0130,2019,40,N,1,12.3,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,48.1
+SW0130,2019,40,N,1,12.3,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,41.8
+SW0130,2019,40,N,1,12.3,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,63.6
+SW0130,2022,43,N,1,15.3,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0130,2022,43,N,1,15.3,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,23.3
+SW0130,2024,45,N,2,17.3,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,20.6
+SW0130,2024,45,N,1,17.3,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0131,2019,36,Y,0,7.6,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,34.2
+SW0131,2019,36,Y,0,7.6,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0131,2021,38,Y,0,9.6,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0131,2021,38,Y,0,9.6,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0131,2022,39,Y,0,10.6,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0131,2023,40,Y,0,11.6,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0131,2024,41,Y,0,12.6,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0132,2019,30,N,2,3.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0132,2021,32,N,2,5.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,25.9
+SW0132,2022,33,N,2,6.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,59.5
+SW0132,2022,33,N,2,6.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,59.5
+SW0132,2022,33,N,2,6.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,59.5
+SW0132,2023,34,N,3,7.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,66.8
+SW0132,2024,35,N,2,8.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,84.0
+SW0132,2024,35,N,2,8.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,33.2
+SW0133,2019,20,Y,2,3.3,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,72.6
+SW0133,2020,21,Y,3,4.3,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,84.2
+SW0133,2020,21,Y,2,4.3,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0133,2022,23,Y,2,6.3,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,58.4
+SW0134,2019,38,Y,3,8.5,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,28.8
+SW0134,2022,41,Y,3,11.5,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,29.4
+SW0134,2023,42,Y,3,12.5,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,29.1
+SW0134,2024,43,Y,3,13.5,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0135,2020,61,Y,3,9.9,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,56.2
+SW0135,2023,64,Y,2,12.9,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0135,2024,65,Y,2,13.9,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,53.0
+SW0136,2020,24,Y,6,14.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,45.5
+SW0136,2020,24,Y,6,14.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0136,2022,26,Y,5,16.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,23.3
+SW0136,2024,28,Y,5,18.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0137,2019,39,N,5,8.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,27.9
+SW0137,2020,40,N,5,9.1,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0137,2020,40,N,5,9.1,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,102.8
+SW0137,2021,41,N,6,10.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0137,2021,41,N,5,10.1,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0137,2022,42,N,6,11.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,89.2
+SW0138,2019,68,N,2,11.3,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,57.5
+SW0138,2020,69,N,3,12.3,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,18.2
+SW0138,2023,72,N,2,15.3,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,84.0
+SW0138,2024,73,N,2,16.3,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,45.3
+SW0139,2020,68,N,2,14.6,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,32.9
+SW0139,2020,68,N,2,14.6,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,32.9
+SW0139,2021,69,N,2,15.6,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0139,2021,69,N,2,15.6,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,82.2
+SW0139,2021,69,N,2,15.6,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0139,2022,70,N,2,16.6,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,28.1
+SW0139,2023,71,N,2,17.6,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,27.4
+SW0139,2024,72,N,2,18.6,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0139,2024,72,N,2,18.6,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0140,2019,29,N,1,6.8,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,41.0
+SW0140,2019,29,N,1,6.8,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0140,2020,30,N,2,7.8,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,53.5
+SW0140,2020,30,N,1,7.8,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,20.2
+SW0140,2021,31,N,1,8.8,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,24.5
+SW0141,2019,18,N,4,0.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0141,2019,18,N,4,0.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0141,2020,19,N,4,1.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0141,2021,20,N,4,2.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0141,2024,23,N,4,5.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0141,2024,23,N,5,5.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0142,2019,52,Y,1,0.1,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,46.6
+SW0142,2020,53,Y,2,1.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,54.2
+SW0142,2022,55,Y,1,3.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,26.3
+SW0142,2022,55,Y,2,3.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0142,2024,57,Y,1,5.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0142,2024,57,Y,2,5.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,22.8
+SW0143,2020,19,N,3,1.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,66.9
+SW0143,2021,20,N,2,2.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0143,2021,20,N,2,2.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,57.9
+SW0144,2019,33,N,2,14.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0144,2019,33,N,2,14.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0144,2021,35,N,2,16.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0144,2021,35,N,3,16.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0144,2021,35,N,2,16.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0145,2020,44,N,0,2.8,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0145,2021,45,N,0,3.8,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0145,2024,48,N,0,6.8,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,25.1
+SW0145,2024,48,N,0,6.8,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,64.5
+SW0146,2019,63,N,3,12.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,98.1
+SW0146,2022,66,N,4,15.2,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0146,2023,67,N,4,16.2,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,69.5
+SW0147,2019,22,Y,0,8.9,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,58.2
+SW0147,2019,22,Y,0,8.9,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0147,2020,23,Y,1,9.9,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,61.2
+SW0147,2021,24,Y,1,10.9,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0147,2024,27,Y,0,13.9,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,56.7
+SW0148,2020,53,N,2,15.6,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,24.0
+SW0148,2020,53,N,2,15.6,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,24.0
+SW0148,2021,54,N,2,16.6,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0148,2021,54,N,2,16.6,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,38.2
+SW0148,2022,55,N,3,17.6,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,16.9
+SW0149,2020,46,N,2,12.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0149,2021,47,N,3,13.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0149,2022,48,N,3,14.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0149,2022,48,N,3,14.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0149,2023,49,N,2,15.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0150,2021,26,N,1,7.5,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0150,2021,26,N,1,7.5,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,32.9
+SW0150,2021,26,N,1,7.5,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0150,2021,26,N,2,7.5,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0150,2021,26,N,1,7.5,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0150,2024,29,N,1,10.5,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0151,2020,62,N,0,6.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,61.3
+SW0151,2020,62,N,1,6.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,67.2
+SW0151,2021,63,N,0,7.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,92.4
+SW0151,2021,63,N,1,7.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,81.6
+SW0151,2024,66,N,0,10.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,79.4
+SW0152,2020,62,N,2,7.4,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,64.1
+SW0152,2021,63,N,2,8.4,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,29.4
+SW0152,2022,64,N,2,9.4,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,55.3
+SW0152,2022,64,N,2,9.4,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0152,2023,65,N,3,10.4,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,28.4
+SW0152,2024,66,N,2,11.4,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,73.3
+SW0153,2020,44,Y,3,7.9,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,51.6
+SW0153,2020,44,Y,3,7.9,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,24.6
+SW0153,2020,44,Y,2,7.9,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,78.5
+SW0153,2020,44,Y,2,7.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0153,2020,44,Y,2,7.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0153,2021,45,Y,2,8.9,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,33.0
+SW0153,2021,45,Y,3,8.9,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,52.2
+SW0153,2023,47,Y,2,10.9,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,42.8
+SW0153,2024,48,Y,2,11.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,73.1
+SW0154,2020,68,N,3,4.3,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,65.7
+SW0154,2022,70,N,4,6.3,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,87.9
+SW0154,2022,70,N,3,6.3,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,27.0
+SW0154,2023,71,N,3,7.3,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,87.6
+SW0154,2023,71,N,3,7.3,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0154,2024,72,N,3,8.3,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,90.9
+SW0155,2019,49,N,3,5.8,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0155,2022,52,N,4,8.8,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0155,2023,53,N,3,9.8,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,71.5
+SW0155,2023,53,N,3,9.8,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0155,2023,53,N,3,9.8,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,71.5
+SW0156,2020,66,Y,2,15.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,22.7
+SW0156,2023,69,Y,1,18.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,65.3
+SW0156,2024,70,Y,1,19.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0156,2024,70,Y,1,19.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,73.1
+SW0157,2019,67,N,0,0.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,66.5
+SW0157,2019,67,N,0,0.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,77.3
+SW0157,2023,71,N,0,4.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0157,2023,71,N,1,4.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,49.3
+SW0157,2024,72,N,0,5.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0157,2024,72,N,1,5.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,86.7
+SW0158,2019,47,N,1,7.3,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0158,2019,47,N,1,7.3,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0158,2020,48,N,1,8.3,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,26.1
+SW0158,2020,48,N,1,8.3,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,30.3
+SW0158,2020,48,N,1,8.3,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,48.6
+SW0158,2022,50,N,1,10.3,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0158,2024,52,N,1,12.3,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,79.0
+SW0158,2024,52,N,1,12.3,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0159,2019,32,N,1,1.5,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0159,2021,34,N,2,3.5,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0159,2022,35,N,1,4.5,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0159,2024,37,N,1,6.5,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0160,2019,25,N,0,6.9,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0160,2020,26,N,1,7.9,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,25.3
+SW0160,2020,26,N,0,7.9,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0160,2021,27,N,0,8.9,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,56.3
+SW0160,2022,28,N,0,9.9,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0160,2023,29,N,0,10.9,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,29.4
+SW0161,2019,47,Y,0,10.2,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,29.2
+SW0161,2020,48,Y,0,11.2,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,27.7
+SW0161,2022,50,Y,0,13.2,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0161,2024,52,Y,1,15.2,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,26.3
+SW0162,2020,29,Y,3,6.7,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,63.6
+SW0162,2020,29,Y,2,6.7,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0162,2021,30,Y,3,7.7,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,28.0
+SW0162,2021,30,Y,3,7.7,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,28.0
+SW0162,2023,32,Y,2,9.7,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,25.8
+SW0163,2019,57,N,1,9.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,70.0
+SW0163,2022,60,N,1,12.9,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0163,2022,60,N,2,12.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,53.6
+SW0163,2023,61,N,2,13.9,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,22.9
+SW0163,2024,62,N,1,14.9,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,21.0
+SW0163,2024,62,N,1,14.9,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,57.6
+SW0164,2019,66,N,3,0.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0164,2021,68,N,4,2.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0164,2021,68,N,3,2.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0164,2022,69,N,3,3.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,55.2
+SW0164,2022,69,N,3,3.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,88.5
+SW0164,2024,71,N,3,5.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,55.7
+SW0164,2024,71,N,3,5.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0165,2019,30,N,0,11.5,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0165,2019,30,N,0,11.5,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0165,2019,30,N,0,11.5,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0165,2020,31,N,0,12.5,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0165,2021,32,N,0,13.5,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0165,2021,32,N,0,13.5,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0165,2022,33,N,1,14.5,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0165,2023,34,N,0,15.5,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,95.2
+SW0165,2024,35,N,0,16.5,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,30.0
+SW0166,2021,48,N,1,5.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,77.5
+SW0166,2024,51,N,2,8.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0166,2024,51,N,1,8.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,31.9
+SW0167,2019,20,N,1,9.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,23.0
+SW0167,2019,20,N,1,9.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,81.3
+SW0167,2020,21,N,1,10.1,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,40.5
+SW0167,2020,21,N,1,10.1,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,40.5
+SW0168,2019,27,N,0,6.9,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0168,2019,27,N,0,6.9,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,28.5
+SW0168,2020,28,N,0,7.9,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,55.9
+SW0168,2021,29,N,0,8.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0168,2022,30,N,0,9.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,79.7
+SW0168,2023,31,N,1,10.9,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,27.3
+SW0168,2023,31,N,0,10.9,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,31.3
+SW0168,2024,32,N,0,11.9,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,30.1
+SW0169,2019,37,N,1,0.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,93.1
+SW0169,2020,38,N,2,1.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0169,2021,39,N,1,2.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,27.8
+SW0169,2021,39,N,1,2.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0169,2021,39,N,2,2.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0169,2021,39,N,2,2.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0169,2023,41,N,1,4.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0169,2024,42,N,1,5.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,24.9
+SW0170,2020,64,N,2,3.2,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0170,2022,66,N,3,5.2,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0170,2023,67,N,2,6.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0170,2023,67,N,3,6.2,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0171,2019,68,N,1,7.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0171,2019,68,N,1,7.1,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0171,2021,70,N,1,9.1,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0171,2021,70,N,1,9.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0171,2022,71,N,1,10.1,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,62.3
+SW0171,2023,72,N,1,11.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,89.7
+SW0172,2019,51,Y,4,13.8,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,32.0
+SW0172,2019,51,Y,4,13.8,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0172,2019,51,Y,4,13.8,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,67.9
+SW0172,2020,52,Y,4,14.8,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,27.1
+SW0172,2021,53,Y,4,15.8,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0172,2022,54,Y,4,16.8,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,78.9
+SW0172,2023,55,Y,4,17.8,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0172,2024,56,Y,4,18.8,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0173,2020,49,N,3,8.4,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0173,2020,49,N,3,8.4,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0173,2022,51,N,3,10.4,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0173,2022,51,N,3,10.4,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,60.4
+SW0173,2022,51,N,4,10.4,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,47.8
+SW0173,2022,51,N,3,10.4,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0173,2024,53,N,3,12.4,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,34.3
+SW0174,2019,47,N,2,7.3,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0174,2019,47,N,2,7.3,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0174,2021,49,N,3,9.3,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,51.1
+SW0174,2021,49,N,2,9.3,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,79.4
+SW0174,2023,51,N,3,11.3,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,60.8
+SW0174,2024,52,N,2,12.3,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0175,2019,21,N,1,0.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0175,2020,22,N,2,1.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0175,2022,24,N,1,3.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0175,2022,24,N,1,3.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0175,2023,25,N,1,4.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,26.0
+SW0175,2024,26,N,1,5.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0176,2019,37,N,0,13.2,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0176,2019,37,N,0,13.2,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0176,2020,38,N,0,14.2,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,53.1
+SW0176,2021,39,N,0,15.2,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,75.5
+SW0176,2022,40,N,0,16.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0176,2023,41,N,0,17.2,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0176,2024,42,N,1,18.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0177,2022,72,N,5,18.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,55.2
+SW0177,2022,72,N,5,18.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,64.2
+SW0177,2022,72,N,4,18.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,44.7
+SW0177,2023,73,N,4,19.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,21.1
+SW0177,2023,73,N,4,19.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,22.2
+SW0177,2023,73,N,5,19.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,71.0
+SW0178,2019,39,N,0,6.1,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0178,2019,39,N,0,6.1,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,78.4
+SW0178,2019,39,N,0,6.1,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,49.5
+SW0178,2019,39,N,0,6.1,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,49.5
+SW0178,2020,40,N,0,7.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,26.5
+SW0178,2023,43,N,0,10.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,25.7
+SW0178,2024,44,N,0,11.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,26.0
+SW0179,2021,31,Y,4,6.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0179,2023,33,Y,5,8.9,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,57.3
+SW0179,2023,33,Y,4,8.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,89.0
+SW0180,2020,31,N,2,1.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0180,2021,32,N,2,2.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,90.1
+SW0180,2021,32,N,2,2.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,44.4
+SW0180,2022,33,N,2,3.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,77.5
+SW0180,2022,33,N,2,3.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,27.6
+SW0181,2021,57,N,1,12.4,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0181,2021,57,N,2,12.4,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0181,2021,57,N,1,12.4,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0181,2022,58,N,1,13.4,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0181,2023,59,N,1,14.4,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0181,2023,59,N,1,14.4,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0181,2023,59,N,1,14.4,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,23.4
+SW0181,2024,60,N,1,15.4,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,48.7
+SW0182,2021,21,N,5,21.5,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,24.2
+SW0182,2021,21,N,5,21.5,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,72.5
+SW0182,2021,21,N,5,21.5,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0182,2022,22,N,4,22.5,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,85.1
+SW0182,2022,22,N,5,22.5,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0182,2022,22,N,4,22.5,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0182,2024,24,N,5,24.5,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,62.9
+SW0183,2019,68,N,2,9.6,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0183,2020,69,N,2,10.6,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,54.3
+SW0183,2021,70,N,2,11.6,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0183,2022,71,N,3,12.6,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,31.2
+SW0183,2022,71,N,2,12.6,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,26.4
+SW0184,2019,63,N,0,12.3,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,49.8
+SW0184,2019,63,N,0,12.3,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,78.2
+SW0184,2019,63,N,0,12.3,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,29.1
+SW0184,2020,64,N,0,13.3,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,31.1
+SW0184,2021,65,N,0,14.3,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0184,2022,66,N,0,15.3,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0184,2022,66,N,0,15.3,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,57.2
+SW0184,2023,67,N,0,16.3,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,86.7
+SW0185,2019,47,N,0,8.7,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0185,2020,48,N,0,9.7,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,32.1
+SW0185,2021,49,N,0,10.7,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0185,2022,50,N,1,11.7,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0185,2023,51,N,1,12.7,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,32.8
+SW0185,2024,52,N,0,13.7,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,61.8
+SW0186,2021,44,N,2,3.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,28.2
+SW0186,2023,46,N,2,5.1,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,89.1
+SW0186,2023,46,N,3,5.1,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0186,2023,46,N,2,5.1,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0186,2023,46,N,2,5.1,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0186,2024,47,N,2,6.1,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0187,2020,58,N,3,13.7,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0187,2021,59,N,2,14.7,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0187,2022,60,N,2,15.7,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0187,2022,60,N,3,15.7,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,89.9
+SW0187,2022,60,N,2,15.7,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,67.7
+SW0187,2022,60,N,2,15.7,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0187,2023,61,N,3,16.7,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,78.6
+SW0188,2023,50,N,2,4.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0188,2023,50,N,3,4.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0188,2024,51,N,2,5.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0189,2020,43,Y,1,5.9,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,68.3
+SW0189,2020,43,Y,1,5.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0189,2022,45,Y,1,7.9,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,62.2
+SW0189,2022,45,Y,1,7.9,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0189,2024,47,Y,1,9.9,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0189,2024,47,Y,1,9.9,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,78.4
+SW0190,2019,34,N,4,7.4,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,29.8
+SW0190,2020,35,N,5,8.4,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0190,2021,36,N,4,9.4,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,96.8
+SW0190,2022,37,N,4,10.4,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,88.6
+SW0190,2022,37,N,4,10.4,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0190,2023,38,N,4,11.4,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,97.4
+SW0191,2020,42,N,1,11.4,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0191,2021,43,N,1,12.4,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0191,2021,43,N,1,12.4,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0191,2021,43,N,1,12.4,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,23.0
+SW0191,2022,44,N,2,13.4,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,57.1
+SW0191,2023,45,N,1,14.4,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,26.6
+SW0191,2023,45,N,1,14.4,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0191,2023,45,N,1,14.4,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,55.4
+SW0192,2022,60,Y,2,11.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0192,2022,60,Y,2,11.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,68.5
+SW0192,2022,60,Y,3,11.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,76.0
+SW0193,2019,20,N,2,7.9,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0193,2019,20,N,2,7.9,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,75.3
+SW0193,2021,22,N,2,9.9,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0193,2021,22,N,2,9.9,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0193,2021,22,N,3,9.9,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0193,2022,23,N,3,10.9,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0193,2023,24,N,2,11.9,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0194,2022,22,N,2,5.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,101.7
+SW0194,2022,22,N,2,5.2,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,65.5
+SW0194,2022,22,N,2,5.2,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0194,2023,23,N,3,6.2,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0194,2024,24,N,2,7.2,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,24.6
+SW0195,2020,56,N,1,1.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0195,2021,57,N,2,2.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0195,2022,58,N,1,3.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0195,2023,59,N,2,4.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0195,2023,59,N,2,4.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0195,2024,60,N,1,5.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,73.1
+SW0196,2019,37,Y,2,6.3,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0196,2019,37,Y,2,6.3,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0196,2019,37,Y,2,6.3,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0196,2020,38,Y,3,7.3,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0196,2023,41,Y,2,10.3,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,99.0
+SW0196,2023,41,Y,3,10.3,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,49.7
+SW0196,2023,41,Y,3,10.3,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0196,2024,42,Y,3,11.3,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0197,2019,59,Y,2,2.4,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0197,2021,61,Y,2,4.4,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,70.3
+SW0197,2021,61,Y,2,4.4,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0197,2021,61,Y,3,4.4,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,47.7
+SW0197,2022,62,Y,2,5.4,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,24.0
+SW0197,2022,62,Y,2,5.4,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0198,2019,19,N,5,0.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0198,2020,20,N,5,1.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0198,2021,21,N,6,2.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0198,2022,22,N,5,3.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0198,2022,22,N,5,3.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0198,2024,24,N,5,5.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0199,2019,65,Y,3,0.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0199,2021,67,Y,3,2.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0199,2021,67,Y,4,2.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0199,2022,68,Y,4,3.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0199,2022,68,Y,4,3.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0200,2019,24,Y,2,3.5,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,82.3
+SW0200,2019,24,Y,2,3.5,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,82.3
+SW0200,2020,25,Y,2,4.5,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,45.1
+SW0200,2021,26,Y,2,5.5,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,51.9
+SW0200,2021,26,Y,2,5.5,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0200,2022,27,Y,2,6.5,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0201,2020,40,N,3,1.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,30.4
+SW0201,2023,43,N,3,4.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0201,2024,44,N,4,5.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0201,2024,44,N,3,5.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,92.2
+SW0202,2022,71,N,0,3.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,75.2
+SW0202,2022,71,N,0,3.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0202,2022,71,N,0,3.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0202,2022,71,N,0,3.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0203,2021,25,N,2,2.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,47.3
+SW0203,2021,25,N,2,2.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,47.3
+SW0203,2022,26,N,3,3.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0203,2022,26,N,2,3.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,59.8
+SW0203,2024,28,N,2,5.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,51.4
+SW0204,2020,53,Y,5,7.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0204,2020,53,Y,5,7.9,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0204,2020,53,Y,5,7.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0204,2022,55,Y,5,9.9,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,58.2
+SW0205,2019,55,N,4,8.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0205,2020,56,N,4,9.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0205,2020,56,N,4,9.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0205,2020,56,N,4,9.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,39.6
+SW0205,2021,57,N,4,10.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,26.6
+SW0205,2021,57,N,4,10.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,92.9
+SW0205,2022,58,N,4,11.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0206,2020,41,Y,1,17.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,64.1
+SW0206,2022,43,Y,1,19.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0206,2022,43,Y,1,19.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,26.1
+SW0206,2022,43,Y,1,19.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,51.7
+SW0206,2023,44,Y,1,20.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,51.3
+SW0206,2023,44,Y,1,20.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,51.3
+SW0207,2019,22,N,2,0.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,28.3
+SW0207,2019,22,N,2,0.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0207,2020,23,N,2,1.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,28.4
+SW0207,2021,24,N,3,2.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,73.0
+SW0207,2021,24,N,2,2.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,61.4
+SW0207,2023,26,N,3,4.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,61.1
+SW0208,2019,45,Y,0,2.6,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0208,2022,48,Y,0,5.6,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0208,2023,49,Y,0,6.6,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0208,2023,49,Y,0,6.6,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0208,2024,50,Y,0,7.6,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0208,2024,50,Y,1,7.6,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0209,2019,40,N,2,10.6,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,93.1
+SW0209,2021,42,N,3,12.6,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,62.4
+SW0209,2022,43,N,2,13.6,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0209,2022,43,N,2,13.6,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,60.6
+SW0209,2023,44,N,2,14.6,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0209,2023,44,N,3,14.6,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0209,2023,44,N,3,14.6,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,57.1
+SW0209,2024,45,N,3,15.6,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,28.8
+SW0210,2022,66,Y,1,7.9,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0210,2023,67,Y,0,8.9,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,77.5
+SW0210,2023,67,Y,0,8.9,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0210,2024,68,Y,0,9.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0210,2024,68,Y,0,9.9,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,73.2
+SW0211,2019,53,N,1,4.4,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0211,2019,53,N,1,4.4,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0211,2021,55,N,2,6.4,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,71.4
+SW0211,2021,55,N,2,6.4,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0211,2022,56,N,2,7.4,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0211,2023,57,N,1,8.4,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0211,2023,57,N,1,8.4,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0212,2019,35,N,1,14.5,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0212,2019,35,N,1,14.5,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0212,2019,35,N,1,14.5,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,55.8
+SW0212,2019,35,N,1,14.5,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0212,2020,36,N,1,15.5,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,31.8
+SW0212,2023,39,N,1,18.5,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,30.9
+SW0212,2024,40,N,2,19.5,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,56.6
+SW0213,2019,21,N,2,4.3,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0213,2020,22,N,2,5.3,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0213,2021,23,N,2,6.3,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0214,2019,48,N,2,0.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0214,2021,50,N,3,2.2,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0214,2022,51,N,2,3.2,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,29.3
+SW0214,2023,52,N,2,4.2,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0214,2023,52,N,2,4.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0215,2019,32,Y,2,0.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,71.6
+SW0215,2019,32,Y,2,0.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0215,2019,32,Y,2,0.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0215,2019,32,Y,2,0.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0215,2020,33,Y,2,1.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0215,2022,35,Y,2,3.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,30.1
+SW0215,2024,37,Y,2,5.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0216,2019,53,N,3,7.7,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0216,2020,54,N,3,8.7,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,75.7
+SW0216,2020,54,N,4,8.7,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0216,2024,58,N,3,12.7,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0216,2024,58,N,3,12.7,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,25.5
+SW0216,2024,58,N,3,12.7,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,77.9
+SW0216,2024,58,N,3,12.7,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0216,2024,58,N,3,12.7,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,88.3
+SW0217,2019,62,N,3,7.5,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,78.4
+SW0217,2020,63,N,3,8.5,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0217,2023,66,N,3,11.5,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,101.6
+SW0217,2023,66,N,3,11.5,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,26.5
+SW0218,2019,36,N,2,0.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0218,2019,36,N,2,0.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0218,2021,38,N,3,2.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,81.9
+SW0218,2023,40,N,2,4.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0218,2023,40,N,2,4.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,32.4
+SW0218,2024,41,N,2,5.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0219,2019,64,Y,2,1.1,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,36.0
+SW0219,2020,65,Y,3,2.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0219,2021,66,Y,2,3.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,86.7
+SW0219,2023,68,Y,2,5.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,29.0
+SW0220,2019,44,N,1,8.7,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,31.7
+SW0220,2020,45,N,2,9.7,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0220,2022,47,N,1,11.7,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0220,2023,48,N,1,12.7,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,38.1
+SW0220,2023,48,N,2,12.7,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,57.4
+SW0221,2019,45,Y,0,8.9,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,84.9
+SW0221,2021,47,Y,0,10.9,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0221,2023,49,Y,1,12.9,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,58.8
+SW0221,2024,50,Y,0,13.9,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0221,2024,50,Y,0,13.9,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,31.4
+SW0222,2019,57,Y,2,2.8,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0222,2021,59,Y,2,4.8,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0222,2022,60,Y,2,5.8,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0222,2023,61,Y,2,6.8,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0223,2019,59,Y,0,9.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,77.3
+SW0223,2020,60,Y,0,10.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,66.5
+SW0223,2021,61,Y,1,11.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,22.2
+SW0223,2021,61,Y,0,11.1,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0223,2023,63,Y,0,13.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,18.5
+SW0223,2023,63,Y,1,13.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,61.1
+SW0223,2023,63,Y,0,13.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,23.0
+SW0223,2023,63,Y,1,13.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,61.1
+SW0223,2024,64,Y,0,14.1,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,60.6
+SW0224,2021,67,N,4,10.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0224,2022,68,N,4,11.9,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,83.0
+SW0224,2022,68,N,4,11.9,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,33.1
+SW0224,2024,70,N,3,13.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0224,2024,70,N,3,13.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0225,2019,69,Y,3,0.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0225,2019,69,Y,3,0.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,90.0
+SW0225,2023,73,Y,3,4.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,22.8
+SW0226,2019,25,Y,2,4.4,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,84.4
+SW0226,2019,25,Y,2,4.4,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0226,2020,26,Y,2,5.4,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,84.2
+SW0226,2021,27,Y,3,6.4,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,87.4
+SW0226,2021,27,Y,2,6.4,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,25.2
+SW0226,2022,28,Y,3,7.4,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,82.3
+SW0226,2022,28,Y,3,7.4,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,82.3
+SW0226,2023,29,Y,3,8.4,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,24.2
+SW0226,2023,29,Y,2,8.4,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,23.1
+SW0226,2023,29,Y,2,8.4,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,23.1
+SW0227,2019,39,N,3,8.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0227,2019,39,N,3,8.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0227,2021,41,N,3,10.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0227,2021,41,N,3,10.1,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,97.5
+SW0227,2024,44,N,3,13.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0228,2019,66,N,3,3.1,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,90.4
+SW0228,2021,68,N,3,5.1,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,105.0
+SW0228,2022,69,N,3,6.1,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0228,2022,69,N,3,6.1,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0228,2023,70,N,4,7.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0228,2023,70,N,3,7.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0228,2024,71,N,4,8.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,92.3
+SW0229,2019,33,Y,2,0.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,48.3
+SW0229,2021,35,Y,2,2.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,44.7
+SW0229,2022,36,Y,2,3.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,55.8
+SW0229,2022,36,Y,3,3.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0229,2024,38,Y,2,5.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,22.2
+SW0230,2019,18,N,4,4.6,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,26.9
+SW0230,2022,21,N,5,7.6,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,32.8
+SW0230,2024,23,N,5,9.6,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0231,2019,47,N,2,9.8,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,54.9
+SW0231,2019,47,N,2,9.8,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,63.8
+SW0231,2022,50,N,3,12.8,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,25.4
+SW0231,2023,51,N,2,13.8,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,107.4
+SW0231,2024,52,N,2,14.8,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,27.4
+SW0231,2024,52,N,2,14.8,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0231,2024,52,N,2,14.8,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0232,2019,57,N,4,13.9,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0232,2020,58,N,4,14.9,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0232,2021,59,N,4,15.9,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0232,2023,61,N,4,17.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0232,2024,62,N,4,18.9,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,31.8
+SW0233,2019,56,N,2,0.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0233,2020,57,N,3,1.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0233,2021,58,N,3,2.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0233,2022,59,N,2,3.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0233,2023,60,N,3,4.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,64.1
+SW0233,2023,60,N,2,4.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0233,2024,61,N,2,5.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0234,2019,60,N,1,19.1,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0234,2022,63,N,1,22.1,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,51.2
+SW0234,2023,64,N,1,23.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0234,2023,64,N,2,23.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0234,2024,65,N,1,24.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0235,2019,51,N,1,0.4,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,24.9
+SW0235,2019,51,N,1,0.4,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0235,2023,55,N,1,4.4,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,85.7
+SW0236,2019,25,N,1,10.8,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0236,2020,26,N,2,11.8,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0236,2020,26,N,1,11.8,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0236,2020,26,N,1,11.8,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0236,2024,30,N,1,15.8,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,61.3
+SW0237,2020,63,N,4,13.2,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0237,2022,65,N,5,15.2,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,28.3
+SW0237,2022,65,N,4,15.2,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0237,2024,67,N,4,17.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,91.6
+SW0238,2020,40,N,0,11.9,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0238,2020,40,N,0,11.9,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0238,2023,43,N,0,14.9,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,60.9
+SW0238,2024,44,N,0,15.9,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0239,2021,64,N,3,8.7,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0239,2021,64,N,2,8.7,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0239,2021,64,N,3,8.7,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,27.0
+SW0239,2022,65,N,2,9.7,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0239,2024,67,N,2,11.7,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0239,2024,67,N,2,11.7,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0239,2024,67,N,3,11.7,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0240,2019,60,Y,3,0.2,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,24.3
+SW0240,2019,60,Y,3,0.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,90.8
+SW0240,2022,63,Y,3,3.2,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,26.2
+SW0240,2023,64,Y,3,4.2,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0240,2023,64,Y,3,4.2,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,40.1
+SW0240,2023,64,Y,4,4.2,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,21.4
+SW0240,2024,65,Y,3,5.2,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,34.9
+SW0240,2024,65,Y,3,5.2,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,75.5
+SW0241,2019,68,Y,2,9.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,26.1
+SW0241,2020,69,Y,2,10.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,79.0
+SW0241,2022,71,Y,3,12.1,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,59.2
+SW0241,2022,71,Y,2,12.1,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0241,2023,72,Y,3,13.1,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,52.7
+SW0241,2024,73,Y,2,14.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,76.1
+SW0241,2024,73,Y,2,14.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,21.9
+SW0241,2024,73,Y,2,14.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,21.3
+SW0241,2024,73,Y,2,14.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,76.1
+SW0242,2020,19,Y,0,3.4,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0242,2020,19,Y,0,3.4,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,19.3
+SW0242,2022,21,Y,0,5.4,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,24.9
+SW0242,2024,23,Y,0,7.4,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,66.1
+SW0243,2020,64,N,2,1.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,70.2
+SW0243,2020,64,N,3,1.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0243,2020,64,N,2,1.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,70.2
+SW0243,2021,65,N,2,2.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0243,2023,67,N,2,4.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,79.4
+SW0243,2023,67,N,3,4.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0243,2024,68,N,2,5.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,28.9
+SW0244,2020,51,N,3,21.1,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,75.1
+SW0244,2021,52,N,2,22.1,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0244,2021,52,N,3,22.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,72.7
+SW0244,2022,53,N,3,23.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,65.1
+SW0244,2022,53,N,3,23.1,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,38.6
+SW0244,2024,55,N,2,25.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,20.7
+SW0244,2024,55,N,3,25.1,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,71.1
+SW0245,2019,43,Y,2,9.5,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0245,2019,43,Y,2,9.5,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,43.8
+SW0245,2020,44,Y,3,10.5,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,81.6
+SW0245,2020,44,Y,3,10.5,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0245,2020,44,Y,3,10.5,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0245,2022,46,Y,2,12.5,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,25.1
+SW0245,2023,47,Y,2,13.5,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0246,2019,59,N,4,15.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,25.7
+SW0246,2023,63,N,5,19.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,25.1
+SW0246,2024,64,N,4,20.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,26.0
+SW0246,2024,64,N,4,20.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0246,2024,64,N,4,20.1,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,46.1
+SW0246,2024,64,N,4,20.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,22.3
+SW0246,2024,64,N,4,20.1,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,22.3
+SW0246,2024,64,N,4,20.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0247,2021,69,Y,5,3.4,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0247,2021,69,Y,6,3.4,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,27.5
+SW0247,2024,72,Y,5,6.4,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,92.3
+SW0247,2024,72,Y,6,6.4,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,26.7
+SW0247,2024,72,Y,5,6.4,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,28.7
+SW0247,2024,72,Y,6,6.4,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,26.7
+SW0248,2019,44,N,2,13.3,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,27.1
+SW0248,2020,45,N,2,14.3,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,85.5
+SW0248,2021,46,N,3,15.3,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0248,2024,49,N,3,18.3,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,58.5
+SW0248,2024,49,N,3,18.3,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0249,2022,25,N,2,16.9,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,70.7
+SW0249,2022,25,N,2,16.9,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,77.8
+SW0249,2022,25,N,2,16.9,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,87.4
+SW0249,2023,26,N,2,17.9,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0249,2024,27,N,3,18.9,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0250,2019,55,N,1,13.8,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,113.3
+SW0250,2019,55,N,1,13.8,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,69.7
+SW0250,2022,58,N,1,16.8,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0250,2022,58,N,1,16.8,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,28.9
+SW0250,2023,59,N,1,17.8,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,40.6
+SW0251,2021,31,Y,1,7.9,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0251,2021,31,Y,1,7.9,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0251,2022,32,Y,2,8.9,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,68.2
+SW0251,2022,32,Y,1,8.9,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0251,2022,32,Y,2,8.9,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0251,2022,32,Y,2,8.9,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0251,2022,32,Y,2,8.9,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0251,2023,33,Y,1,9.9,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0251,2023,33,Y,1,9.9,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0252,2020,30,N,4,1.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,25.5
+SW0252,2022,32,N,4,3.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,82.5
+SW0252,2022,32,N,5,3.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,25.0
+SW0252,2023,33,N,4,4.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,47.9
+SW0252,2023,33,N,4,4.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,88.9
+SW0252,2024,34,N,4,5.0,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,42.7
+SW0252,2024,34,N,5,5.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,60.5
+SW0253,2021,30,N,2,7.1,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,30.4
+SW0253,2021,30,N,1,7.1,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0253,2021,30,N,1,7.1,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0253,2024,33,N,2,10.1,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0253,2024,33,N,1,10.1,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0254,2019,28,Y,3,0.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,30.7
+SW0254,2020,29,Y,4,1.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,94.5
+SW0254,2020,29,Y,3,1.0,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,72.1
+SW0254,2023,32,Y,3,4.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,81.8
+SW0254,2024,33,Y,4,5.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,111.6
+SW0255,2019,65,Y,2,0.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,0,
+SW0255,2019,65,Y,2,0.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0255,2019,65,Y,2,0.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0255,2021,67,Y,2,2.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0255,2022,68,Y,2,3.0,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,28.9
+SW0255,2023,69,Y,2,4.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,93.3
+SW0255,2023,69,Y,2,4.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,0,
+SW0256,2019,36,N,3,6.5,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0256,2019,36,N,3,6.5,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,66.2
+SW0256,2020,37,N,3,7.5,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,1,32.8
+SW0256,2021,38,N,3,8.5,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0256,2021,38,N,3,8.5,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0256,2021,38,N,3,8.5,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,0,
+SW0256,2022,39,N,3,9.5,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,1,80.7
+SW0256,2022,39,N,3,9.5,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0257,2020,24,N,5,2.0,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0257,2021,25,N,6,3.0,R2,La Jolla Rough Water (3mi),CA,3.0,3-5,66,Moderate,4,1,98.0
+SW0257,2021,25,N,5,3.0,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0257,2024,28,N,5,6.0,R1,Waikiki Roughwater Swim,HI,2.4,2-3,79,Moderate,3,1,57.1
+SW0258,2019,27,N,2,5.2,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0258,2019,27,N,2,5.2,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0258,2022,30,N,3,8.2,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,28.7
+SW0258,2023,31,N,2,9.2,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,33.7
+SW0258,2023,31,N,2,9.2,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,0,
+SW0258,2024,32,N,3,10.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0258,2024,32,N,3,10.2,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0258,2024,32,N,2,10.2,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,0,
+SW0259,2020,39,N,3,6.5,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0259,2021,40,N,4,7.5,R5,Manhattan Beach Pier to Pier,CA,2.0,1-2,65,Low,2,1,72.5
+SW0259,2024,43,N,3,10.5,R4,Seal Beach Rough Water Swim,CA,1.0,2-3,64,Moderate,2,0,
+SW0260,2021,37,N,1,17.7,R7,Maui Roughwater Swim,HI,3.0,3-5,78,High,4,0,
+SW0260,2023,39,N,1,19.7,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,16.4
+SW0260,2024,40,N,1,20.7,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,50.2
+SW0260,2024,40,N,1,20.7,R3,La Jolla Rough Water (1mi),CA,1.0,2-3,66,Moderate,2,1,24.6
+SW0260,2024,40,N,1,20.7,R6,Alcatraz Sharkfest Swim,CA,1.5,2-4,60,High,5,1,50.2

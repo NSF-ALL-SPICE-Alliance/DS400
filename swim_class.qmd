@@ -1,0 +1,113 @@
+---
+title: "Swim"
+format: html
+editor: visual
+---
+
+## Today's Lecture
+
+With the Waikiki Roughwater swim coming up, let's do a Bayesian analysis on some claude-generated swim data
+
+### Libraries
+
+```{r}
+library(tidyverse)
+library(here)
+library(scales)
+```
+
+### Read in Data
+
+```{r}
+swim <- read_csv(here("data/swim_panel_dataset_1500.csv"))
+```
+
+### Exploratory Data Viz
+
+Histogram of finished swim times
+
+```{r}
+
+```
+
+Color by Event
+
+```{r}
+
+```
+
+Finish or not by event
+
+```{r}
+ggplot(data = swim, aes(y = race_name, fill = factor(finished))) +
+  geom_bar(position = "fill") +
+  scale_x_continuous(labels = percent_format())
+```
+
+Scatter plot of finish times and age colored by event
+
+```{r}
+
+```
+
+Boxplot of finish times by event
+
+```{r}
+
+```
+
+Let's say Tallen and I finish the Waikiki Roughwater Race!
+
+Then..... the adrenaline gets to our heads and we get wrapped up in some criminal activity the lands us at alcatraz. We prison break style escape but then we have to swim to San Francisco. What is the probability we will make it? Can we base it on some swim event data?
+
+```{r}
+swim <- swim %>% mutate(finished = factor(finished, levels = c(0, 1), labels = c("No", "Yes")))
+```
+
+#### P(B\|A)
+
+The probability that we will make it across given we completed the Waikiki Roughwater Swim
+
+```{r}
+swim_wide <- swim |>
+  filter(race_name %in% c("Alcatraz Sharkfest Swim", "Waikiki Roughwater Swim")) |>
+  group_by(swimmer_id, race_name) |>
+  summarize(finished_race = if_else(any(finished == "Yes"), "Yes", "No"), .groups = "drop") |>
+  pivot_wider(names_from = race_name, values_from = finished_race) |>
+  rename(finished_alcatraz = `Alcatraz Sharkfest Swim`,
+         finished_waikiki = `Waikiki Roughwater Swim`) |>
+  filter(!is.na(finished_alcatraz), !is.na(finished_waikiki))
+```
+
+P(B)
+
+what is the probability of completing the Alcatraz Sharkfest Swim
+
+```{r}
+
+```
+
+P(A\|B)
+
+```{r}
+probability_complete_waikiki_given_complete_alcatraz <- swim_wide %>% 
+  count(finished_alcatraz, finished_waikiki) %>% 
+  group_by(finished_alcatraz) %>% 
+  mutate(percent = n / sum(n)) %>% 
+  filter(finished_alcatraz == "Yes", finished_waikiki == "Yes") %>% 
+  pull(percent)
+
+probability_complete_waikiki_given_complete_alcatraz
+```
+
+P(A)
+
+```{r}
+
+```
+
+P(B\|A)
+
+```{r}
+probability_complete_alcatraz * probability_complete_waikiki_given_complete_alcatraz / probability_complete_waikiki
+```
