@@ -1,4 +1,4 @@
-## ============================================================
+### ============================================================
 ## Beta-Binomial Explorer -- Two Tabs + Exercise Reference
 ## Tab 1: The Beta prior model alone (Michelle's election, prior only)
 ## Tab 2: Prior + Likelihood + Posterior, the full picture
