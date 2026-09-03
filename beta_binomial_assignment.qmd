@@ -1,0 +1,114 @@
+---
+title: "Beta Binomial Model - Your Use Case"
+format: html
+editor: visual
+---
+
+# Welcome to Today's Lecture
+
+```{r}
+library(tidyverse)
+library(bayesrules)
+```
+
+We have done a deep-dive into the [Beta Binomial model for Michellele's election support](https://www.bayesrulesbook.com/chapter-3) with the shiny app in the `beta_binomial_election_app.R` script. Now, I would like you and a teammate to create a use-case that is appropriate for the usage of this model.
+
+## Example
+
+This example will help guide you in your use case, I will leave a skeleton outline of the bottom of this qmd for you to fill out.
+
+### Prior
+
+Every four years, Americans go to the polls to cast their vote for President of the United States. Consider the following scenario. “Michelle” has decided to run for president and you’re her campaign manager for the state of Minnesota. As such, you’ve conducted 30 different polls throughout the election season. Though Michelle’s support has hovered around 45%, she polled at around 35% in the dreariest days and around 55% in the best days on the campaign trail
+
+π = Michelle's true election support
+
+```{r}
+plot_beta(45, 55)
+```
+
+Statement = "Before any new poll, we believe there's a 95% chance Michelle's true support π is between 35% and 55%, with 45% as our single best guess."
+
+Prior effective sample size = 100 pseudo voters
+
+### Likelihood
+
+**New data arrives:** We commission a new poll of *n* Minnesotans and record *y* , the number who support Michelle. We poll 50 voters in which 30 (60%) supported her -- noticeably higher than her 45% prior average.
+
+```{r}
+plot_binomial_likelihood(y = 30, n = 50)
+```
+
+Likelihood Question: "For each possible value of π — Michelle's true underlying support — how compatible is that value with having produced exactly 30 out of 50 in this poll?"
+
+Likelihood Statement: "Taken on its own, this poll makes values of π near 60% far more plausible than values near 45% — the data alone points to a higher number than we'd been expecting"
+
+### Posterior
+
+```{r}
+plot_beta_binomial(alpha = 45, beta = 55, y = 30, n = 50)
+```
+
+Statement = "There's a 95% probability that Michelle's true support π lies between 42.0% and 58.0%."
+
+Weight = prior (worth \~100 pseudo-voters) contributes 67% of the weight, and our new poll (n = 50 voters) contributes the other 33%.
+
+## Your Turn
+
+With your teammate, invent a use-case appropriate for the Beta Binomial Model. You do not need to find a dataset, just follow the kind of thinking from the text and example. Repeat the steps above describing in context your prior, likelihood, and posterior with statements and plots. Tips:
+
+- Come up with 3 -5 ideas on your own
+
+- Sketch them out and think critically in how they differ from the example but may still fit the Beta Binomial Modeling architecture
+
+- Pitch your sketches to a free AI Chat of your choosing (I use Claude) and have it critique your use case to see if the Beta Binomial Model is appropriate and accurately addresses your question
+
+- Note the assumptions/limitations of your model based on AI feedback
+
+- **Remember**: "[All models are wrong, but some are useful](https://en.wikipedia.org/wiki/All_models_are_wrong)"
+
+Things to keep on mind:
+
+- Is π a single, clearly defined quantity — not "kind of about deposits, kind of about attendance"?
+
+- Does your data collection method actually measure that population, or a biased subset of it (who responds, who's easy to ask)?
+
+- Is π genuinely uncertain — or is it something you could already know exactly (a completed census), making the model unnecessary?
+
+- Is your prior based on real past counts (pseudo-counts) or an elicited belief — and can you say why you chose that one?
+
+### Prior
+
+Set the scene...
+
+define π
+
+```{r}
+#plot_beta(alpha = , beta = )
+```
+
+Statement = "Before any new data we believe there's a 95% chance π is between x% and x%, with x% as our single best guess."
+
+Prior effective sample size =
+
+### Likelihood
+
+**New data arrives:** We commission new data of *n* and record *y* , the number .... We gather x data points in which y (x%) ... -- noticeably higher/lower than the x% prior average.
+
+```{r}
+#plot_binomial_likelihood(y = , n = )
+```
+
+Likelihood Question: "For each possible value of π —.... — how compatible is that value with having produced exactly y out of n in this data collection?"
+
+Likelihood Statement: "Taken on its own, this data makes values of π near x% far more plausible than values near x% — the data alone points to a higher/lower number than we'd been expecting"
+
+### Posterior
+
+```{r}
+#plot_beta_binomial(alpha = , beta = , y = , n = )
+```
+
+Statement = "There's a 95% probability that π lies between x% and x%."
+
+Weight = prior (worth \~ ) contributes x% of the weight, and our new data (n = ) contributes the other x%.
