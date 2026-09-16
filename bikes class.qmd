@@ -1,0 +1,109 @@
+---
+title: "Untitled"
+format: html
+editor: visual
+---
+
+### Libraries
+
+```{r}
+library(bayesrules)
+library(tidyverse)
+library(ggpubr)
+library(plotly)
+library(report)
+```
+
+### Intro
+
+Welcome to today's lecture, we will analyze Capital Bikeshare Data from Washington D.C
+
+```{r}
+bikes_data <- bayesrules::bikes
+```
+
+Starter Questions:
+
+1.  What is the distribution of ridership? Make a histogram and write what you see below
+
+```{r}
+
+```
+
+2.  Has ridership increased over time? Make a plot and write what you see below
+
+```{r}
+
+```
+
+```{}
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+3.  Are there more rides on weekdays or weekends? Make a plot and write what you see below
+
+```{r}
+
+```
+
+4.  **Does temperature feel effect ridership**?
+
+```{r}
+ggplot(bikes_data, aes(x = temp_feel, y = rides)) +
+  geom_point()
+```
+
+```{r}
+ggplot(bikes_data, aes(x = temp_feel, y = rides)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  stat_cor()
+  
+```
+
+What is a correlation coefficient and p value: [helpful tool here](https://rpsychologist.com/correlation/)
+
+R = 0.58 — the strength and direction of the pattern you're looking at
+
+- On the -1-to-1 scale, 0.58 sits in **moderate** territory: real and clearly visible in the scatter, but the cloud of points still has meaningful width around the line, not tightly hugging it the way an R of 0.9+ would.
+
+Squaring it tells you something more concrete about the plot: R² ≈ 0.34
+
+- About **34% of the vertical scatter in ridership** across this plot is explained by where a point sits on the x-axis (temperature). The remaining **66%** is everything else the plot doesn't capture
+
+p \< 2.2×10⁻¹⁶ — how confident you should be that this pattern is real, not a fluke of these particular 500 days
+
+- This tests rhe hypothesis that temperature and ridership have *no* linear relationship at all in the underlying population, and this pattern is just coincidental noise from sampling 500 particular days. The p-value says: **if that null hypothesis were actually true, seeing a correlation as strong as 0.58 in a sample this size would be astronomically unlikely**
+
+```{r}
+lm(data = bikes_data, rides~temp_feel)
+```
+
+**`(Intercept)` = -2179.27**: the model's predicted ridership when temp_feel = 0. As flagged before, this is a real number the formula produces, but not a practically meaningful one — 0°F essentially never happens in D.C., so this is just "where the line would cross the y-axis if you extended it that far," not a usable prediction.
+
+**`temp_feel` = 81.88**: the slope — for every one-unit (one degree) increase in temp_feel, the model predicts ridership increases by 81.88 rides. This is the number that actually answers "does temperature matter, and by how much"
+
+```{r}
+
+model <- lm(rides ~ temp_feel, data = bikes_data)
+report(model)
+```
+
+### Your turn
+
+Repeat the all the steps to model the relationship between
+
+- rides and humidity
+
+- rides and windspeed
+
+- rides and temp_actual
+
+- temp_feel and temp_actual
