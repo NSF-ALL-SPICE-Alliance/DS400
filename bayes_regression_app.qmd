@@ -1,0 +1,815 @@
+---
+title: "Bayes Regression App"
+format: html
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(bayesrules)
+```
+
+### Data
+
+```{r}
+bikes_data <- bayesrules::bikes
+```
+
+### Question
+
+How many rides will we have on a 75 degree (feel) day
+
+```{r}
+bikes_data |> 
+  filter(between(temp_feel, 74.9, 76)) |> 
+  ggplot(aes(x = rides)) +
+  geom_histogram()
+```
+
+```{r}
+ggplot(bikes_data, aes(x = temp_feel, y = rides)) +
+  geom_point()
+```
+
+### App
+
+```{r}
+library(shiny)
+library(tidyverse)
+library(bayesrules)   # provides the `bikes` data AND plot_normal()/plot_gamma()
+library(rstanarm)     # for the real stan_glm() MCMC fit
+
+bikes_data <- bayesrules::bikes
+mean_temp  <- mean(bikes_data$temp_feel)
+temp_range <- range(bikes_data$temp_feel)
+
+# "Data alone" reference for beta1: a plain OLS fit, computed once since
+# bikes_data never changes. Its sampling distribution (estimate +/- SE)
+# is the frequentist stand-in for "what does the data alone say", the
+# direct regression analogue of the scaled-likelihood curve from the
+# Beta-Binomial election app.
+ols_model     <- lm(rides ~ temp_feel, data = bikes_data)
+ols_coef      <- summary(ols_model)$coefficients
+ols_beta1_est <- unname(ols_coef["temp_feel", "Estimate"])
+ols_beta1_se  <- unname(ols_coef["temp_feel", "Std. Error"])
+
+# "Data alone" reference for beta0c (typical ridership at the average
+# temperature): the OLS fitted value AT mean_temp, which -- by a basic
+# property of least-squares regression -- always exactly equals
+# mean(rides), with its own standard error from predict().
+ols_mu_pred <- predict(ols_model, newdata = data.frame(temp_feel = mean_temp), se.fit = TRUE)
+ols_mu_est  <- unname(ols_mu_pred$fit)
+ols_mu_se   <- unname(ols_mu_pred$se.fit)
+
+app_css <- tags$head(tags$style(HTML("
+  .story-panel {
+    background: #eef4fb; border-left: 4px solid #4C72B0;
+    border-radius: 4px; padding: 10px 16px; margin-bottom: 14px;
+  }
+  .interp-panel {
+    background: #f2f8f0; border-left: 4px solid #55A868;
+    border-radius: 4px; padding: 10px 16px; margin-top: 10px;
+  }
+  .concept-panel {
+    background: #f7f2fb; border-left: 4px solid #8B5CF6;
+    border-radius: 4px; padding: 10px 16px; margin-top: 10px;
+    margin-bottom: 10px; font-size: 0.95em;
+  }
+  .code-box {
+    background: #2b2b2b; color: #eaeaea; font-family: monospace;
+    font-size: 13px; padding: 12px 16px; border-radius: 6px;
+    white-space: pre-wrap; margin-top: 8px;
+  }
+  .question-card {
+    border-left: 4px solid #4C72B0;
+    background: #fafafa; border-radius: 4px;
+    padding: 10px 16px; margin-bottom: 12px;
+  }
+  .question-tab-badge {
+    display: inline-block; margin-left: 8px; font-size: 0.65em;
+    font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em;
+    color: #4C72B0; background: #eef4fb; border-radius: 10px;
+    padding: 2px 9px; vertical-align: middle;
+  }
+")))
+
+## ------------------------------------------------------------
+## Helpers
+## ------------------------------------------------------------
+
+# Simulate directly from the priors (Exponential(l) == Gamma(1, l), so
+# rexp() and bayesrules::plot_gamma(shape=1, rate=l) describe the same
+# sigma prior -- this reuses the book's own plotting functions.
+simulate_prior_draws <- function(m0, s0, m1, s1, l, n = 200) {
+  tibble(
+    beta0c = rnorm(n, m0, s0),
+    beta1  = rnorm(n, m1, s1),
+    sigma  = rexp(n, l)
+  )
+}
+
+# beta0c is the CENTERED intercept (typical ridership at the average
+# temperature) -- to draw a line against raw temp_feel we decenter it,
+# exactly the beta0 vs beta0c distinction from the book's Figure 9.3.
+prior_line_df <- function(draws, x_seq) {
+  draws %>%
+    mutate(draw_id = row_number()) %>%
+    crossing(x = x_seq) %>%
+    mutate(mu = beta0c + beta1 * (x - mean_temp))
+}
+
+stan_call_text <- function(m0, s0, m1, s1, l, prior_pd, chains, iter) {
+  sprintf(
+    paste0(
+      "stan_glm(\n",
+      "  rides ~ temp_feel, data = bikes,\n",
+      "  family = gaussian,\n",
+      "  prior_intercept = normal(%s, %s),\n",
+      "  prior = normal(%s, %s),\n",
+      "  prior_aux = exponential(%s),\n",
+      "  chains = %d, iter = %d, seed = 84735%s)"
+    ),
+    m0, s0, m1, s1, l, chains, iter,
+    if (prior_pd) ",\n  prior_PD = TRUE" else ""
+  )
+}
+
+# One reference card per question: a tab badge and the prompt, no
+# answer box -- answers go in the comment block at the top of this
+# script instead, so they persist with the file rather than the app.
+question_card <- function(n, tab, prompt) {
+  div(class = "question-card",
+      h5(sprintf("Question %d", n), tags$span(class = "question-tab-badge", tab)),
+      p(prompt)
+  )
+}
+
+## ------------------------------------------------------------
+## UI
+## ------------------------------------------------------------
+
+ui <- navbarPage(
+  title = "Bayesian Bike Regression",
+  header = app_css,
+  
+  ## ---------------- TAB 1: Tune the prior ----------------
+  tabPanel(
+    "1. Tune the Prior",
+    sidebarLayout(
+      sidebarPanel(
+        div(class = "story-panel",
+            strong("The three unknowns:"), " beta0c (typical ridership at ",
+            "the average temperature), beta1 (change in ridership per ",
+            "degree), and sigma (day-to-day scatter around the line). ",
+            "Drag the sliders and watch the plots and the code below ",
+            "update together."
+        ),
+        h4("beta0c ~ Normal(m0, s0)"),
+        sliderInput("m0", "m0 (typical ridership at avg. temp)", 0, 10000, 5000, step = 100),
+        sliderInput("s0", "s0 (uncertainty around that typical value)", 100, 3000, 1000, step = 50),
+        h4("beta1 ~ Normal(m1, s1)"),
+        sliderInput("m1", "m1 (typical change per degree)", -50, 300, 100, step = 5),
+        sliderInput("s1", "s1 (uncertainty around that change)", 5, 150, 40, step = 5),
+        h4("sigma ~ Exponential(l)"),
+        sliderInput("l", "l (rate; E(sigma) = 1/l)", 0.0002, 0.005, 0.0008, step = 0.0001),
+        actionButton("reset_prior", "Reset to the text's priors"),
+        div(class = "concept-panel",
+            strong("Reading a 95% range from mean and SD:"), " for a Normal ",
+            "distribution, 95% of the plausible values fall within about ",
+            "mean \u00b1 1.96\u00d7SD -- not \u00b1SD (that's only the 68% range). ",
+            "So Normal(100, 40) puts 95% of its mass between roughly ",
+            "100 - 1.96(40) = 22 and 100 + 1.96(40) = 178, not the 60-140 ",
+            "you'd get from just \u00b1SD."
+        ),
+        div(class = "concept-panel",
+            strong("Why sigma's curve looks so different:"), " beta0c and ",
+            "beta1 use Normal priors, which are symmetric -- their mean, ",
+            "median, and peak (mode) all sit at the same spot. sigma's ",
+            "Exponential prior is NOT symmetric: it peaks at 0, but its ",
+            tags$em("mean"), " (E(sigma) = 1/l) sits well to the right of ",
+            "that peak, pulled there by a long thin tail of larger values. ",
+            "The peak tells you the single most likely value; the mean is ",
+            "a full weighted average across the whole tail. They're both ",
+            "correct descriptions of the same curve -- they're just ",
+            "answering different questions (\"what's most likely?\" vs. ",
+            "\"what's the long-run average?\")."
+        ),
+        div(class = "concept-panel",
+            strong("Why sigma can't go negative:"), " sigma measures ",
+            "spread -- how far typical days scatter from the average. ",
+            "Spread can't be negative any more than a distance can. The ",
+            "Exponential formula itself enforces this: it's only defined ",
+            "for sigma \u2265 0. Normal priors, by contrast, are fine for ",
+            "beta0c and beta1 because those parameters really can be any ",
+            "real number -- including 0 or negative."
+        )
+      ),
+      mainPanel(
+        uiOutput("priorStatement"),
+        fluidRow(
+          column(4, plotOutput("beta0Plot", height = "220px")),
+          column(4, plotOutput("beta1Plot", height = "220px")),
+          column(4, plotOutput("sigmaPlot", height = "220px"))
+        ),
+        h4("200 prior plausible model lines"),
+        plotOutput("priorLinesPlot", height = "280px"),
+        div(class = "concept-panel",
+            strong("Why the lines funnel together in the middle:"), " beta0c ",
+            "is defined as ridership at the ", tags$em("average"), " temperature ",
+            sprintf("(~%.0f\u00b0F), not at 0\u00b0F", mean_temp), " -- so every ",
+            "line's uncertainty is smallest right there and grows the further ",
+            "you move toward either edge, since a small disagreement about ",
+            "the slope compounds over distance. A few lines dipping below 0 ",
+            "rides at the cold end isn't a data problem -- it's a property ",
+            "of the prior itself: Normal distributions don't know negative ",
+            "ridership is impossible."
+        ),
+        h4("Equivalent stan_glm() code (prior only, prior_PD = TRUE)"),
+        div(class = "code-box", textOutput("priorCode"))
+      )
+    )
+  ),
+  
+  ## ---------------- TAB 2: Fit the posterior ----------------
+  tabPanel(
+    "2. Fit the Posterior",
+    sidebarLayout(
+      sidebarPanel(
+        div(class = "story-panel",
+            strong("This runs real MCMC"), " on the actual ", code("bikes"),
+            " dataset (500 days), using the priors you just tuned on Tab 1. ",
+            "Unlike Tab 1's instant prior simulation, this genuinely samples ",
+            "the posterior with Stan -- expect it to take a few seconds."
+        ),
+        p(strong("Current priors (from Tab 1):")),
+        verbatimTextOutput("currentPriorSummary"),
+        actionButton("fit_posterior", "Fit the posterior model", class = "btn-primary"),
+        hr(),
+        helpText("Uses 4 chains, 2000 iterations each (fewer than the ",
+                 "book's 10,000 to keep this responsive in a live demo -- ",
+                 "more iterations would only reduce simulation noise, not ",
+                 "change the substantive answer, since the real driver of ",
+                 "precision here is the 500 real data points, not the ",
+                 "chain length.")
+      ),
+      mainPanel(
+        uiOutput("posteriorStatus"),
+        conditionalPanel(
+          condition = "output.modelFitted == true",
+          h4("Posterior summary"),
+          tableOutput("posteriorTable"),
+          uiOutput("posteriorInterpretation"),
+          h4("Prior belief vs. data alone vs. posterior, for beta1 specifically"),
+          div(class = "concept-panel",
+              strong("This is the plot Q5 is really asking for:"), " three ",
+              "separate estimates of \"expected change in rides per 1-degree ",
+              "increase\" side by side -- your prior belief (m1, before any ",
+              "data), what the data alone says (a plain OLS fit, ignoring the ",
+              "prior entirely), and the posterior (the balance between them). ",
+              "This is the direct regression version of the prior/likelihood/",
+              "posterior plot from the earlier Beta-Binomial election example."
+          ),
+          tableOutput("beta1CompareTable"),
+          plotOutput("beta1ComparePlot", height = "280px"),
+          div(class = "concept-panel",
+              strong("watch the SE:"), " the data-alone curve is built from ",
+              sprintf("OLS's estimate (%.1f) and its standard error (%.2f).",
+                      ols_beta1_est, ols_beta1_se),
+              " With n = 500 real days, that standard error is small, so the ",
+              "data-alone curve is naturally tall and narrow -- a sign of how ",
+              "precisely 500 real observations pin down the slope, compared ",
+              "to how spread out your prior belief (s1) was before seeing ",
+              "any of them."
+          ),
+          h4("Prior belief vs. data alone vs. posterior, for beta0c (typical ridership at the average temperature)"),
+          div(class = "concept-panel",
+              strong("This is the plot Q10 needs:"), " m0 and s0 set your ",
+              "prior belief about beta0c specifically, not the raw ",
+              "(Intercept) in the table above (that's ridership at a ",
+              "hypothetical 0\u00b0F -- a different, less meaningful number). ",
+              "Try setting m0 to 10,000 (its max) on Tab 1, then refit here: ",
+              "watch whether the green posterior curve follows the blue ",
+              "prior curve toward 10,000, or stays anchored near the tall ",
+              "orange data-alone curve instead."
+          ),
+          tableOutput("beta0cCompareTable"),
+          plotOutput("beta0cComparePlot", height = "280px"),
+          div(class = "concept-panel",
+              strong("Why the posterior should land close to the textbook's numbers:"),
+              " with Normal priors, there isn't a single clean number like ",
+              "\"alpha + beta\" to compare against n the way there is for a ",
+              "Beta prior -- but the same core idea still applies: a prior's ",
+              "pull on the posterior depends on how tightly it's specified ",
+              "(small s0/s1 = a more confident, more stubborn prior) relative ",
+              "to how much real data you have. With n = 500 real days and ",
+              "priors that are informative but not extremely narrow (s1 = 40, ",
+              "not s1 = 2), the data comfortably dominates -- so a posterior ",
+              "landing close to what plain OLS would give you isn't a ",
+              "coincidence, it's exactly what you'd expect."
+          ),
+          div(class = "concept-panel",
+              strong("Reading \"P(beta1 > 0 | data)\":"), " this is computed by ",
+              "literally counting what fraction of the thousands of posterior ",
+              "draws are positive -- a direct probability statement about the ",
+              "parameter itself. A p-value, by contrast, answers a different ",
+              "question: \"if the true effect were exactly zero, how surprising ",
+              "would this data be?\" Both can point the same direction, but ",
+              "only the Bayesian probability is allowed to say \"there's an X% ",
+              "chance the effect is positive.\""
+          ),
+          h4("50 posterior plausible model lines vs. the real data"),
+          plotOutput("posteriorLinesPlot", height = "300px"),
+          h4("Posterior distribution of beta1 (temp_feel effect)"),
+          plotOutput("beta1PosteriorPlot", height = "220px"),
+          h4("Equivalent stan_glm() code (this is the exact call used)"),
+          div(class = "code-box", textOutput("posteriorCode")),
+          h4("MCMC diagnostics"),
+          verbatimTextOutput("diagnostics"),
+          div(class = "concept-panel",
+              strong("Reading Rhat and n_eff:"), " Rhat compares your several ",
+              "MCMC chains against each other -- if they've all genuinely ",
+              "converged on the same posterior, Rhat should sit right around ",
+              "1.00 (matching what the textbook reports: 0.9999-1.0000). A ",
+              "value noticeably above 1 (a common rule of thumb: worry above ",
+              "roughly 1.01-1.05) means the chains disagree with each other, ",
+              "which is a red flag that the simulation hasn't settled yet -- ",
+              "not a statement about whether you have enough real data. ",
+              "n_eff (effective sample size) tells you, roughly, how many ",
+              "genuinely independent-looking draws your MCMC chain produced; ",
+              "MCMC draws are naturally a bit correlated step-to-step, so ",
+              "n_eff is usually somewhat smaller than the raw number of ",
+              "iterations you asked for."
+          )
+        )
+      )
+    )
+  ),
+  
+  ## ---------------- TAB 3: Posterior prediction ----------------
+  tabPanel(
+    "3. Predict Ridership",
+    sidebarLayout(
+      sidebarPanel(
+        div(class = "story-panel",
+            strong("Requires a fitted model from Tab 2 first."), " Once ",
+            "fitted, this tab is fully live -- no new MCMC needed, since ",
+            "we're just reusing the posterior draws already sitting in memory."
+        ),
+        sliderInput("temp_predict", "Temperature to predict for (\u00b0F)",
+                    min = 20, max = 100, value = 75, step = 1),
+        helpText(sprintf("The observed data ranges from %.0f\u00b0F to %.0f\u00b0F -- ",
+                         temp_range[1], temp_range[2]),
+                 "predicting outside that range leans more heavily on the ",
+                 "model's assumed linear shape than on nearby real data.")
+      ),
+      mainPanel(
+        uiOutput("predictionStatus"),
+        conditionalPanel(
+          condition = "output.modelFitted == true",
+          uiOutput("predictionStatement"),
+          div(class = "concept-panel",
+              strong("mu vs. the posterior predictive -- two different questions:"),
+              " mu asks \"what's the average ridership across ", tags$em("all"),
+              " days at this temperature?\" -- it's narrow because averaging ",
+              "smooths out day-to-day noise. The posterior predictive asks ",
+              "\"what will happen on ", tags$em("one specific"), " day at this ",
+              "temperature?\" -- it has to add real day-to-day scatter (sigma) ",
+              "on top of the same uncertainty mu already has, which is why the ",
+              "orange curve is always wider than the blue one."
+          ),
+          div(class = "concept-panel",
+              strong("A real limitation, visible at cold temperatures:"), " a ",
+              "Normal distribution technically allows any real number, ",
+              "including negative ones -- so at cold temperatures, where ",
+              "typical ridership is already low, the posterior predictive's ",
+              "left tail can dip below 0 rides. That's not a bug in the ",
+              "simulation; it's an honest sign that a plain Normal model is ",
+              "only an approximation, one that strains more at the extremes ",
+              "than in the middle of the observed data."
+          ),
+          plotOutput("predictionPlot", height = "280px"),
+          h4("The by-hand simulation code (what's actually happening)"),
+          div(class = "code-box", textOutput("predictionCode")),
+          h4("The rstanarm shortcut (same answer, one line)"),
+          div(class = "code-box", textOutput("shortcutCode"))
+        )
+      )
+    )
+  ),
+  
+  ## ---------------- TAB 4: Questions ----------------
+  tabPanel(
+    "4. Questions",
+    fluidPage(
+      div(class = "story-panel",
+          strong("How to use this tab:"), " Each question names which tab ",
+          "to work in. Set the sliders, read off the app's numbers, then ",
+          "write your answer as a comment at the top of ", code("app.R"),
+          " (the script you're running this from) -- that way your ",
+          "answers are saved with the script itself, not lost when you ",
+          "close the app."
+      ),
+      question_card(1, "Tab 1", "Set m1 = 100, s1 = 40 (the book's defaults). By hand, using mean +/- 1.96*SD, calculate the 95% plausible range for beta1. Check your answer against what the app reports."),
+      question_card(2, "Tab 1", "Increase s1 from 40 to 80, keeping m1 = 100. What happens to the spread of the \"200 prior plausible lines\" plot? Explain in one sentence why."),
+      question_card(3, "Tab 1", "Set l (sigma's rate) to 0.002, then to 0.0003. Compare the two sigma prior plots. Which one reflects a stronger belief that ridership is tightly predicted by temperature alone?"),
+      question_card(4, "Tab 1", "The sigma prior plot peaks at 0, not in the middle like the beta0c and beta1 plots. Why? (Hint: what values is sigma even allowed to take?)"),
+      question_card(5, "Tab 2", "Reset to the book's default priors and fit the posterior. Report the posterior median for the Intercept and for temp_feel. How closely do they match the textbook's own values (-2194.24 and 82.16)? Given how large n = 500 is relative to this prior's strength, is that closeness surprising, or exactly what you'd expect? Explain using the weight-of-evidence idea."),
+      question_card(6, "Tab 2", "What does \"P(beta1 > 0 | data)\" actually tell you, and why is this a genuine probability statement rather than a p-value?"),
+      question_card(7, "Tab 2", "Look at the MCMC diagnostics table (Rhat, n_eff). What would an Rhat far from 1 (say, 1.5) suggest about the chains?"),
+      question_card(8, "Tab 3", "Predict ridership at 75\u00b0F. Record both credible intervals shown: \"typical ridership (mu)\" and \"one day's ridership (posterior predictive).\" Which is wider, and why?"),
+      question_card(9, "Tab 3", "Now predict at a much colder temperature, like 30\u00b0F. Does the posterior predictive interval's lower bound dip below zero? What limitation of using a Normal distribution for ridership does that reveal?"),
+      question_card(10, "Tab 1 + Tab 2, extends Q5", "The m0 slider only goes up to 10,000. In Q5 you fit the posterior with the default m0 = 5,000 and found the posterior intercept near -2194. Now set m0 to its max, 10,000 -- double your original prior belief -- keep everything else the same, and refit. Use the \"Prior belief vs. data alone vs. posterior, for beta0c\" plot to see it directly: does the posterior follow the prior toward 10,000, or stay anchored near the data-alone curve? Explain using weight-of-evidence: compare how confidently you specified m0 (via s0) to how much real data you have (n = 500).")
+    )
+  )
+)
+
+## ------------------------------------------------------------
+## Server
+## ------------------------------------------------------------
+
+server <- function(input, output, session) {
+  
+  ## ===== TAB 1: Prior tuning (instant, no MCMC) =====
+  
+  observeEvent(input$reset_prior, {
+    updateSliderInput(session, "m0", value = 5000)
+    updateSliderInput(session, "s0", value = 1000)
+    updateSliderInput(session, "m1", value = 100)
+    updateSliderInput(session, "s1", value = 40)
+    updateSliderInput(session, "l", value = 0.0008)
+  })
+  
+  prior_draws <- reactive({
+    simulate_prior_draws(input$m0, input$s0, input$m1, input$s1, input$l, n = 200)
+  })
+  
+  output$priorStatement <- renderUI({
+    m0 <- input$m0; s0 <- input$s0; m1 <- input$m1; s1 <- input$s1; l <- input$l
+    div(class = "interp-panel",
+        sprintf(
+          paste0(
+            "Before seeing any data: on a typical (~%.0f\u00b0F) day, you expect ",
+            "about %.0f riders (95%% plausible range roughly %.0f to %.0f). For ",
+            "every one-degree increase in temperature, you expect ridership to ",
+            "change by about %.0f rides (95%% plausible range roughly %.0f to ",
+            "%.0f). Day-to-day scatter around that average is expected to be ",
+            "about %.0f rides (E(sigma) = 1/l)."
+          ),
+          mean_temp, m0, m0 - 1.96*s0, m0 + 1.96*s0,
+          m1, m1 - 1.96*s1, m1 + 1.96*s1,
+          1/l
+        )
+    )
+  })
+  
+  output$beta0Plot <- renderPlot({
+    plot_normal(mean = input$m0, sd = input$s0) + labs(x = "beta0c", y = "pdf") + theme_minimal()
+  })
+  output$beta1Plot <- renderPlot({
+    plot_normal(mean = input$m1, sd = input$s1) + labs(x = "beta1", y = "pdf") + theme_minimal()
+  })
+  output$sigmaPlot <- renderPlot({
+    plot_gamma(shape = 1, rate = input$l) + labs(x = "sigma", y = "pdf") + theme_minimal()
+  })
+  
+  output$priorLinesPlot <- renderPlot({
+    x_seq <- seq(temp_range[1], temp_range[2], length.out = 50)
+    prior_line_df(prior_draws(), x_seq) %>%
+      ggplot(aes(x = x, y = mu, group = draw_id)) +
+      geom_line(alpha = 0.15, color = "#4C72B0") +
+      labs(x = "temp_feel", y = "rides",
+           title = "200 prior plausible relationships between temp_feel and rides") +
+      theme_minimal(base_size = 13)
+  })
+  
+  output$priorCode <- renderText({
+    stan_call_text(input$m0, input$s0, input$m1, input$s1, input$l,
+                   prior_pd = TRUE, chains = 4, iter = 2000)
+  })
+  
+  ## ===== TAB 2: Real posterior fit (MCMC, behind a button) =====
+  
+  output$currentPriorSummary <- renderText({
+    sprintf("beta0c ~ Normal(%s, %s)\nbeta1  ~ Normal(%s, %s)\nsigma  ~ Exponential(%s)",
+            input$m0, input$s0, input$m1, input$s1, input$l)
+  })
+  
+  fitted_model <- reactiveVal(NULL)
+  fitted_draws <- reactiveVal(NULL)
+  
+  observeEvent(input$fit_posterior, {
+    withProgress(message = "Running MCMC (stan_glm)...", value = 0.3, {
+      m <- stan_glm(
+        rides ~ temp_feel, data = bikes_data, family = gaussian,
+        prior_intercept = normal(input$m0, input$s0),
+        prior = normal(input$m1, input$s1),
+        prior_aux = exponential(input$l),
+        chains = 4, iter = 2000, seed = 84735, refresh = 0
+      )
+      incProgress(0.6)
+      fitted_model(m)
+      fitted_draws(as.data.frame(m))
+    })
+  })
+  
+  output$modelFitted <- reactive({ !is.null(fitted_model()) })
+  outputOptions(output, "modelFitted", suspendWhenHidden = FALSE)
+  
+  output$posteriorStatus <- renderUI({
+    if (is.null(fitted_model())) {
+      p(em("Click \"Fit the posterior model\" to run MCMC on the real bikes data."))
+    } else {
+      NULL
+    }
+  })
+  
+  output$posteriorTable <- renderTable({
+    req(fitted_draws())
+    fitted_draws() %>%
+      pivot_longer(everything(), names_to = "parameter", values_to = "value") %>%
+      group_by(parameter) %>%
+      summarize(
+        median = median(value),
+        `2.5%`  = quantile(value, 0.025),
+        `97.5%` = quantile(value, 0.975),
+        .groups = "drop"
+      )
+  }, digits = 2)
+  
+  output$posteriorInterpretation <- renderUI({
+    req(fitted_draws())
+    df <- fitted_draws()
+    p_pos <- mean(df$temp_feel > 0)
+    div(class = "interp-panel",
+        sprintf(
+          paste0(
+            "Posterior median relationship: rides = %.1f + %.1f x temp_feel. ",
+            "P(beta1 > 0 | data) \u2248 %.3f -- based on the real data, we're ",
+            "essentially certain ridership increases with temperature."
+          ),
+          median(df$`(Intercept)`), median(df$temp_feel), p_pos
+        )
+    )
+  })
+  
+  output$beta1CompareTable <- renderTable({
+    req(fitted_draws())
+    tibble(
+      Source = c("Prior belief (m1)", "Data alone (OLS estimate)", "Posterior (median)"),
+      `beta1 (rides per degree)` = c(
+        input$m1,
+        ols_beta1_est,
+        median(fitted_draws()$temp_feel)
+      )
+    )
+  }, digits = 2)
+  
+  output$beta1ComparePlot <- renderPlot({
+    req(fitted_draws())
+    post_beta1 <- fitted_draws()$temp_feel
+    
+    x_lo <- min(input$m1 - 3*input$s1, ols_beta1_est - 4*ols_beta1_se, min(post_beta1))
+    x_hi <- max(input$m1 + 3*input$s1, ols_beta1_est + 4*ols_beta1_se, max(post_beta1))
+    x_seq <- seq(x_lo, x_hi, length.out = 500)
+    
+    prior_df <- tibble(x = x_seq, density = dnorm(x_seq, input$m1, input$s1), curve = "Prior belief")
+    data_df  <- tibble(x = x_seq, density = dnorm(x_seq, ols_beta1_est, ols_beta1_se), curve = "Data alone (OLS)")
+    post_dens <- density(post_beta1, n = 500)
+    post_df  <- tibble(x = post_dens$x, density = post_dens$y, curve = "Posterior")
+    
+    all_df <- bind_rows(prior_df, data_df, post_df) %>%
+      mutate(curve = factor(curve, levels = c("Prior belief", "Data alone (OLS)", "Posterior")))
+    
+    ggplot(all_df, aes(x = x, y = density, color = curve, fill = curve)) +
+      geom_area(alpha = 0.25, position = "identity") +
+      geom_line(linewidth = 1.1) +
+      scale_color_manual(values = c("Prior belief" = "#4C72B0",
+                                    "Data alone (OLS)" = "#DD8452",
+                                    "Posterior" = "#55A868")) +
+      scale_fill_manual(values = c("Prior belief" = "#4C72B0",
+                                   "Data alone (OLS)" = "#DD8452",
+                                   "Posterior" = "#55A868")) +
+      labs(x = "beta1 (expected change in rides per 1-degree increase)",
+           y = "density", color = NULL, fill = NULL) +
+      theme_minimal(base_size = 13) +
+      theme(legend.position = "top")
+  })
+  
+  output$beta0cCompareTable <- renderTable({
+    req(fitted_draws())
+    post_beta0c <- fitted_draws()$`(Intercept)` + fitted_draws()$temp_feel * mean_temp
+    tibble(
+      Source = c("Prior belief (m0)", "Data alone (OLS, at avg. temp)", "Posterior (median)"),
+      `beta0c (typical rides at avg. temp)` = c(
+        input$m0,
+        ols_mu_est,
+        median(post_beta0c)
+      )
+    )
+  }, digits = 1)
+  
+  output$beta0cComparePlot <- renderPlot({
+    req(fitted_draws())
+    post_beta0c <- fitted_draws()$`(Intercept)` + fitted_draws()$temp_feel * mean_temp
+    
+    x_lo <- min(input$m0 - 3*input$s0, ols_mu_est - 4*ols_mu_se, min(post_beta0c))
+    x_hi <- max(input$m0 + 3*input$s0, ols_mu_est + 4*ols_mu_se, max(post_beta0c))
+    x_seq <- seq(x_lo, x_hi, length.out = 500)
+    
+    prior_df <- tibble(x = x_seq, density = dnorm(x_seq, input$m0, input$s0), curve = "Prior belief")
+    data_df  <- tibble(x = x_seq, density = dnorm(x_seq, ols_mu_est, ols_mu_se), curve = "Data alone (OLS)")
+    post_dens <- density(post_beta0c, n = 500)
+    post_df  <- tibble(x = post_dens$x, density = post_dens$y, curve = "Posterior")
+    
+    all_df <- bind_rows(prior_df, data_df, post_df) %>%
+      mutate(curve = factor(curve, levels = c("Prior belief", "Data alone (OLS)", "Posterior")))
+    
+    ggplot(all_df, aes(x = x, y = density, color = curve, fill = curve)) +
+      geom_area(alpha = 0.25, position = "identity") +
+      geom_line(linewidth = 1.1) +
+      scale_color_manual(values = c("Prior belief" = "#4C72B0",
+                                    "Data alone (OLS)" = "#DD8452",
+                                    "Posterior" = "#55A868")) +
+      scale_fill_manual(values = c("Prior belief" = "#4C72B0",
+                                   "Data alone (OLS)" = "#DD8452",
+                                   "Posterior" = "#55A868")) +
+      labs(x = "beta0c (typical ridership at the average temperature)",
+           y = "density", color = NULL, fill = NULL) +
+      theme_minimal(base_size = 13) +
+      theme(legend.position = "top")
+  })
+  
+  output$posteriorLinesPlot <- renderPlot({
+    req(fitted_draws())
+    df <- fitted_draws() %>% slice_sample(n = 50) %>% mutate(draw_id = row_number())
+    x_seq <- seq(temp_range[1], temp_range[2], length.out = 50)
+    line_df <- df %>%
+      crossing(x = x_seq) %>%
+      mutate(mu = `(Intercept)` + temp_feel * x)
+    
+    ggplot() +
+      geom_point(data = bikes_data, aes(x = temp_feel, y = rides), size = 0.4, alpha = 0.4) +
+      geom_line(data = line_df, aes(x = x, y = mu, group = draw_id),
+                color = "#55A868", alpha = 0.3) +
+      labs(x = "temp_feel", y = "rides",
+           title = "50 posterior plausible lines over the real observed data") +
+      theme_minimal(base_size = 13)
+  })
+  
+  output$beta1PosteriorPlot <- renderPlot({
+    req(fitted_draws())
+    fitted_draws() %>%
+      ggplot(aes(x = temp_feel)) +
+      geom_density(fill = "#55A868", alpha = 0.4) +
+      geom_vline(xintercept = 0, linetype = "dashed", color = "#8B3A3A") +
+      labs(x = "beta1 (posterior draws)", y = "density",
+           title = "Posterior distribution of the temp_feel effect") +
+      theme_minimal(base_size = 13)
+  })
+  
+  output$posteriorCode <- renderText({
+    stan_call_text(input$m0, input$s0, input$m1, input$s1, input$l,
+                   prior_pd = FALSE, chains = 4, iter = 2000)
+  })
+  
+  output$diagnostics <- renderPrint({
+    req(fitted_model())
+    summ <- summary(fitted_model())
+    # summary() on a stanreg object already includes Rhat and n_eff columns
+    # for every parameter -- no separate rhat()/neff_ratio() call needed,
+    # which sidesteps a real gotcha: the `posterior` package also defines
+    # a function called rhat(), but it expects a plain numeric draws array,
+    # not a fitted model object. If both rstanarm and posterior are loaded,
+    # whichever was loaded LAST wins the name "rhat" -- and if posterior's
+    # version gets called on a stanreg object by mistake, it fails with
+    # exactly the "non-numeric argument to binary operator" error, since
+    # it's trying to do arithmetic on something that isn't a plain numeric
+    # array. summary() avoids this ambiguity entirely.
+    print(summ[, c("Rhat", "n_eff")])
+  })
+  
+  ## ===== TAB 3: Posterior prediction (fast, reuses fitted_draws) =====
+  
+  output$predictionStatus <- renderUI({
+    if (is.null(fitted_draws())) {
+      p(em("Fit a posterior model on Tab 2 first -- this tab reuses those draws."))
+    } else {
+      NULL
+    }
+  })
+  
+  prediction_draws <- reactive({
+    req(fitted_draws())
+    df <- fitted_draws()
+    mu <- df$`(Intercept)` + df$temp_feel * input$temp_predict
+    y_new <- rnorm(length(mu), mean = mu, sd = df$sigma)
+    tibble(mu = mu, y_new = y_new)
+  })
+  
+  output$predictionStatement <- renderUI({
+    req(prediction_draws())
+    pd <- prediction_draws()
+    mu_ci <- quantile(pd$mu, c(0.025, 0.975))
+    y_ci  <- quantile(pd$y_new, c(0.025, 0.975))
+    div(class = "interp-panel",
+        sprintf(
+          paste0(
+            "At %.0f\u00b0F: the TYPICAL ridership across all days at this ",
+            "temperature is estimated at %.0f riders (95%% credible interval ",
+            "%.0f to %.0f -- narrow, since it's an average). But ridership on ",
+            "any ONE specific day at %.0f\u00b0F could range much more widely: ",
+            "95%% posterior predictive interval %.0f to %.0f."
+          ),
+          input$temp_predict, mean(pd$mu), mu_ci[1], mu_ci[2],
+          input$temp_predict, y_ci[1], y_ci[2]
+        )
+    )
+  })
+  
+  output$predictionPlot <- renderPlot({
+    req(prediction_draws())
+    pd <- prediction_draws() %>%
+      pivot_longer(everything(), names_to = "quantity", values_to = "value") %>%
+      mutate(quantity = recode(quantity,
+                               mu = "Typical ridership (mu)",
+                               y_new = "One day's ridership (posterior predictive)"))
+    ggplot(pd, aes(x = value, fill = quantity)) +
+      geom_density(alpha = 0.5) +
+      scale_fill_manual(values = c("Typical ridership (mu)" = "#4C72B0",
+                                   "One day's ridership (posterior predictive)" = "#DD8452")) +
+      labs(x = "rides", y = "density", fill = NULL,
+           title = sprintf("Posterior vs. posterior predictive at %.0f\u00b0F", input$temp_predict)) +
+      theme_minimal(base_size = 13) +
+      theme(legend.position = "top")
+  })
+  
+  output$predictionCode <- renderText({
+    sprintf(
+      paste0(
+        "posterior <- as.data.frame(bike_model)\n",
+        "mu <- posterior$`(Intercept)` + posterior$temp_feel * %d\n",
+        "y_new <- rnorm(length(mu), mean = mu, sd = posterior$sigma)"
+      ),
+      input$temp_predict
+    )
+  })
+  
+  output$shortcutCode <- renderText({
+    sprintf(
+      "posterior_predict(bike_model, newdata = data.frame(temp_feel = %d))",
+      input$temp_predict
+    )
+  })
+}
+
+shinyApp(ui, server)
+
+```
+
+### Questions
+
+1.  100−1.96(40)=100−78.4≈22 100+1.96(40)=100+78.4≈178
+
+- 95% corresponds to mean±1.96 SD, *not* ±1 SD
+
+  - `plot_normal(100,40)`
+
+2.  The fan of 200 lines widens substantially, especially toward the edges of the temperature range, while staying pinched together near the average temperature
+    - with s1=80, the 95% range for beta1 itself widens to roughly 100 ± 1.96(80) = -57 to 257 — meaning some of the 200 simulated lines will now even slope *downward*, which wasn't plausible at s1=40.
+3.  l=0.002 represents the stronger belief in a tight relationship
+
+- We are saying σ = 1/l. σ is the variance in rides scattered around the mean
+
+  - 1/0.002 = 500. In other words, once temperature is accounted for, relatively small scatter remains (500 rides)
+
+  - 1/0.003 =3,333. In other words, once temperature is accounted for, very sginificant scatter remains (3,333 rides) implying temperature is only a loose, weak predictor.
+
+4.  sigma is restricted to non-negative values, while beta0c and beta1 can genuinely take any real number — including zero or negative. That constraint forces sigma into a fundamentally different *shape* of distribution than the other two.
+
+- sigma is describing the scatter around the mean when temperature is controlled for, which cannot be a negative number. we could have negative slope (rides could decrease with increased temperature
+
+5.  posterior meidan for intercept = -2,197 (not helpful because we dont see any 0 degree days in our data). posterior median for temp_feel = 82.2
+
+- The posterior almost exactly matches the prior suggesting our 500 data points carries more weight than our relatively loos prior.
+
+6.  This is computed by literally tallying what fraction of the thousands of MCMC draws of beta1 came out positive — a direct empirical estimate of the actual probability that the true slope exceeds zero, given this prior and this data. It's a genuine probability statement about the *parameter*. A p-value answers a structurally different question: *"if the true effect were exactly zero, how surprising would data like this be?"* — a probability about the *data*, conditional on an assumption about the parameter, never a probability about the parameter itself.
+7.  it means the several MCMC chains have **not** converged to the same posterior — they're disagreeing substantially with each other.
+8.  **mu's 95% credible interval**: roughly 3843 to 4095 — narrow, about 250 rides wide. **Posterior predictive 95% interval**: roughly 1500 to 6482 — about 5000 rides wide, roughly **20× wider**.
+9.  **Why**: mu's interval only reflects uncertainty about the *average* relationship (from not knowing beta0/beta1 exactly) — and averaging across many days smooths out individual noise, so that uncertainty shrinks a lot with n=500. The posterior predictive interval has to add a second, much bigger source of uncertainty on top: genuine day-to-day scatter (σ≈1281), representing how much any *one specific* day's ridership naturally varies even if the true average were known perfectly.
+10. even doubling m0 (a substantially "wrong," confidently-stated prior belief) should still get pulled back close to the Q5 baseline once real data enters, since n=500 comfortably outweighs a moderately-confident prior
+
+3\.
+
+4\.
+
+5\.
+
+6\.
+
+7\.
+
+8\.
+
+9\.
+
+10\.
