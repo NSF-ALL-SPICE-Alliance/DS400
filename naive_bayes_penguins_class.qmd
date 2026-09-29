@@ -1,0 +1,376 @@
+---
+title: "naive bayes penguins"
+format: html
+editor: visual
+---
+
+### Libraries
+
+```{r, message = FALSE, warning = FALSE}
+library(tidyverse)
+library(bayesrules)
+library(janitor)
+library(e1071)
+options(scipen = 99)
+```
+
+### Story
+
+We’ll start our naive Bayes classification with just a single penguin. Suppose an Antarctic researcher comes across a penguin that weighs less than 4200g with a 195mm-long flipper and 50mm-long bill. Our goal is to help this researcher identify the species of this penguin, Adelie, Chinstrap, or Gentoo.
+
+#### Let's Plot!
+
+Make a visualization that will help the researcher determine the species based on the characteristics described above
+
+```{r}
+penguins <- bayesrules::penguins_bayes
+
+penguins <- penguins %>%
+  mutate(above_average_weight = if_else(above_average_weight == 1, "yes", "no"))
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+Our original Bayesian ways
+
+P(B\|A)
+
+- P(Chinstrap \| below average weight)
+
+```{r}
+penguins %>% 
+  tabyl(above_average_weight, species) %>% 
+  adorn_percentages("row")
+```
+
+#### Naive Bayes Classification!
+
+```{r}
+naive_model_hints <- naiveBayes(species ~ flipper_length_mm + bill_length_mm + above_average_weight, data = penguins)
+```
+
+Our penguin
+
+```{r}
+our_penguin <- data.frame(bill_length_mm = 50, flipper_length_mm = 195, above_average_weight = "no")
+```
+
+Ask our model to make a prediction of what species our penguin is
+
+```{r}
+predict(naive_model_hints, newdata = our_penguin, type = "raw")
+```
+
+"There's approximately a 99.94% probability this penguin is a Chinstrap, given its flipper length, bill length, and weight category"
+
+Test our model fro accuracy with confusion matrix
+
+```{r}
+penguins <- penguins %>% 
+  mutate(predicted_species = predict(naive_model_hints, newdata = .))
+```
+
+```{r}
+penguins %>% 
+  tabyl(species, predicted_species) %>% 
+  adorn_percentages("row") %>% 
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns
+```
+
+```{r}
+# Flag whether each prediction matched the true species
+penguins <- penguins %>%
+  filter(!is.na(species), !is.na(predicted_species)) %>%
+  mutate(correct = species == predicted_species)
+
+# Scatterplot: true species by color, misclassified points marked with an X
+ggplot(penguins, aes(x = bill_length_mm, y = flipper_length_mm,
+                     color = species, shape = correct)) +
+  geom_point(size = 2, alpha = 0.7) +
+  scale_shape_manual(values = c(`TRUE` = 16, `FALSE` = 4)) +
+  labs(title = "Misclassified penguins (X) vs. correctly classified (circle)",
+       shape = "Correctly classified?", color = "True species") +
+  theme_minimal()
+```
+
+```{r}
+naive_model_hints
+```
+
+## Part 2 - Under the hood of Naive Bayes
+
+### Adelie
+
+#### Species
+
+```{r}
+prior_prob_adelie <- penguins %>% 
+  tabyl(species) %>% 
+  filter(species == "Adelie") %>% 
+  pull(percent)
+
+prior_prob_adelie
+```
+
+#### Flipper Length - Probability density function
+
+- first argument = our penguins flipper length
+
+- second argument = mean flipper length for adelie penguins
+
+- third argument = standard deviation in flipper length for adelie penguins
+
+```{r}
+adelie_flipper_mean <- naive_model_hints$tables$flipper_length_mm["Adelie", 1]
+adelie_flipper_mean
+adelie_flipper_sd   <- naive_model_hints$tables$flipper_length_mm["Adelie", 2]
+adelie_flipper_sd
+density_flipper_given_adelie <- dnorm(195, mean = adelie_flipper_mean, sd = adelie_flipper_sd)
+density_flipper_given_adelie 
+```
+
+Given the penguin were an Adelie, a flipper length of 195mm would have a density of about 0.0455 under Adelie's flipper-length distribution
+
+- "195mm is a fairly typical flipper length for an Adelie — the Adelie flipper-length distribution has a density of 0.045296 there, meaning it's reasonably close to Adelie's average of 190mm."
+
+What happened here
+
+```{r}
+adelie <- penguins %>% filter(species == "Adelie")
+
+flipper_stats <- adelie %>%
+  summarise(mean = mean(flipper_length_mm, na.rm = TRUE),
+            sd   = sd(flipper_length_mm, na.rm = TRUE))
+
+highlight_value   <- 195
+highlight_density <- dnorm(highlight_value, flipper_stats$mean, flipper_stats$sd)
+
+ggplot(adelie, aes(x = flipper_length_mm)) +
+  geom_density(color = "blue", linewidth = 1) +
+  annotate("point", x = highlight_value, y = highlight_density, color = "red", size = 3) +
+  geom_vline(xintercept = highlight_value, linetype = "dashed", color = "red") +
+  geom_vline(xintercept = flipper_stats$mean + c(-1, 1) * flipper_stats$sd, linetype = "dotted") +
+  annotate("text",
+           x = flipper_stats$mean + c(-1, 1) * flipper_stats$sd + c(-1, 1),
+           y = 0.01, label = c("-1 SD", "+1 SD"), hjust = c(1, 0)) +
+  annotate("text", x = highlight_value + 2, y = highlight_density,
+           label = paste0("195 mm\nDensity: ", round(highlight_density, 5)),
+           hjust = 0, color = "red") +
+  labs(title = "Normal Distribution of Flipper Lengths for Adelie Penguins",
+       subtitle = paste("Mean =", round(flipper_stats$mean, 2), "mm, SD =", round(flipper_stats$sd, 2), "mm"),
+       x = "Flipper Length (mm)", y = "Density") +
+  theme_minimal()
+```
+
+```{r}
+ggplot(penguins, aes(x = flipper_length_mm, fill = species)) +
+  geom_histogram()
+```
+
+#### Bill Length
+
+```{r}
+adelie_bill_mean <- naive_model_hints$tables$bill_length_mm["Adelie", 1]
+adelie_bill_mean
+adelie_bill_sd   <- naive_model_hints$tables$bill_length_mm["Adelie", 2]
+adelie_bill_sd
+density_bill_given_adelie <- dnorm(50, mean = adelie_bill_mean, sd = adelie_bill_sd)
+density_bill_given_adelie 
+```
+
+#### Above Average Weight
+
+```{r}
+prob_under_average_weight_given_adelie <- penguins %>%
+  filter(species == "Adelie") %>%
+  count(above_average_weight) %>%
+  mutate(prop = n / sum(n)) %>%
+  filter(above_average_weight == "no") %>%
+  pull(prop)
+
+prob_under_average_weight_given_adelie
+```
+
+P(Adelie) \* P(195 mm flipper \| Adelie ) \* P(50 mm bill \| Adelie ) \* P(under average weight \| Adelie)
+
+```{r}
+probs_adelie <- prior_prob_adelie * density_flipper_given_adelie * density_bill_given_adelie * prob_under_average_weight_given_adelie
+probs_adelie
+
+```
+
+### Chinstrap
+
+#### Species
+
+```{r}
+prior_prob_chinstrap <- penguins %>% 
+  tabyl(species) %>% 
+  filter(species == "Chinstrap") %>% 
+  pull(percent)
+
+prior_prob_chinstrap
+```
+
+#### Flipper Length
+
+```{r}
+chinstrap_flipper_mean <- naive_model_hints$tables$flipper_length_mm["Chinstrap", 1]
+chinstrap_flipper_mean
+chinstrap_flipper_sd   <- naive_model_hints$tables$flipper_length_mm["Chinstrap", 2]
+chinstrap_flipper_sd
+density_flipper_given_chinstrap <- dnorm(195, mean = chinstrap_flipper_mean, sd = chinstrap_flipper_sd)
+density_flipper_given_chinstrap
+```
+
+#### Bill Length
+
+```{r}
+chinstrap_bill_mean <- naive_model_hints$tables$bill_length_mm["Chinstrap", 1]
+chinstrap_bill_mean
+chinstrap_bill_sd   <- naive_model_hints$tables$bill_length_mm["Chinstrap", 2]
+chinstrap_bill_sd
+density_bill_given_chinstrap <- dnorm(50, mean = chinstrap_bill_mean, sd = chinstrap_bill_sd)
+density_bill_given_chinstrap 
+```
+
+#### Above Average Weight
+
+```{r}
+prob_under_average_weight_given_chinstrap  <- penguins %>%
+  filter(species == "Chinstrap") %>%
+  count(above_average_weight) %>%
+  mutate(prop = n / sum(n)) %>%
+  filter(above_average_weight == "no") %>%
+  pull(prop)
+
+prob_under_average_weight_given_chinstrap 
+```
+
+P(Chinstrap) \* P(195 mm flipper \| Chinstrap ) \* P(50 mm bill \| Chinstrap ) \* P(under average weight \| Chinstrap)
+
+```{r}
+probs_chinstrap <- prior_prob_chinstrap * density_flipper_given_chinstrap * density_bill_given_chinstrap * prob_under_average_weight_given_chinstrap
+probs_chinstrap
+```
+
+### Your turn - Find Gentoo
+
+#### Species
+
+```{r}
+
+```
+
+#### Flipper Length
+
+```{r}
+
+```
+
+#### Bill Length
+
+```{r}
+
+```
+
+#### Above Average Weight
+
+```{r}
+
+```
+
+P(Gentoo) \* P(195 mm flipper \| Gentoo ) \* P(50 mm bill \| Gentoo ) \* P(under average weight \| Gentoo)
+
+```{r}
+
+```
+
+### Final
+
+```{r}
+# total_prob <- probs_adelie + probs_chinstrap + probs_gentoo
+# 
+# posterior_probs <- c(
+#   Adelie    = probs_adelie / total_prob,
+#   Chinstrap = probs_chinstrap / total_prob,
+#   Gentoo    = probs_gentoo / total_prob
+# )
+# 
+# posterior_probs
+```
+
+```{r}
+#predict(naive_model_hints, newdata = our_penguin, type = "raw")
+```
+
+### What makes Naive bayes naive?
+
+```{r}
+penguins %>%
+  filter(!is.na(bill_length_mm), !is.na(flipper_length_mm)) %>%
+  group_by(species) %>%
+  summarise(correlation = cor(bill_length_mm, flipper_length_mm))
+```
+
+```{r}
+library(tidyverse)
+
+# Build both curves on the SAME x-grid per species/feature, so the gap
+# between "actual" and "assumed Normal" can be shaded directly rather
+# than just visually estimated from two independently-drawn curves.
+build_comparison <- function(values, species_name, feature_name, n_grid = 200) {
+  values <- values[!is.na(values)]
+  x_seq  <- seq(min(values), max(values), length.out = n_grid)
+  
+  actual_dens  <- density(values, n = n_grid, from = min(x_seq), to = max(x_seq))$y
+  assumed_dens <- dnorm(x_seq, mean(values), sd(values))
+  
+  tibble(value = x_seq, actual = actual_dens, assumed = assumed_dens,
+         species = species_name, feature = feature_name)
+}
+
+raw_data <- penguins %>%
+  filter(!is.na(species)) %>%
+  dplyr::select(species, bill_length_mm, flipper_length_mm) %>%
+  pivot_longer(cols = c(bill_length_mm, flipper_length_mm),
+               names_to = "feature", values_to = "value") %>%
+  filter(!is.na(value))
+
+comparison_data <- raw_data %>%
+  group_by(species, feature) %>%
+  summarise(data = list(build_comparison(value, unique(species), unique(feature))), .groups = "drop") %>%
+  pull(data) %>%
+  bind_rows()
+
+feature_labels <- c(bill_length_mm = "Bill Length (mm)", flipper_length_mm = "Flipper Length (mm)")
+
+ggplot(comparison_data, aes(x = value)) +
+  geom_ribbon(aes(ymin = pmin(actual, assumed), ymax = pmax(actual, assumed)),
+              fill = "grey55", alpha = 0.35) +
+  geom_line(aes(y = actual, color = "Actual data"), linewidth = 1) +
+  geom_line(aes(y = assumed, color = "Naive Bayes' assumed Normal"),
+            linewidth = 1, linetype = "dashed") +
+  geom_rug(data = raw_data, aes(x = value), sides = "b", alpha = 0.3, inherit.aes = FALSE) +
+  facet_grid(feature ~ species, scales = "free",
+             labeller = labeller(feature = feature_labels)) +
+  scale_color_manual(values = c("Actual data" = "#4C72B0",
+                                "Naive Bayes' assumed Normal" = "#DD8452"),
+                     name = NULL) +
+  labs(title = "How well does naive Bayes' Normal assumption fit the real data?",
+       subtitle = "Shaded grey = the gap between what's real (blue) and what the model assumes (orange, dashed)",
+       x = NULL, y = "Density") +
+  theme_minimal(base_size = 13) +
+  theme(legend.position = "top", strip.text = element_text(face = "bold"))
+```
