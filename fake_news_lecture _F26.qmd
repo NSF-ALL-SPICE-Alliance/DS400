@@ -1,0 +1,382 @@
+---
+title: "Fake News"
+format: html
+editor: visual
+---
+
+### Goal
+
+How can we model whether news articles are fake or not with our bayesian toolkit
+
+```{r}
+library(tidyverse)
+library(bayesrules)
+library(janitor)
+library(e1071)
+library(tidytext)
+```
+
+### Data
+
+```{r}
+?bayesrules::fake_news
+```
+
+```{r}
+news_data <- bayesrules::fake_news |> 
+  mutate(id = row_number())
+```
+
+### Explore
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+### Text-Specific Viz
+
+```{r}
+text_tokens_clean <- news_data %>%
+  select(id, type, text) %>%
+  mutate(text = str_replace_all(text, "['’]s\\b", "")) %>%
+  unnest_tokens(word, text) %>%
+  anti_join(stop_words, by = "word")
+```
+
+```{r}
+library(ggwordcloud)
+
+text_tokens_clean %>%
+  count(type, word, sort = TRUE) %>%
+  group_by(type) %>%
+  slice_max(n, n = 60) %>%
+  ungroup() %>%
+  ggplot(aes(label = word, size = n, color = type)) +
+  geom_text_wordcloud(rm_outside = TRUE) +
+  scale_size_area(max_size = 12) +
+  scale_color_manual(values = c(fake = "#C0392B", real = "#27824C")) +
+  facet_wrap(~type) +
+  theme_minimal()
+```
+
+```{r}
+tf_idf_by_type <- text_tokens_clean %>%
+  count(type, word) %>%
+  bind_tf_idf(word, type, n) %>%
+  arrange(desc(tf_idf))
+
+tf_idf_by_type %>%
+  group_by(type) %>%
+  slice_max(tf_idf, n = 15) %>%
+  ungroup() %>%
+  ggplot(aes(x = reorder_within(word, tf_idf, type), y = tf_idf, fill = type)) +
+  geom_col(show.legend = FALSE) +
+  coord_flip() +
+  scale_x_reordered() +
+  scale_fill_manual(values = c(fake = "#C0392B", real = "#27824C")) +
+  facet_wrap(~type, scales = "free_y") +
+  labs(x = NULL, y = "TF-IDF", title = "Most distinctive words by article type") +
+  theme_minimal()
+```
+
+```{r}
+bigrams <- news_data %>%
+  select(id, type, text) %>%
+  unnest_tokens(bigram, text, token = "ngrams", n = 2) %>%
+  separate(bigram, into = c("word1", "word2"), sep = " ") %>%
+  filter(!word1 %in% stop_words$word, !word2 %in% stop_words$word) %>%
+  unite(bigram, word1, word2, sep = " ")
+
+bigrams %>%
+  count(type, bigram, sort = TRUE) %>%
+  group_by(type) %>%
+  slice_max(n, n = 12) %>%
+  ungroup() %>%
+  ggplot(aes(x = reorder_within(bigram, n, type), y = n, fill = type)) +
+  geom_col(show.legend = FALSE) +
+  coord_flip() +
+  scale_x_reordered() +
+  scale_fill_manual(values = c(fake = "#C0392B", real = "#27824C")) +
+  facet_wrap(~type, scales = "free_y") +
+  labs(x = NULL, y = "Count", title = "Most common two-word phrases by article type") +
+  theme_minimal()
+```
+
+```{r}
+library(igraph)
+library(ggraph)
+
+# Reuse the bigram structure, but keep both words and count co-occurrences
+bigram_counts <- news_data %>%
+  select(id, type, text) %>%
+  unnest_tokens(bigram, text, token = "ngrams", n = 2) %>%
+  separate(bigram, into = c("word1", "word2"), sep = " ") %>%
+  filter(!word1 %in% stop_words$word, !word2 %in% stop_words$word,
+         !is.na(word1), !is.na(word2))
+
+# Build and plot one network, filtering to bigrams that occur often enough
+# to be worth drawing -- otherwise the graph becomes an unreadable tangle
+plot_bigram_network <- function(data, article_type, min_count = 3, title_color) {
+  graph_data <- data %>%
+    filter(type == article_type) %>%
+    count(word1, word2, sort = TRUE) %>%
+    filter(n >= min_count)
+  
+  g <- graph_from_data_frame(graph_data)
+  
+  ggraph(g, layout = "fr") +
+    geom_edge_link(aes(edge_alpha = n), show.legend = FALSE,
+                   arrow = arrow(length = unit(2, "mm")), end_cap = circle(2, "mm")) +
+    geom_node_point(color = title_color, size = 3) +
+    geom_node_text(aes(label = name), vjust = 1.3, hjust = 1, size = 3) +
+    labs(title = paste("Word co-occurrence network:", article_type)) +
+    theme_void()
+}
+
+plot_bigram_network(bigram_counts, "fake", min_count = 3, title_color = "#C0392B")
+plot_bigram_network(bigram_counts, "real", min_count = 3, title_color = "#27824C")
+```
+
+### Your Turn - Bayes Theorem
+
+What is the probability an article is fake given it has en exclamation point = P(B\|A)
+
+P(B)
+
+```{r}
+
+```
+
+```{r}
+# prior_probability_fake <- 
+```
+
+P(A\|B)
+
+```{r}
+
+```
+
+```{r}
+# probability_has_excl_given_fake <- 
+```
+
+P(A)
+
+```{r}
+
+```
+
+```{r}
+#probability_has_excl <- 
+```
+
+P(B\|A)
+
+```{r}
+
+```
+
+```{r}
+news_data |> 
+  tabyl(type, title_has_excl) |> 
+  adorn_percentages("col")
+```
+
+```{r}
+news_data %>%
+  count(title_has_excl, type) %>%
+  group_by(title_has_excl) %>%
+  mutate(percent = n / sum(n)) %>%
+  ungroup() %>%
+  ggplot(aes(x = title_has_excl, y = percent, fill = type)) +
+  geom_col(position = "fill") +
+  geom_text(aes(label = scales::percent(percent, accuracy = 1)),
+            position = position_fill(vjust = 0.5),
+            color = "white", fontface = "bold") +
+  scale_y_continuous(labels = scales::percent_format()) +
+  scale_fill_manual(values = c(fake = "#C0392B", real = "#27824C")) +
+  labs(x = "Title has exclamation point?", y = "Percentage",
+       fill = "Article type",
+       title = "Fake vs. real articles, by exclamation point in title") +
+  theme_minimal()
+```
+
+### Naive Bayes Model
+
+```{r}
+model1 <- naiveBayes(type ~ title_has_excl, news_data)
+```
+
+```{r}
+model1
+```
+
+```{r}
+news_data <- news_data %>%
+  mutate(predicted_type = predict(model1, newdata = .))
+
+news_data %>%
+  tabyl(type, predicted_type) %>%
+  adorn_percentages("row") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns
+```
+
+- **Sensitivity (recall for fake)**: 16/60 ≈ 26.7% — genuinely poor
+
+- **Specificity (recall for real)**: 88/90 ≈ 97.8% — excellent
+
+#### Adding more features (model2)
+
+```{r}
+model2 <- naiveBayes(type ~ title_has_excl + title_words, news_data)
+```
+
+```{r}
+model2
+```
+
+```{r}
+news_data <- news_data %>%
+  mutate(predicted_type = predict(model2, newdata = .))
+
+news_data %>%
+  tabyl(type, predicted_type) %>%
+  adorn_percentages("row") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns
+```
+
+```{r}
+ggplot(news_data, aes(x = title_words)) +
+  geom_density()
+```
+
+```{r}
+
+plot_normal(mean = 12.31667, sd = 3.743884) +
+  stat_function(fun = dnorm, args = list(mean = 10.42222, sd = 3.204554),
+                color = "forestgreen", linewidth = 1) +
+  annotate("text", x = 12.3, y = dnorm(12.3, 12.31667, 3.743884) + 0.01,
+           label = "fake", color = "black") +
+  annotate("text", x = 10.4, y = dnorm(10.4, 10.42222, 3.204554) + 0.01,
+           label = "real", color = "forestgreen") +
+  labs(title = "title_words by article type (naive Bayes' assumed Normal curves)",
+       x = "title_words", y = "density")
+```
+
+#### Adding more features (model3)
+
+```{r}
+model3 <- naiveBayes(type ~ title_has_excl + title_words + title_caps_percent + negative,
+                     data = news_data)
+model3
+```
+
+```{r}
+news_data <- news_data %>%
+  mutate(predicted_type = predict(model3, newdata = .))
+
+news_data %>%
+  tabyl(type, predicted_type) %>%
+  adorn_percentages("row") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns
+```
+
+| Model | Sensitivity (catching fake) | Specificity (catching real) | Accuracy |
+|------------------|------------------|------------------|------------------|
+| Model 1 (`title_has_excl`) | 26.67% | 97.78% | 69.3% |
+| Model 2 (+ `title_words`) | 36.67% | 90.00% | 68.7% |
+| Model 3 (+ `title_caps_percent`, `negative`) | **48.33%** | 83.33% | **69.33%** |
+
+#### Adding more features (model4)
+
+```{r}
+model4_data <- news_data %>%
+  select(-any_of(c("title", "text", "url", "authors", "id", "predicted_type")))
+
+model4 <- naiveBayes(type ~ ., data = model4_data)
+```
+
+```{r}
+news_data <- news_data %>%
+  mutate(predicted_type = predict(model4, newdata = .))
+
+news_data %>%
+  tabyl(type, predicted_type) %>%
+  adorn_percentages("row") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns
+```
+
+#### Your turn - adding more features
+
+Create a model with a custom feature list and test for accuracy with a confusion matrix
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+#### Strategic features
+
+```{r}
+candidate_features <- c("title_has_excl", "title_words", "title_caps_percent",
+                        "title_excl_percent", "anger", "negative",
+                        "text_syllables_per_word", "fear")
+
+evaluate_formula <- function(features, data, k = 5, seed = 84735) {
+  set.seed(seed)
+  folds <- sample(rep(1:k, length.out = nrow(data)))
+  formula <- as.formula(paste("type ~", paste(features, collapse = " + ")))
+  
+  fold_results <- map_dfr(1:k, function(fold) {
+    train <- data[folds != fold, ]
+    test  <- data[folds == fold, ]
+    m <- naiveBayes(formula, data = train)
+    preds <- predict(m, newdata = test)
+    cm <- table(factor(test$type, levels = c("fake","real")),
+                factor(preds, levels = c("fake","real")))
+    tibble(
+      sensitivity = cm["fake","fake"] / sum(cm["fake",]),
+      specificity = cm["real","real"] / sum(cm["real",]),
+      accuracy    = sum(diag(cm)) / sum(cm)
+    )
+  })
+  
+  fold_results %>%
+    summarise(across(everything(), mean, na.rm = TRUE)) %>%
+    mutate(youdens_j = sensitivity + specificity - 1,
+           n_features = length(features),
+           features = paste(features, collapse = ", "))
+}
+
+all_subsets <- unlist(
+  lapply(seq_along(candidate_features), function(k) combn(candidate_features, k, simplify = FALSE)),
+  recursive = FALSE
+)
+
+subset_results <- map_dfr(all_subsets, ~evaluate_formula(.x, model4_data))
+
+subset_results %>% arrange(desc(youdens_j)) %>% head(10)
+
+subset_results %>%
+  mutate(weighted_score = 0.7 * sensitivity + 0.3 * specificity) %>%
+  arrange(desc(weighted_score)) %>%
+  head(10)
+```
+
+#### Your turn - Create a visual from subset_results
