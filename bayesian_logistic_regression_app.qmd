@@ -1,0 +1,1085 @@
+---
+title: "Bayesian Logistic Regression App"
+format: html
+editor: visual
+---
+
+### Welcome
+
+Today, we are going to dive deeper into our Bayesian Logistic Regression model for humidity and rain in Perth.
+
+But first we will take 10 minutes to come up with a use-case where bayesian logistic regression could be a good tool to utilize
+
+- Describe the scenario (target parameter, predictive feature(s))
+
+- Describe your hypothetical priors
+
+- Describe your hypothetical data
+
+- Describe what you would expect to see as an output. What kinds of statements will you be able to make?
+
+- How accurate will your hypothetical model be?
+
+- Does this use-case better fit bayesian or frequentist logistic regression?
+
+### Overview
+
+Where is Perth?
+
+[Gemini prompt](https://www.google.com/search?q=relationship+between+humidity+at+9+am+today+and+rain+tomorrow&sca_esv=6efddd7cd5a3a77d&sxsrf=APpeQntZbOpTiLRWl11pyM_8KL09aoPijQ%3A1791502597330&ei=BSnIarzRE_aj0PEPit-cuQ4&biw=726&bih=628&ved=2ahUKEwj857Wfy6uXAxX2ETQIHYovJ-cQ4dUDegQIBxAM&uact=5&oq=relationship+between+humidity+at+9+am+today+and+rain+tomorrow&gs_lp=Egxnd3Mtd2l6LXNlcnAiPXJlbGF0aW9uc2hpcCBiZXR3ZWVuIGh1bWlkaXR5IGF0IDkgYW0gdG9kYXkgYW5kIHJhaW4gdG9tb3Jyb3cyChAhGAoYoAEYwwRI_iVQAFiXInAAeAGQAQCYAZcBoAH1C6oBBDAuMTG4AQPIAQD4AQGYAgSgAqoEwgIFEAAY7wXCAggQABiABBiiBJgDAJIHAzAuNKAHkjCyBwMwLjS4B6oEwgcFMC4yLjLIBwyACAE&sclient=gws-wiz-serp): (questionable AI?) relationship between humidity at 9 am today and rain tomorrow
+
+- Moisture Loading
+
+- The 24-Hour Convective Cycle
+
+- Frontal Systems
+
+### App
+
+```{r}
+
+##
+## ============================================================
+
+
+library(shiny)
+library(tidyverse)
+library(bayesrules)   # weather_perth data + plot_normal()
+library(rstanarm)     # stan_glm() for the real MCMC fit
+
+## ------------------------------------------------------------
+## Data (loaded once; never changes while the app runs)
+## ------------------------------------------------------------
+
+weather <- bayesrules::weather_perth %>%
+  select(day_of_year, raintomorrow, humidity9am, humidity3pm, raintoday) %>%
+  mutate(y = as.numeric(raintomorrow == "Yes"))
+
+mean_h     <- mean(weather$humidity9am)
+h_range    <- range(weather$humidity9am)
+base_rate  <- mean(weather$y)
+n_days     <- nrow(weather)
+
+# "Data alone" reference for beta1: an ordinary maximum-likelihood
+# logistic fit, ignoring the prior entirely.
+mle_model     <- glm(raintomorrow ~ humidity9am, data = weather, family = binomial)
+mle_coef      <- summary(mle_model)$coefficients
+mle_beta1_est <- unname(mle_coef["humidity9am", "Estimate"])
+mle_beta1_se  <- unname(mle_coef["humidity9am", "Std. Error"])
+
+binned_rain <- weather %>%
+  mutate(bracket = cut(humidity9am, breaks = seq(0, 100, by = 10), include.lowest = TRUE)) %>%
+  group_by(bracket) %>%
+  summarise(humidity = mean(humidity9am), rain_rate = mean(y), n = n(), .groups = "drop") %>%
+  filter(n >= 5)
+
+app_css <- tags$head(tags$style(HTML("
+  .story-panel {
+    background: #eef4fb; border-left: 4px solid #4C72B0;
+    border-radius: 4px; padding: 10px 16px; margin-bottom: 14px;
+  }
+  .interp-panel {
+    background: #f2f8f0; border-left: 4px solid #55A868;
+    border-radius: 4px; padding: 10px 16px; margin-top: 10px;
+  }
+  .concept-panel {
+    background: #f7f2fb; border-left: 4px solid #8B5CF6;
+    border-radius: 4px; padding: 10px 16px; margin-top: 10px;
+    margin-bottom: 10px; font-size: 0.95em;
+  }
+  .code-box {
+    background: #2b2b2b; color: #eaeaea; font-family: monospace;
+    font-size: 13px; padding: 12px 16px; border-radius: 6px;
+    white-space: pre-wrap; margin-top: 8px;
+  }
+  .verdict-rain { background:#e8f0fb; border-left:4px solid #2c6fbb; }
+  .verdict-dry  { background:#fdf3e3; border-left:4px solid #d9962b; }
+  .verdict { border-radius:6px; padding:14px; margin-top:10px; font-size:1.1em; }
+  .bb-frac { display:inline-block; vertical-align:middle; margin:0 6px;
+             text-align:center; font-size:1.05em; line-height:1.1; }
+  .bb-num { display:block; border-bottom:2px solid #333; padding:0 6px 2px 6px; }
+  .bb-denom { display:block; padding:2px 6px 0 6px; }
+  .eq-card { background:#f7f7f9; border:1px solid #e1e1e8; border-radius:6px;
+             padding:12px 18px; margin-top:8px; margin-bottom:8px; }
+  .eq-card h5 { margin-top:6px; margin-bottom:4px; color:#555; }
+  .eq-line { font-size:1.1em; margin:8px 0; }
+  .eq-result { font-weight:700; color:#2a5d34; }
+  .question-card { border-left:4px solid #4C72B0; background:#fafafa;
+                   border-radius:4px; padding:10px 16px; margin-bottom:12px; }
+  .question-tab-badge { display:inline-block; margin-left:8px; font-size:0.65em;
+                        font-weight:600; text-transform:uppercase; letter-spacing:0.03em;
+                        color:#4C72B0; background:#eef4fb; border-radius:10px;
+                        padding:2px 9px; vertical-align:middle; }
+")))
+
+## ------------------------------------------------------------
+## Helpers
+## ------------------------------------------------------------
+
+fmt <- function(x, d = 3) formatC(x, format = "f", digits = d)
+paren <- function(x, d = 3) ifelse(x < 0, paste0("(", fmt(x, d), ")"), fmt(x, d))
+pct <- function(x, digits = 0) sprintf(paste0("%.", digits, "f%%"), 100 * x)
+
+# CSS-rendered fraction: no MathJax, no JS, always renders.
+html_frac <- function(top, bottom) {
+  sprintf('<span class="bb-frac"><span class="bb-num">%s</span><span class="bb-denom">%s</span></span>',
+          top, bottom)
+}
+
+question_card <- function(n, tab, prompt) {
+  div(class = "question-card",
+      h5(sprintf("Question %d", n), tags$span(class = "question-tab-badge", tab)),
+      p(prompt)
+  )
+}
+
+stan_call_text <- function(m0, s0, m1, s1, prior_pd) {
+  sprintf(
+    paste0(
+      "stan_glm(\n",
+      "  raintomorrow ~ humidity9am, data = weather,\n",
+      "  family = binomial,\n",
+      "  prior_intercept = normal(%s, %s),\n",
+      "  prior = normal(%s, %s),\n",
+      "  chains = 4, iter = 2000, seed = 84735%s)"
+    ),
+    m0, s0, m1, s1,
+    if (prior_pd) ",\n  prior_PD = TRUE" else ""
+  )
+}
+
+class_metrics <- function(prob, truth, cutoff) {
+  pred <- as.numeric(prob >= cutoff)
+  a <- sum(truth == 0 & pred == 0); b <- sum(truth == 0 & pred == 1)
+  c <- sum(truth == 1 & pred == 0); d <- sum(truth == 1 & pred == 1)
+  list(
+    cm = matrix(c(a, c, b, d), nrow = 2,
+                dimnames = list(`Actual` = c("No rain", "Rain"), `Predicted` = c("No rain", "Rain"))),
+    sensitivity = if ((c + d) > 0) d / (c + d) else NA_real_,
+    specificity = if ((a + b) > 0) a / (a + b) else NA_real_,
+    accuracy    = (a + d) / (a + b + c + d)
+  )
+}
+
+# One reusable equation chain: log-odds -> odds -> probability, with the
+# actual numbers plugged in. Used on several tabs.
+chain_from_logodds <- function(lo, label_lo = "log-odds") {
+  odds <- exp(lo); p <- plogis(lo)
+  HTML(paste0(
+    sprintf('<div class="eq-line">odds = e<sup>%s</sup> = e<sup>%s</sup> = <span class="eq-result">%s</span></div>',
+            label_lo, fmt(lo, 3), fmt(odds, 3)),
+    sprintf('<div class="eq-line">&pi; = %s = %s = %s = <span class="eq-result">%s</span></div>',
+            html_frac("odds", "1 + odds"),
+            html_frac(fmt(odds, 3), paste0("1 + ", fmt(odds, 3))),
+            html_frac(fmt(odds, 3), fmt(1 + odds, 3)),
+            pct(p, 1))
+  ))
+}
+
+## ------------------------------------------------------------
+## UI
+## ------------------------------------------------------------
+
+ui <- navbarPage(
+  title = "Bayesian Logistic Regression: Rain in Perth",
+  header = app_css,
+  
+  ## ---------------- TAB 1: Odds primer ----------------
+  tabPanel(
+    "1. Odds & Probability",
+    fluidPage(
+      div(class = "story-panel",
+          strong("Why start here:"), " logistic regression models a yes/no ",
+          "outcome, but it never draws a straight line through probabilities ",
+          "-- a straight line would eventually predict probabilities below 0 ",
+          "or above 1. Instead it draws a straight line on the ",
+          em("log-odds"), " scale, then converts back. Everything below is ",
+          "the same number viewed three ways: probability, odds, log-odds. ",
+          "The equations update live so you can watch each conversion happen."
+      ),
+      h3("Converting between probability, odds, and log-odds"),
+      sliderInput("prob_in", "Probability of rain tomorrow (\u03c0)",
+                  min = 0.01, max = 0.99, value = 0.5, step = 0.01, width = "500px"),
+      div(style = "display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;",
+          actionButton("scn_23", "Text example: \u03c0 \u2248 2/3 (odds \u2248 2)"),
+          actionButton("scn_13", "Text example: \u03c0 \u2248 1/3 (odds \u2248 1/2)"),
+          actionButton("scn_12", "Text example: \u03c0 = 1/2 (odds = 1)"),
+          actionButton("scn_80", "Text example: \u03c0 = 0.8 (odds = 4)")
+      ),
+      helpText("The slider moves in steps of 0.01, so 2/3 and 1/3 are set to ",
+               "0.67 and 0.33 -- close to, but not exactly, the book's fractions."),
+      uiOutput("oddsStatement"),
+      uiOutput("probToOddsEq"),
+      plotOutput("oddsCurve", height = "250px"),
+      div(class = "concept-panel",
+          strong("The three scales, side by side:"), " probability lives between ",
+          "0 and 1; odds (\u03c0 / (1 - \u03c0)) live between 0 and infinity and ",
+          "can never be negative; log-odds live on the whole number line, ",
+          "negative or positive. That last fact is the whole point: a ",
+          "straight line \u03b2\u2080 + \u03b2\u2081X can take any real value, so it can ",
+          "only sensibly model something that also lives on the whole number ",
+          "line -- log-odds, not probability."
+      ),
+      hr(),
+      h3("One straight line, three different pictures (the book's Figure 13.1)"),
+      fluidRow(
+        column(4, sliderInput("demo_b0", "\u03b2\u2080 (log-odds at 0% humidity)", -8, 2, -4, step = 0.1)),
+        column(4, sliderInput("demo_b1", "\u03b2\u2081 (log-odds change per humidity point)", 0, 0.2, 0.1, step = 0.005)),
+        column(4, sliderInput("demo_x", "Pick a humidity to trace (%)", 0, 100, 60, step = 1))
+      ),
+      actionButton("reset_demo", "Reset to the text's Figure 13.1: \u03b2\u2080 = -4, \u03b2\u2081 = 0.1"),
+      uiOutput("demoStatement"),
+      uiOutput("demoChainEq"),
+      fluidRow(
+        column(4, plotOutput("demoLogOdds", height = "230px")),
+        column(4, plotOutput("demoOdds", height = "230px")),
+        column(4, plotOutput("demoProb", height = "230px"))
+      )
+    )
+  ),
+  
+  ## ---------------- TAB 2: Tune the prior ----------------
+  tabPanel(
+    "2. Tune the Prior",
+    sidebarLayout(
+      sidebarPanel(
+        div(class = "story-panel",
+            strong("The scenario:"), " we're in Perth, Australia, trying to ",
+            "predict whether it rains tomorrow from today's 9 a.m. humidity. ",
+            "Vaguely, we believe rain is fairly uncommon on an average day ",
+            "(maybe 20%), and more likely after a humid day -- but we're ",
+            "foggy on how much more."
+        ),
+        h4("beta0c ~ Normal(m0, s0), on the log-odds scale"),
+        sliderInput("m0", "m0 (log-odds of rain on an average-humidity day)", -4, 1, -1.4, step = 0.1),
+        sliderInput("s0", "s0 (uncertainty around that)", 0.1, 2, 0.7, step = 0.05),
+        h4("beta1 ~ Normal(m1, s1)"),
+        sliderInput("m1", "m1 (typical change in log-odds per humidity point)", -0.05, 0.2, 0.07, step = 0.005),
+        sliderInput("s1", "s1 (uncertainty around that)", 0.005, 0.1, 0.035, step = 0.005),
+        actionButton("reset_prior", "Reset to the text's priors"),
+        div(class = "concept-panel",
+            strong("Priors live on the log-odds scale:"), " that's where \u03b2\u2080 and ",
+            "\u03b2\u2081 are allowed to be any real number, so Normal priors are the ",
+            "natural choice. The equations on the right convert your ",
+            "log-odds choices to odds and probabilities, which are far easier ",
+            "to sanity-check."
+        ),
+        div(class = "concept-panel",
+            strong("Reading a 95% range from mean and SD:"), " about 95% of a ",
+            "Normal prior falls within mean \u00b1 1.96 \u00d7 SD, not mean \u00b1 SD ",
+            "(that's only about 68%)."
+        )
+      ),
+      mainPanel(
+        uiOutput("priorStatement"),
+        uiOutput("priorChainEq"),
+        fluidRow(
+          column(4, plotOutput("beta0cPlot", height = "210px")),
+          column(4, plotOutput("beta1Plot", height = "210px")),
+          column(4, plotOutput("impliedProbPlot", height = "210px"))
+        ),
+        h4("100 prior plausible S-curves: probability of rain vs. 9 a.m. humidity"),
+        plotOutput("priorCurvesPlot", height = "280px"),
+        div(class = "concept-panel",
+            strong("Prior predictive check:"), " every S-curve above is one ",
+            "version of the world your priors consider plausible. The ",
+            "histogram below asks a different but equally important ",
+            "question: if each of those worlds produced a full year of ",
+            "weather, what share of days would be rainy? If that range ",
+            "looks absurd for Perth (a dry-summer city), retune."
+        ),
+        plotOutput("priorRainRatePlot", height = "230px"),
+        h4("Equivalent stan_glm() code (prior only, prior_PD = TRUE)"),
+        div(class = "code-box", textOutput("priorCode"))
+      )
+    )
+  ),
+  
+  ## ---------------- TAB 3: Fit the posterior ----------------
+  tabPanel(
+    "3. Fit the Posterior",
+    sidebarLayout(
+      sidebarPanel(
+        div(class = "story-panel",
+            strong("This runs real MCMC"), " on ", n_days, " days of Perth ",
+            "weather, using the priors you tuned on Tab 2. Expect a few ",
+            "seconds -- Stan is genuinely sampling the posterior."
+        ),
+        p(strong("Current priors (from Tab 2):")),
+        verbatimTextOutput("currentPriorSummary"),
+        actionButton("fit_posterior", "Fit the posterior model", class = "btn-primary"),
+        hr(),
+        sliderInput("ci_level", "Interval level (%)", 50, 99, 80, step = 1),
+        helpText("4 chains x 2000 iterations (fewer than the book's 10,000 ",
+                 "to keep this responsive in a live demo).")
+      ),
+      mainPanel(
+        uiOutput("posteriorStatus"),
+        conditionalPanel(
+          condition = "output.modelFitted == true",
+          h4("What the data says about humidity"),
+          uiOutput("posteriorStatement"),
+          uiOutput("posteriorChainEq"),
+          tableOutput("posteriorTable"),
+          div(class = "concept-panel",
+              strong("Three scales again:"), " the table reports beta1 on the ",
+              "log-odds scale (a plain slope) and on the odds scale ",
+              "(e^beta1, a multiplier). A multiplier of 1.05 means each extra ",
+              "humidity point raises the odds of rain by 5%. The probability ",
+              "scale is skipped on purpose -- because the S-curve is ",
+              "nonlinear, there's no single 'per point' change in probability."
+          ),
+          h4("Prior belief vs. data alone vs. posterior, for beta1"),
+          plotOutput("beta1ComparePlot", height = "260px"),
+          div(class = "concept-panel",
+              strong("Reading the three curves:"), " blue = your prior belief ",
+              "about beta1; orange = what an ordinary (non-Bayesian) logistic ",
+              "fit says from the data alone; green = the posterior. With ",
+              n_days, " real days, the data-alone curve is narrow, so the ",
+              "posterior lands close to it unless your prior is very tightly ",
+              "specified -- the same weight-of-evidence story as every ",
+              "model this semester."
+          ),
+          h4("Credible interval vs. confidence interval, for the same coefficient"),
+          uiOutput("intervalStatement"),
+          tableOutput("intervalTable"),
+          plotOutput("intervalPlot", height = "190px"),
+          div(class = "concept-panel",
+              strong("Same numbers, different claims:"), " the two intervals ",
+              "usually look nearly identical when you have lots of data, and ",
+              "that's what you see here. The difference is what you're ",
+              "allowed to ", em("say"), " about them. A ",
+              strong("credible interval"), " is a direct probability statement ",
+              "about the coefficient itself: given this prior and this data, ",
+              "there's an X% probability beta1 lies in that range. A ",
+              strong("confidence interval"), " treats beta1 as one fixed, unknown ",
+              "number and the interval as the random thing: if you repeated ",
+              "the whole data collection many times and built an interval the ",
+              "same way each time, X% of those intervals would contain the true ",
+              "beta1 -- but for the one interval you actually got, the true ",
+              "value is either in it or it isn't. Only the credible interval ",
+              "supports 'there's an X% chance it's in here.' (The frequentist ",
+              "interval above is a quick Wald interval, estimate \u00b1 z \u00d7 SE; ",
+              "R's ", code("confint()"), " uses a slightly more accurate profile-likelihood ",
+              "method, so its numbers differ a hair.)"
+          ),
+          h4("100 posterior plausible S-curves vs. the observed rain rate"),
+          plotOutput("posteriorCurvesPlot", height = "280px"),
+          div(class = "concept-panel",
+              strong("The points are real data:"), " each dot is the actual ",
+              "share of days that were followed by rain within a 10-point ",
+              "humidity bracket. A good model's curves should thread through ",
+              "them."
+          ),
+          h4("Equivalent stan_glm() code (the exact call used)"),
+          div(class = "code-box", textOutput("posteriorCode")),
+          h4("MCMC diagnostics"),
+          verbatimTextOutput("diagnostics"),
+          div(class = "concept-panel",
+              strong("Rhat and n_eff:"), " Rhat compares your chains against ",
+              "each other -- near 1.00 means they converged on the same ",
+              "posterior; values noticeably above 1 (worry past ~1.01-1.05) ",
+              "mean the simulation hasn't settled. n_eff is roughly how many ",
+              "genuinely independent draws you got. Both are about whether ",
+              "the ", em("simulation"), " worked, not whether you have enough ",
+              em("data"), "."
+          )
+        )
+      )
+    )
+  ),
+  
+  ## ---------------- TAB 4: Predict & classify ----------------
+  tabPanel(
+    "4. Predict & Classify",
+    sidebarLayout(
+      sidebarPanel(
+        div(class = "story-panel",
+            strong("Requires a fitted model from Tab 3."), " Once fitted, ",
+            "this tab is fully live -- no new MCMC, just reusing the ",
+            "posterior draws already in memory."
+        ),
+        sliderInput("h_predict", "Today's 9 a.m. humidity (%)", 10, 100, 99, step = 1),
+        sliderInput("cutoff", "Classification cutoff c", 0.05, 0.95, 0.5, step = 0.05),
+        div(class = "concept-panel",
+            strong("What's the cutoff?"), " the model gives a probability of ",
+            "rain; a classification needs a yes/no. The cutoff is the ",
+            "probability above which you say \"rain.\" 0.5 is the natural ",
+            "default, but nothing forces it -- if getting caught in the rain ",
+            "is worse than carrying a useless umbrella, lower it."
+        )
+      ),
+      mainPanel(
+        uiOutput("predictionStatus"),
+        conditionalPanel(
+          condition = "output.modelFitted == true",
+          h4("Predicting tomorrow, given today's humidity"),
+          uiOutput("predictChainEq"),
+          uiOutput("verdict"),
+          plotOutput("predictionPlot", height = "230px"),
+          div(class = "code-box", textOutput("predictionCode")),
+          hr(),
+          h4("How good is this at classifying all 1,000 days at once?"),
+          uiOutput("metricsStatement"),
+          tableOutput("confusionTable"),
+          plotOutput("tradeoffPlot", height = "280px"),
+          div(class = "concept-panel",
+              strong("The trade-off:"), " lowering the cutoff makes it easier ",
+              "to say \"rain,\" which catches more of the real rainy days ",
+              "(sensitivity up) but also cries wolf on more dry days ",
+              "(specificity down). Raising it does the opposite. There is no ",
+              "setting that wins on both -- the right one depends on which ",
+              "mistake costs you more."
+          ),
+          div(class = "code-box", textOutput("classificationCode"))
+        )
+      )
+    )
+  ),
+  
+  ## ---------------- TAB 5: Questions ----------------
+  tabPanel(
+    "5. Questions",
+    fluidPage(
+      div(class = "story-panel",
+          strong("How to use this tab:"), " each question names which tab to ",
+          "work in. Set the sliders, read off the app's numbers and ",
+          "equations, then write your answer as a comment at the top of ",
+          code("app.R"), " -- your answers are saved with the script, not lost ",
+          "when you close the app."
+      ),
+      question_card(1, "Tab 1", "Set the probability slider to 0.8. By hand, compute the odds using odds = \u03c0 / (1 - \u03c0). Check your answer against the app's equation. Then say in one sentence what that odds value means."),
+      question_card(2, "Tab 1", "Set the probability to 0.2. Report the odds and the log-odds. Why is the log-odds negative while the odds are not?"),
+      question_card(3, "Tab 1", "At what probability does the log-odds equal exactly 0? What are the odds there? What does that say about rain vs. no rain?"),
+      question_card(4, "Tab 1", "Click \"Reset to the text's Figure 13.1\" in the three-scales demo (\u03b2\u2080 = -4, \u03b2\u2081 = 0.1) and set humidity to 60. Write the chain: log-odds, then odds, then probability. Show the number at each step."),
+      question_card(5, "Tab 1", "In the demo, raise \u03b2\u2081 from 0.1 to 0.15. By what multiplier do the odds of rain change per humidity point? Then match each scale (log-odds, odds, probability) to ONE of these descriptions: (a) changes by the same AMOUNT every humidity point, (b) changes by the same MULTIPLIER (percentage) every humidity point but not the same amount, (c) changes by neither. Give a number from the app or a quick calculation to support each match."),
+      question_card(6, "Tab 2", "With the text's default priors, what chance of rain on an average-humidity day does the app report, and over what plausible range? Now change m0 to -0.5. What is the new chance, and why did it change?"),
+      question_card(7, "Tab 2", "Raise s1 from 0.035 to 0.1. What happens to the prior S-curves and to the prior rain-rate histogram? Explain in one or two sentences."),
+      question_card(8, "Tab 3", "Fit the posterior with the text's priors. Report the posterior median for humidity9am on the log-odds scale and the odds scale, and write one sentence giving the percent increase in the odds of rain per extra humidity point."),
+      question_card(9, "Tab 3", "Use the credible vs. confidence interval section. At the same level, are the two intervals similar? Write one sentence interpreting each, and say what the credible interval can claim that the confidence interval cannot."),
+      question_card(10, "Tab 4", "Set humidity to 99. At a cutoff of 0.5, what is the classification? Lower the cutoff to 0.2: what happens to sensitivity and specificity? Why might someone who hates getting wet prefer the lower cutoff?")
+    )
+  )
+)
+
+## ------------------------------------------------------------
+## Server
+## ------------------------------------------------------------
+
+server <- function(input, output, session) {
+  
+  ## ===== TAB 1: Odds primer =====
+  
+  observeEvent(input$scn_23, updateSliderInput(session, "prob_in", value = 0.67))
+  observeEvent(input$scn_13, updateSliderInput(session, "prob_in", value = 0.33))
+  observeEvent(input$scn_12, updateSliderInput(session, "prob_in", value = 0.50))
+  observeEvent(input$scn_80, updateSliderInput(session, "prob_in", value = 0.80))
+  
+  observeEvent(input$reset_demo, {
+    updateSliderInput(session, "demo_b0", value = -4)
+    updateSliderInput(session, "demo_b1", value = 0.1)
+    updateSliderInput(session, "demo_x", value = 60)
+  })
+  
+  output$oddsStatement <- renderUI({
+    p <- input$prob_in
+    odds <- p / (1 - p)
+    lo <- log(odds)
+    verbal <- if (abs(odds - 1) < 0.005) {
+      "rain and no rain are exactly equally likely"
+    } else if (odds > 1) {
+      sprintf("rain is %.2f times as likely as no rain", odds)
+    } else {
+      sprintf("rain is only %.2f times as likely as no rain (no rain is %.2f times as likely as rain)",
+              odds, 1 / odds)
+    }
+    sign_note <- if (abs(lo) < 0.0005) {
+      "Odds of exactly 1 sit at 0 on the log-odds scale."
+    } else if (lo < 0) {
+      "The log-odds are negative because the odds are below 1 -- the odds themselves can never go negative."
+    } else {
+      "The log-odds are positive because the odds are above 1."
+    }
+    div(class = "interp-panel",
+        sprintf("A probability of %s corresponds to odds of %.3f, so %s. Taking the log gives log-odds of %.3f (a different number from the odds). %s",
+                pct(p), odds, verbal, lo, sign_note)
+    )
+  })
+  
+  output$probToOddsEq <- renderUI({
+    p <- input$prob_in
+    odds <- p / (1 - p)
+    lo <- log(odds)
+    
+    forward_odds <- HTML(sprintf(
+      '<div class="eq-line">odds = %s = %s = %s = <span class="eq-result">%s</span></div>',
+      html_frac("&pi;", "1 &minus; &pi;"),
+      html_frac(fmt(p, 2), paste0("1 &minus; ", fmt(p, 2))),
+      html_frac(fmt(p, 2), fmt(1 - p, 2)),
+      fmt(odds, 3)
+    ))
+    forward_lo <- HTML(sprintf(
+      '<div class="eq-line">log-odds = ln(odds) = ln(%s) = <span class="eq-result">%s</span></div>',
+      fmt(odds, 3), fmt(lo, 3)
+    ))
+    back_odds <- HTML(sprintf(
+      '<div class="eq-line">odds = e<sup>log-odds</sup> = e<sup>%s</sup> = <span class="eq-result">%s</span></div>',
+      fmt(lo, 3), fmt(exp(lo), 3)
+    ))
+    back_p <- HTML(sprintf(
+      '<div class="eq-line">&pi; = %s = %s = %s = <span class="eq-result">%s</span></div>',
+      html_frac("odds", "1 + odds"),
+      html_frac(fmt(odds, 3), paste0("1 + ", fmt(odds, 3))),
+      html_frac(fmt(odds, 3), fmt(1 + odds, 3)),
+      fmt(odds / (1 + odds), 3)
+    ))
+    
+    div(class = "eq-card",
+        h5("Forward: probability \u2192 odds \u2192 log-odds"),
+        forward_odds, forward_lo,
+        h5("And back again: log-odds \u2192 odds \u2192 probability"),
+        back_odds, back_p
+    )
+  })
+  
+  output$oddsCurve <- renderPlot({
+    p <- input$prob_in
+    lo <- log(p / (1 - p))
+    x <- seq(-6, 6, length.out = 300)
+    ggplot(tibble(lo = x, p = plogis(x)), aes(lo, p)) +
+      geom_line(color = "#4C72B0", linewidth = 1.1) +
+      annotate("point", x = lo, y = p, color = "#C0392B", size = 4) +
+      geom_hline(yintercept = 0.5, linetype = "dotted") +
+      geom_vline(xintercept = 0, linetype = "dotted") +
+      labs(x = "log-odds", y = "probability",
+           title = "The logistic S-curve: log-odds in, probability out") +
+      theme_minimal(base_size = 13)
+  })
+  
+  demo_df <- reactive({
+    x <- seq(0, 100, length.out = 200)
+    lo <- input$demo_b0 + input$demo_b1 * x
+    tibble(humidity = x, log_odds = lo, odds = exp(lo), prob = plogis(lo))
+  })
+  
+  demo_point <- reactive({
+    lo <- input$demo_b0 + input$demo_b1 * input$demo_x
+    list(x = input$demo_x, lo = lo, odds = exp(lo), prob = plogis(lo))
+  })
+  
+  output$demoStatement <- renderUI({
+    b0 <- input$demo_b0; b1 <- input$demo_b1
+    tip <- if (b1 > 0 && -b0 / b1 >= 0 && -b0 / b1 <= 100) {
+      sprintf("The probability of rain crosses 50%% (odds = 1) at about %.0f%% humidity.", -b0 / b1)
+    } else {
+      "Within 0-100% humidity this curve never reaches a 50% chance of rain."
+    }
+    div(class = "interp-panel",
+        sprintf(
+          paste0(
+            "At 0%% humidity the log-odds of rain are %.1f -- odds of %.4f, a %s chance. ",
+            "Each extra humidity point adds %.3f to the log-odds, which multiplies the ",
+            "odds by e^%.3f = %.3f (a %.1f%% increase). %s"
+          ),
+          b0, exp(b0), pct(plogis(b0), 1), b1, b1, exp(b1), 100 * (exp(b1) - 1), tip
+        )
+    )
+  })
+  
+  output$demoChainEq <- renderUI({
+    b0 <- input$demo_b0; b1 <- input$demo_b1; x <- input$demo_x
+    pt <- demo_point()
+    
+    line_lo <- HTML(sprintf(
+      '<div class="eq-line">log-odds = &beta;<sub>0</sub> + &beta;<sub>1</sub> &times; humidity = %s + %s &times; %s = <span class="eq-result">%s</span></div>',
+      paren(b0, 2), paren(b1, 3), x, fmt(pt$lo, 3)
+    ))
+    line_odds <- HTML(sprintf(
+      '<div class="eq-line">odds = e<sup>log-odds</sup> = e<sup>%s</sup> = <span class="eq-result">%s</span></div>',
+      fmt(pt$lo, 3), fmt(pt$odds, 3)
+    ))
+    line_p <- HTML(sprintf(
+      '<div class="eq-line">&pi; = %s = %s = %s = <span class="eq-result">%s</span></div>',
+      html_frac("odds", "1 + odds"),
+      html_frac(fmt(pt$odds, 3), paste0("1 + ", fmt(pt$odds, 3))),
+      html_frac(fmt(pt$odds, 3), fmt(1 + pt$odds, 3)),
+      pct(pt$prob, 1)
+    ))
+    line_step <- HTML(sprintf(
+      '<div class="eq-line">One more humidity point: log-odds change by +%s, odds are multiplied by e<sup>%s</sup> = <span class="eq-result">%s</span> (a %s%% change in the odds).</div>',
+      fmt(b1, 3), fmt(b1, 3), fmt(exp(b1), 3), fmt(100 * (exp(b1) - 1), 1)
+    ))
+    
+    div(class = "eq-card",
+        h5(sprintf("Tracing one point: humidity = %s%%", x)),
+        line_lo, line_odds, line_p,
+        h5("What a one-point step does"),
+        line_step
+    )
+  })
+  
+  output$demoLogOdds <- renderPlot({
+    pt <- demo_point()
+    ggplot(demo_df(), aes(humidity, log_odds)) +
+      geom_line(color = "#4C72B0", linewidth = 1.1) +
+      annotate("point", x = pt$x, y = pt$lo, color = "#C0392B", size = 3.5) +
+      labs(x = "humidity", y = "log(odds of rain)", title = "Log-odds: a straight line") +
+      theme_minimal(base_size = 12)
+  })
+  output$demoOdds <- renderPlot({
+    pt <- demo_point()
+    ggplot(demo_df(), aes(humidity, odds)) +
+      geom_line(color = "#DD8452", linewidth = 1.1) +
+      annotate("point", x = pt$x, y = pt$odds, color = "#C0392B", size = 3.5) +
+      labs(x = "humidity", y = "odds of rain", title = "Odds: curves upward") +
+      theme_minimal(base_size = 12)
+  })
+  output$demoProb <- renderPlot({
+    pt <- demo_point()
+    ggplot(demo_df(), aes(humidity, prob)) +
+      geom_line(color = "#55A868", linewidth = 1.1) +
+      annotate("point", x = pt$x, y = pt$prob, color = "#C0392B", size = 3.5) +
+      ylim(0, 1) +
+      labs(x = "humidity", y = "probability of rain", title = "Probability: an S-curve") +
+      theme_minimal(base_size = 12)
+  })
+  
+  ## ===== TAB 2: Prior tuning (instant) =====
+  
+  observeEvent(input$reset_prior, {
+    updateSliderInput(session, "m0", value = -1.4)
+    updateSliderInput(session, "s0", value = 0.7)
+    updateSliderInput(session, "m1", value = 0.07)
+    updateSliderInput(session, "s1", value = 0.035)
+  })
+  
+  prior_draws <- reactive({
+    set.seed(84735)   # fixed seed so curves don't jitter as sliders move
+    tibble(beta0c = rnorm(100, input$m0, input$s0),
+           beta1  = rnorm(100, input$m1, input$s1),
+           draw   = seq_len(100))
+  })
+  
+  output$priorStatement <- renderUI({
+    m0 <- input$m0; s0 <- input$s0; m1 <- input$m1; s1 <- input$s1
+    lo_lo <- m0 - 1.96 * s0; lo_hi <- m0 + 1.96 * s0
+    b_lo  <- m1 - 1.96 * s1; b_hi  <- m1 + 1.96 * s1
+    tip <- if (m1 > 0) {
+      x50 <- mean_h - m0 / m1
+      if (x50 >= 0 && x50 <= 100) sprintf("Your best-guess curve crosses a 50%% chance of rain at about %.0f%% humidity.", x50)
+      else "Your best-guess curve never reaches a 50% chance of rain within 0-100% humidity."
+    } else "With a zero or negative best-guess slope, your prior doesn't expect humidity to raise the chance of rain."
+    
+    div(class = "interp-panel",
+        sprintf(
+          paste0(
+            "On an average-humidity day (~%.0f%%), your best guess is a %s chance of rain ",
+            "(log-odds %.1f, odds %.2f), and you'd be unsurprised by anything between about %s ",
+            "and %s (log-odds %.1f to %.1f). For every one-point rise in humidity you expect the ",
+            "log-odds to change by about %.3f -- multiplying the odds by e^%.3f = %.3f (95%% plausible ",
+            "range of multipliers: %.3f to %.3f). A 15-point rise multiplies the odds by about %.2f. %s"
+          ),
+          mean_h, pct(plogis(m0), 0), m0, exp(m0), pct(plogis(lo_lo), 0), pct(plogis(lo_hi), 0),
+          lo_lo, lo_hi, m1, m1, exp(m1), exp(b_lo), exp(b_hi), exp(15 * m1), tip
+        )
+    )
+  })
+  
+  output$priorChainEq <- renderUI({
+    m0 <- input$m0; m1 <- input$m1
+    div(class = "eq-card",
+        h5("Your intercept prior, translated: log-odds \u2192 odds \u2192 probability"),
+        HTML(sprintf('<div class="eq-line">log-odds on an average-humidity day = m<sub>0</sub> = <span class="eq-result">%s</span></div>',
+                     fmt(m0, 2))),
+        chain_from_logodds(m0),
+        h5("Your slope prior, translated: log-odds change \u2192 odds multiplier"),
+        HTML(sprintf(
+          '<div class="eq-line">odds multiplier per humidity point = e<sup>m<sub>1</sub></sup> = e<sup>%s</sup> = <span class="eq-result">%s</span> (a %s%% increase in the odds per point)</div>',
+          fmt(m1, 3), fmt(exp(m1), 3), fmt(100 * (exp(m1) - 1), 1)
+        ))
+    )
+  })
+  
+  output$beta0cPlot <- renderPlot({
+    plot_normal(mean = input$m0, sd = input$s0) +
+      labs(x = "beta0c (log-odds, avg. humidity)", y = "pdf") + theme_minimal(base_size = 11)
+  })
+  output$beta1Plot <- renderPlot({
+    plot_normal(mean = input$m1, sd = input$s1) +
+      labs(x = "beta1 (log-odds per humidity point)", y = "pdf") + theme_minimal(base_size = 11)
+  })
+  output$impliedProbPlot <- renderPlot({
+    set.seed(1)
+    tibble(p = plogis(rnorm(20000, input$m0, input$s0))) %>%
+      ggplot(aes(p)) +
+      geom_density(fill = "#55A868", alpha = 0.4) +
+      xlim(0, 1) +
+      labs(x = "implied chance of rain, avg. humidity", y = "density") +
+      theme_minimal(base_size = 11)
+  })
+  
+  output$priorCurvesPlot <- renderPlot({
+    x_seq <- seq(10, 100, length.out = 60)
+    prior_draws() %>%
+      crossing(x = x_seq) %>%
+      mutate(prob = plogis(beta0c + beta1 * (x - mean_h))) %>%
+      ggplot(aes(x, prob, group = draw)) +
+      geom_line(alpha = 0.2, color = "#4C72B0") +
+      ylim(0, 1) +
+      labs(x = "humidity at 9 a.m.", y = "probability of rain tomorrow") +
+      theme_minimal(base_size = 13)
+  })
+  
+  output$priorRainRatePlot <- renderPlot({
+    set.seed(84735)
+    d <- prior_draws()
+    rates <- map_dbl(seq_len(nrow(d)), function(i) {
+      p <- plogis(d$beta0c[i] + d$beta1[i] * (weather$humidity9am - mean_h))
+      mean(rbinom(n_days, 1, p))
+    })
+    ggplot(tibble(rate = rates), aes(rate)) +
+      geom_histogram(color = "white", fill = "#4C72B0", bins = 20) +
+      geom_vline(xintercept = base_rate, linetype = "dashed", color = "#C0392B") +
+      labs(x = "proportion of rainy days in a simulated dataset", y = "count",
+           title = sprintf("Prior-simulated rain rates (red dashed = share of days actually followed by rain in the Perth data, %s)", pct(base_rate, 1))) +
+      theme_minimal(base_size = 12)
+  })
+  
+  output$priorCode <- renderText({
+    stan_call_text(input$m0, input$s0, input$m1, input$s1, prior_pd = TRUE)
+  })
+  
+  ## ===== TAB 3: Real posterior fit =====
+  
+  output$currentPriorSummary <- renderText({
+    sprintf("beta0c ~ Normal(%s, %s)\nbeta1  ~ Normal(%s, %s)", input$m0, input$s0, input$m1, input$s1)
+  })
+  
+  fitted_model <- reactiveVal(NULL)
+  fitted_draws <- reactiveVal(NULL)
+  
+  observeEvent(input$fit_posterior, {
+    withProgress(message = "Running MCMC (stan_glm)...", value = 0.3, {
+      m <- stan_glm(
+        raintomorrow ~ humidity9am, data = weather, family = binomial,
+        prior_intercept = normal(input$m0, input$s0),
+        prior = normal(input$m1, input$s1),
+        chains = 4, iter = 2000, seed = 84735, refresh = 0
+      )
+      incProgress(0.6)
+      fitted_model(m)
+      fitted_draws(as.data.frame(m))
+    })
+  })
+  
+  output$modelFitted <- reactive({ !is.null(fitted_model()) })
+  outputOptions(output, "modelFitted", suspendWhenHidden = FALSE)
+  
+  output$posteriorStatus <- renderUI({
+    if (is.null(fitted_model())) p(em("Click \"Fit the posterior model\" to run MCMC on the real Perth data."))
+  })
+  
+  output$posteriorStatement <- renderUI({
+    req(fitted_draws())
+    d <- fitted_draws(); lvl <- input$ci_level / 100
+    b1 <- d$humidity9am
+    ci <- quantile(b1, c((1 - lvl) / 2, 1 - (1 - lvl) / 2))
+    med <- median(b1)
+    vs_prior <- if (med < input$m1 - 0.005) "smaller than" else if (med > input$m1 + 0.005) "larger than" else "about the same as"
+    x50 <- -median(d$`(Intercept)`) / med
+    tip <- if (x50 >= 0 && x50 <= 100) sprintf(" The median curve reaches a 50%% chance of rain at roughly %.0f%% humidity.", x50)
+    else " Within 0-100% humidity, the median curve never reaches a 50% chance of rain."
+    div(class = "interp-panel",
+        sprintf(
+          paste0(
+            "For every one-point increase in today's 9 a.m. humidity, there's a %.0f%% posterior chance the ",
+            "log-odds of rain rise by between %.4f and %.4f -- equivalently, the odds of rain rise by between ",
+            "%.1f%% and %.1f%%. That median rate (%.4f) is %s your prior mean (%.3f). Every 15-point rise in ",
+            "humidity multiplies the odds by roughly %.2f to %.2f.%s"
+          ),
+          100 * lvl, ci[1], ci[2], 100 * (exp(ci[1]) - 1), 100 * (exp(ci[2]) - 1),
+          med, vs_prior, input$m1, exp(15 * ci[1]), exp(15 * ci[2]), tip
+        )
+    )
+  })
+  
+  output$posteriorChainEq <- renderUI({
+    req(fitted_draws())
+    med <- median(fitted_draws()$humidity9am)
+    mult <- exp(med)
+    div(class = "eq-card",
+        h5("From the posterior median slope to a percent change in the odds"),
+        HTML(sprintf('<div class="eq-line">posterior median slope &beta;<sub>1</sub> = <span class="eq-result">%s</span> (change in log-odds per humidity point)</div>', fmt(med, 4))),
+        HTML(sprintf('<div class="eq-line">odds multiplier = e<sup>&beta;<sub>1</sub></sup> = e<sup>%s</sup> = <span class="eq-result">%s</span></div>', fmt(med, 4), fmt(mult, 4))),
+        HTML(sprintf('<div class="eq-line">percent change in the odds = (%s &minus; 1) &times; 100 = <span class="eq-result">%s%%</span> per humidity point</div>', fmt(mult, 4), fmt(100 * (mult - 1), 2))),
+        HTML(sprintf('<div class="eq-line">over 15 points: e<sup>15 &times; %s</sup> = <span class="eq-result">%s</span> &mdash; the odds are multiplied by about %s</div>', fmt(med, 4), fmt(exp(15 * med), 3), fmt(exp(15 * med), 2)))
+    )
+  })
+  
+  output$posteriorTable <- renderTable({
+    req(fitted_draws())
+    d <- fitted_draws(); lvl <- input$ci_level / 100
+    lo_q <- (1 - lvl) / 2; hi_q <- 1 - lo_q
+    summarize_param <- function(x, name) {
+      tibble(
+        parameter = name,
+        `log-odds scale (median)` = median(x),
+        `lower` = quantile(x, lo_q), `upper` = quantile(x, hi_q),
+        `odds scale (median)` = exp(median(x)),
+        `odds lower` = exp(quantile(x, lo_q)), `odds upper` = exp(quantile(x, hi_q))
+      )
+    }
+    bind_rows(
+      summarize_param(d$`(Intercept)`, "(Intercept)  [raw: log-odds at 0% humidity]"),
+      summarize_param(d$humidity9am, "humidity9am")
+    )
+  }, digits = 4)
+  
+  output$beta1ComparePlot <- renderPlot({
+    req(fitted_draws())
+    post <- fitted_draws()$humidity9am
+    x_lo <- min(input$m1 - 3 * input$s1, mle_beta1_est - 4 * mle_beta1_se, min(post))
+    x_hi <- max(input$m1 + 3 * input$s1, mle_beta1_est + 4 * mle_beta1_se, max(post))
+    xs <- seq(x_lo, x_hi, length.out = 500)
+    pd <- density(post, n = 500)
+    all_df <- bind_rows(
+      tibble(x = xs, density = dnorm(xs, input$m1, input$s1), curve = "Prior belief"),
+      tibble(x = xs, density = dnorm(xs, mle_beta1_est, mle_beta1_se), curve = "Data alone (MLE)"),
+      tibble(x = pd$x, density = pd$y, curve = "Posterior")
+    ) %>% mutate(curve = factor(curve, levels = c("Prior belief", "Data alone (MLE)", "Posterior")))
+    cols <- c("Prior belief" = "#4C72B0", "Data alone (MLE)" = "#DD8452", "Posterior" = "#55A868")
+    ggplot(all_df, aes(x, density, color = curve, fill = curve)) +
+      geom_area(alpha = 0.25, position = "identity") +
+      geom_line(linewidth = 1.1) +
+      scale_color_manual(values = cols) + scale_fill_manual(values = cols) +
+      labs(x = "beta1 (change in log-odds of rain per humidity point)", y = "density", color = NULL, fill = NULL) +
+      theme_minimal(base_size = 13) + theme(legend.position = "top")
+  })
+  
+  # Credible (Bayesian) vs. confidence (frequentist Wald) interval, same level
+  interval_data <- reactive({
+    req(fitted_draws())
+    lvl <- input$ci_level / 100
+    lo_q <- (1 - lvl) / 2; hi_q <- 1 - lo_q
+    post <- fitted_draws()$humidity9am
+    z <- qnorm(hi_q)
+    tibble(
+      method = c("Bayesian credible interval", "Frequentist confidence interval (Wald)"),
+      estimate = c(median(post), mle_beta1_est),
+      lower = c(unname(quantile(post, lo_q)), mle_beta1_est - z * mle_beta1_se),
+      upper = c(unname(quantile(post, hi_q)), mle_beta1_est + z * mle_beta1_se)
+    )
+  })
+  
+  output$intervalStatement <- renderUI({
+    iv <- interval_data(); lvl <- input$ci_level
+    div(class = "interp-panel",
+        HTML(sprintf(
+          paste0(
+            "<strong>Credible interval says:</strong> given the prior and the data, there is a %.0f%% probability ",
+            "that the humidity coefficient lies between %.4f and %.4f.<br><br>",
+            "<strong>Confidence interval says:</strong> if we repeated this data collection many times and built ",
+            "an interval the same way each time, %.0f%% of those intervals would contain the true coefficient. ",
+            "This particular interval runs from %.4f to %.4f, but we can't say there's a %.0f%% chance the true ",
+            "value is inside it &mdash; it either is or it isn't."
+          ),
+          lvl, iv$lower[1], iv$upper[1], lvl, iv$lower[2], iv$upper[2], lvl
+        ))
+    )
+  })
+  
+  output$intervalTable <- renderTable({
+    iv <- interval_data()
+    iv %>%
+      transmute(
+        Method = method,
+        `Estimate (log-odds)` = estimate,
+        `Lower` = lower, `Upper` = upper,
+        `Odds multiplier lower` = exp(lower), `Odds multiplier upper` = exp(upper)
+      )
+  }, digits = 4)
+  
+  output$intervalPlot <- renderPlot({
+    iv <- interval_data()
+    ggplot(iv, aes(y = method, color = method)) +
+      geom_segment(aes(x = lower, xend = upper, yend = method), linewidth = 3, lineend = "round") +
+      geom_point(aes(x = estimate), size = 4, color = "black") +
+      scale_color_manual(values = c("Bayesian credible interval" = "#55A868",
+                                    "Frequentist confidence interval (Wald)" = "#DD8452"),
+                         guide = "none") +
+      labs(x = "humidity coefficient (log-odds per point); black dot = point estimate", y = NULL) +
+      theme_minimal(base_size = 12)
+  })
+  
+  output$posteriorCurvesPlot <- renderPlot({
+    req(fitted_draws())
+    d <- fitted_draws() %>% slice_sample(n = 100) %>% mutate(draw = row_number())
+    x_seq <- seq(10, 100, length.out = 60)
+    curves <- d %>% crossing(x = x_seq) %>%
+      mutate(prob = plogis(`(Intercept)` + humidity9am * x))
+    ggplot() +
+      geom_line(data = curves, aes(x, prob, group = draw), alpha = 0.2, color = "#55A868") +
+      geom_point(data = binned_rain, aes(humidity, rain_rate), size = 3) +
+      ylim(0, 1) +
+      labs(x = "humidity at 9 a.m.", y = "probability of rain tomorrow") +
+      theme_minimal(base_size = 13)
+  })
+  
+  output$posteriorCode <- renderText({
+    stan_call_text(input$m0, input$s0, input$m1, input$s1, prior_pd = FALSE)
+  })
+  
+  output$diagnostics <- renderPrint({
+    req(fitted_model())
+    # summary() already includes Rhat and n_eff for every parameter -- this
+    # avoids the rhat() name collision between rstanarm and the posterior package.
+    print(summary(fitted_model())[, c("Rhat", "n_eff")])
+  })
+  
+  ## ===== TAB 4: Prediction & classification (fast, reuses draws) =====
+  
+  output$predictionStatus <- renderUI({
+    if (is.null(fitted_draws())) p(em("Fit a posterior model on Tab 3 first -- this tab reuses those draws."))
+  })
+  
+  sim_prediction <- reactive({
+    req(fitted_draws())
+    d <- fitted_draws()
+    set.seed(84735)
+    log_odds <- d$`(Intercept)` + d$humidity9am * input$h_predict
+    prob <- plogis(log_odds)
+    tibble(log_odds = log_odds, odds = exp(log_odds), prob = prob, Y = rbinom(length(prob), 1, prob))
+  })
+  
+  output$predictChainEq <- renderUI({
+    req(fitted_draws())
+    d <- fitted_draws(); h <- input$h_predict
+    b0 <- median(d$`(Intercept)`); b1 <- median(d$humidity9am)
+    lo <- b0 + b1 * h
+    div(class = "eq-card",
+        h5(sprintf("Using posterior medians: humidity = %s%% \u2192 log-odds \u2192 odds \u2192 probability", h)),
+        HTML(sprintf(
+          '<div class="eq-line">log-odds = &beta;<sub>0</sub> + &beta;<sub>1</sub> &times; %s = %s + %s &times; %s = <span class="eq-result">%s</span></div>',
+          h, paren(b0, 3), paren(b1, 4), h, fmt(lo, 3)
+        )),
+        chain_from_logodds(lo),
+        p(em("This chain uses the median coefficients as a quick summary. The simulation below uses every posterior draw, so it also carries the uncertainty in the coefficients."))
+    )
+  })
+  
+  output$verdict <- renderUI({
+    s <- sim_prediction()
+    p_rain <- mean(s$Y == 1)
+    classify_rain <- p_rain >= input$cutoff
+    ci <- quantile(s$prob, c(0.1, 0.9))
+    cls <- if (classify_rain) "verdict verdict-rain" else "verdict verdict-dry"
+    div(class = cls,
+        strong(if (classify_rain) "Carry an umbrella: classify as RAIN." else "Leave the umbrella: classify as NO RAIN."),
+        br(),
+        sprintf(
+          paste0(
+            "At %.0f%% humidity, %s of the %s posterior predictions called for rain. Since %s %s the cutoff of %s, ",
+            "we classify tomorrow as %s. (The underlying chance of rain, \u03c0, has a posterior median of %s ",
+            "with an 80%% credible interval of %s to %s.)"
+          ),
+          input$h_predict, pct(p_rain, 1), format(nrow(s), big.mark = ","), pct(p_rain, 1),
+          if (classify_rain) "meets or exceeds" else "falls below", input$cutoff,
+          if (classify_rain) "rain" else "no rain", pct(median(s$prob), 1), pct(ci[1], 1), pct(ci[2], 1)
+        )
+    )
+  })
+  
+  output$predictionPlot <- renderPlot({
+    s <- sim_prediction()
+    tibble(Y = factor(s$Y, levels = c(0, 1), labels = c("No rain (Y = 0)", "Rain (Y = 1)"))) %>%
+      count(Y, .drop = FALSE) %>%
+      ggplot(aes(Y, n, fill = Y)) +
+      geom_col(show.legend = FALSE) +
+      scale_fill_manual(values = c("#d9962b", "#2c6fbb")) +
+      labs(x = NULL, y = "posterior predictions",
+           title = sprintf("Posterior predictive model of tomorrow's rain at %.0f%% humidity", input$h_predict)) +
+      theme_minimal(base_size = 13)
+  })
+  
+  output$predictionCode <- renderText({
+    sprintf(
+      paste0(
+        "posterior <- as.data.frame(rain_model)\n",
+        "log_odds <- posterior$`(Intercept)` + posterior$humidity9am * %d\n",
+        "prob <- exp(log_odds) / (1 + exp(log_odds))\n",
+        "Y <- rbinom(length(prob), size = 1, prob = prob)\n",
+        "mean(Y)   # proportion of predictions calling for rain, compare to cutoff = %s"
+      ),
+      input$h_predict, input$cutoff
+    )
+  })
+  
+  day_probs <- reactive({
+    req(fitted_draws())
+    d <- fitted_draws()
+    lin <- outer(d$`(Intercept)`, rep(1, n_days)) + outer(d$humidity9am, weather$humidity9am)
+    colMeans(plogis(lin))
+  })
+  
+  metrics_now <- reactive(class_metrics(day_probs(), weather$y, input$cutoff))
+  
+  output$metricsStatement <- renderUI({
+    m <- metrics_now()
+    lean <- if (input$cutoff < 0.35) "You've set a low bar for calling rain, so you catch most real rainy days but carry an umbrella a lot for nothing."
+    else if (input$cutoff > 0.65) "You've set a high bar for calling rain, so you rarely carry an umbrella needlessly but you miss many real rainy days."
+    else "This is a middle-of-the-road cutoff, balancing the two kinds of mistakes."
+    div(class = "interp-panel",
+        sprintf(
+          paste0(
+            "At a cutoff of %s: overall accuracy %s, sensitivity %s (of the days it actually rained, the share ",
+            "we correctly called), specificity %s (of the dry days, the share we correctly called). %s Note: ",
+            "accuracy alone can mislead here, since only about %s of days are rainy -- a model that ",
+            "always said \"no rain\" would score %s accuracy while being useless."
+          ),
+          input$cutoff, pct(m$accuracy, 1), pct(m$sensitivity, 1), pct(m$specificity, 1), lean,
+          pct(base_rate, 0), pct(1 - base_rate, 0)
+        )
+    )
+  })
+  
+  output$confusionTable <- renderTable({
+    m <- metrics_now()
+    as.data.frame.matrix(m$cm) %>% rownames_to_column("Actual \\ Predicted")
+  }, digits = 0)
+  
+  output$tradeoffPlot <- renderPlot({
+    cuts <- seq(0.05, 0.95, by = 0.025)
+    probs <- day_probs()
+    tab <- map_dfr(cuts, function(cc) {
+      m <- class_metrics(probs, weather$y, cc)
+      tibble(cutoff = cc, Sensitivity = m$sensitivity, Specificity = m$specificity, `Overall accuracy` = m$accuracy)
+    }) %>% pivot_longer(-cutoff, names_to = "metric", values_to = "value")
+    ggplot(tab, aes(cutoff, value, color = metric)) +
+      geom_line(linewidth = 1.1) +
+      geom_vline(xintercept = input$cutoff, linetype = "dashed") +
+      scale_color_manual(values = c(Sensitivity = "#2c6fbb", Specificity = "#d9962b", `Overall accuracy` = "grey40")) +
+      labs(x = "classification cutoff", y = NULL, color = NULL,
+           title = "Sensitivity and specificity trade off as the cutoff moves (dashed = your choice)") +
+      theme_minimal(base_size = 13) + theme(legend.position = "top")
+  })
+  
+  output$classificationCode <- renderText({
+    sprintf("classification_summary(model = rain_model, data = weather, cutoff = %s)", input$cutoff)
+  })
+}
+
+shinyApp(ui, server)
+```
+
+### Question & Answers Here
+
+1.  a
+2.  a
+3.  a
+4.  a
+5.  a
+6.  a
+7.  a
+8.  a
+9.  a
+10. a
