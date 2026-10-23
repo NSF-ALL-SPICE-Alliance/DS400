@@ -1,0 +1,230 @@
+---
+title: "Hierearchical Models Are Awesome"
+format: html
+editor: visual
+---
+
+### Welcome
+
+Today we are going to introduce the topic of hierarchical models following [Chapter 15 of Bayes Rules!](https://www.bayesrulesbook.com/chapter-15) very closely
+
+### Libraries
+
+```{r}
+library(bayesrules)
+library(tidyverse)
+library(ggpubr)
+library(rstanarm)
+library(broom.mixed)
+library(tidybayes)
+```
+
+### Data
+
+This data, a subset of the `Cherry` data in the **mdsr** package ([Baumer, Horton, and Kaplan 2021](https://www.bayesrulesbook.com/chapter-15#ref-R-mdsr)), contains the `net` running times (in minutes) for 36 participants in the annual 10-mile Cherry Blossom race held in Washington, D.C.. Each runner is in their 50s or 60s and has entered the race in multiple years.
+
+```{r}
+running <- bayesrules::cherry_blossom_sample
+```
+
+### Guided Exploratory Viz
+
+We only have a few more chance to practice exploratory viz with `ggplot()` left this semester so do your best to follow these guided questions
+
+1.  What is the general distribution of run times
+
+```{r}
+
+```
+
+2.  What is the average run time by age
+
+```{r}
+
+```
+
+3.  What is the distribution of run time by age
+
+```{r}
+
+```
+
+4.  Did runner 27 get faster or slower with age?
+
+```{r}
+
+```
+
+5.  Has the average race time changed over the years
+
+```{r}
+
+```
+
+6.  What is the distribution of the difference between net and gun
+
+```{r}
+
+```
+
+7.  What is the distribution of run time by runner
+
+```{r}
+
+```
+
+### Model Question
+
+What is the relationship between age and race time?
+
+```{r}
+running <- running %>%
+  select(runner, age, net) 
+```
+
+#### Complete Pooling
+
+Combine all 252 observations across our 36 runners into *one pool* of information
+
+```{r}
+ggplot(running, aes(y = net, x = age)) + 
+  geom_point() +
+  geom_smooth(method = "lm") +
+  stat_cor()
+```
+
+Bayesian?
+
+```{r}
+complete_pooled_model <- stan_glm(
+  net ~ age, 
+  data = running, family = gaussian, 
+  prior_intercept = normal(0, 2.5, autoscale = TRUE),
+  prior = normal(0, 2.5, autoscale = TRUE), 
+  prior_aux = exponential(1, autoscale = TRUE),
+  chains = 4, iter = 5000*2, seed = 84735)
+```
+
+```{r}
+tidy(complete_pooled_model, conf.int = TRUE, conf.level = 0.80)
+```
+
+This seems a bit strange. Our own experience does not support the idea that we’ll continue to run at the same speed.
+
+```{r}
+# Plot of the posterior median model
+ggplot(running, aes(x = age, y = net, group = runner)) + 
+  geom_smooth(method = "lm", se = FALSE, color = "gray", size = 0.5) + 
+  geom_abline(aes(intercept = 75.2, slope = 0.268), color = "blue") +
+  theme_bw()
+```
+
+```{r}
+# Select an example subset
+examples <- running %>% 
+  filter(runner %in% c("1", "20", "22"))
+
+ggplot(examples, aes(x = age, y = net)) + 
+  geom_point() + 
+  facet_wrap(~ runner) + 
+  geom_abline(aes(intercept = 75.2242, slope = 0.2678), 
+              color = "blue")
+```
+
+#### No pooling
+
+Having failed with our complete pooled model, let’s swing to the other extreme. Instead of lumping everybody together into one pool and ignoring any information about runners, the **no pooling** approach considers each of our m=36 runners *separately*.
+
+```{r}
+ggplot(examples, aes(x = age, y = net)) + 
+  geom_point() + 
+  geom_smooth(method = "lm", se = FALSE, fullrange = TRUE) + 
+  facet_wrap(~ runner) + 
+  xlim(52, 62)
+```
+
+Based on the no pooling results for our three example cases, what do you anticipate your running times to be? Are you stumped? If not, you should be. The no pooling approach can’t help you answer this question. Since they’re tailored to the 36 individuals in our sample, the resulting 36 models don’t reliably extend beyond these individuals.
+
+### Partial Pooling with hierarchical models
+
+```{r}
+running_model_1 <- stan_glmer(
+  net ~ age + (1 | runner), 
+  data = running, family = gaussian,
+  prior_intercept = normal(100, 10),
+  prior = normal(2.5, 1), 
+  prior_aux = exponential(1, autoscale = TRUE),
+  prior_covariance = decov(reg = 1, conc = 1, shape = 1, scale = 1),
+  chains = 4, iter = 5000*2, seed = 84735)
+```
+
+- **`net ~ age`**: on average, race time changes in a straight line with age, with slope β₁ (minutes per year).
+
+- **`(1 | runner)`**: each runner gets their own baseline shift b_j. Some runners are consistently faster than average at a given age and some consistently slower. Repeated races by the same person are therefore treated as related, not independent. The b_j values come from a common normal distribution with standard deviation σ_b, which is what lets the model share information across runners.
+
+- **`family = gaussian`**: the leftover race-to-race variation within a runner is normal, with standard deviation σ_y.
+
+**The priors, which are the assumptions you state before seeing the data.**
+
+- **`prior_intercept = normal(100, 10)`**: before seeing data, you expect the typical runner’s race time to be about 100 minutes, give or take 10 minutes. `rstanarm` centers the predictors, so this is the time at the average age.
+
+- **`prior = normal(2.5, 1)`**: you expect each additional year of age to add about 2.5 minutes, give or take 1, so slopes from about 0.5 to 4.5 minutes per year are plausible.
+
+- **`prior_aux = exponential(1, autoscale = TRUE)`**: this is the prior on σ_y, the within-runner noise. It favors smaller values, and `autoscale = TRUE` rescales it to the spread of the data, so you aren’t setting units by hand.
+
+- **`prior_covariance = decov(reg = 1, conc = 1, shape = 1, scale = 1)`**: this is the prior on how much runners differ from each other (σ_b). With a single random intercept, there is only one standard deviation, so the extra settings mostly don’t matter. It amounts to a gentle prior favoring moderate between-runner variation.
+
+**The sampling settings.**
+
+- **`chains = 4`**: four independent runs of the sampler, so you can check that they agree.
+
+- **`iter = 5000*2`**: each chain runs 10,000 iterations. The first half is warmup and is discarded, leaving 5,000 draws per chain and 20,000 in total.
+
+- **`seed = 84735`**: makes the results reproducible
+
+```{r}
+tidy_summary_1 <- tidy(running_model_1, effects = "fixed",
+                       conf.int = TRUE, conf.level = 0.80)
+tidy_summary_1
+
+```
+
+There’s an 80% chance that the *typical* runner tends to slow down somewhere between 1.02 and 1.58 minutes per year
+
+```{r}
+# Posterior summaries of runner-specific intercepts
+runner_summaries_1 <- running_model_1 %>%
+  spread_draws(`(Intercept)`, b[,runner]) %>% 
+  mutate(runner_intercept = `(Intercept)` + b) %>% 
+  select(-`(Intercept)`, -b) %>% 
+  median_qi(.width = 0.80) %>% 
+  select(runner, runner_intercept, .lower, .upper)
+```
+
+```{r}
+B0 <- tidy_summary_1$estimate[1]
+B1 <- tidy_summary_1$estimate[2]
+running %>%
+  select(runner, age, net) %>%      # only the variables in the model
+  drop_na() %>%
+  add_epred_draws(running_model_1, ndraws = 200, re_formula = NA) %>%
+  ggplot(aes(x = age, y = net)) +
+  geom_line(aes(y = .epred, group = .draw), alpha = 0.1) +
+  geom_abline(intercept = B0, slope = B1, color = "blue") +
+  lims(y = c(75, 110))
+```
+
+### Takeaway
+
+Pooling all runners’ data together masks the fact that most *individual* runners slow down with age. Hierarchical models with varying intercepts allow us to quantify this relationship more effectively
+
+### Exercise Questions:
+
+Use the [text](https://www.bayesrulesbook.com/chapter-15) to answer these questions:\
+Can you give me an example when we might want to use the partial pooling approach?
+
+1.  Why wouldn’t we always just use the complete pooling approach? It seems easier
+
+2.  Does the no pooled approach have any drawbacks? It seems that there are fewer assumptions.
+
+3.  Can you remind me what the difference is between *within-group* variability and *between-group* variability? And how does that relate to partial pooling?
