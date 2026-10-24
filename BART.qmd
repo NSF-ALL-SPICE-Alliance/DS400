@@ -1,0 +1,831 @@
+---
+title: "BART"
+format: html
+editor: visual
+---
+
+### Welcome to the lab on Bayesian Additive Regression Trees (BART)
+
+Inspiration for this lab comes from Julia Howard MS, who presented the paper [*Community- and data-driven homelessness prevention and service delivery: optimizing for equity*](https://academic.oup.com/jamia/article/30/6/1032/7111260)in the Data2Jobs Journal Club.
+
+### Libraries
+
+```{r}
+library(tidyverse)
+library(here)
+library(dbarts)
+library(ggalluvial)
+library(janitor)
+```
+
+### Data
+
+The primary data or modeling code is not available in the [papers github](https://github.com/amandakube/Community-And-Data-Driven_Homelessness_Prevention) 😲 but we can do a bit of claude-assisted reverse engineering to generate synthetic data that mirrors the results we see in the paper. Download it here
+
+```{r}
+
+synthetic_hims_data <- read_csv(here("data/synthetic_hmis.csv"))
+```
+
+#### Column names and meanings
+
+**Identifiers and outcome**
+
+| Column | Meaning |
+|------------------------------------|------------------------------------|
+| `id` | Household ID. Rows are shuffled, so the order means nothing. |
+| `service` | The service the household actually received: ES, TH, RRH or Prev. |
+| `reentry` | The outcome. 1 means the household needed homeless services again within 2 years, and 0 means it didn’t. |
+| `prev_eligible` | 1 if the household is eligible for Prevention, based on stable prior housing. All Prevention households are 1, plus 205 households served by other services. |
+
+**Derived groups from the paper’s hypotheses**
+
+| Column | Meaning |
+|------------------------------------|------------------------------------|
+| `family` | 1 if the household has at least one child. |
+| `comorbid` | 1 if the head of household has at least 2 of: a disability (`disabling` or `phys_disab`), an alcohol problem, or a drug problem. |
+
+**Household composition**
+
+| Column | Meaning |
+|------------------------------------|------------------------------------|
+| `members` | Total household size: 1 + spouse + children + unrelated adults and children. |
+| `spouse` | 1 if a spouse is present. |
+| `children` | Number of children. |
+| `unrel_adults`, `unrel_children` | Number of unrelated adults and children in the household. |
+
+**System contact and money**
+
+| Column      | Meaning                                                   |
+|-------------|-----------------------------------------------------------|
+| `calls`     | Number of calls to the hotline before entering a service. |
+| `wait_days` | Days waited before entry.                                 |
+| `income`    | Monthly income in US dollars.                             |
+
+**Head of household demographics**
+
+| Column     | Meaning                      |
+|------------|------------------------------|
+| `female`   | 1 if female.                 |
+| `age`      | Age in years, from 18 to 85. |
+| `race`     | `black`, `white` or `other`. |
+| `hispanic` | 1 if Hispanic or Latino.     |
+| `veteran`  | 1 if a veteran.              |
+
+**Health and risk indicators (all 0/1)**
+
+| Column             | Meaning                               |
+|--------------------|---------------------------------------|
+| `disabling`        | Has a disabling condition.            |
+| `phys_disab`       | Has a physical disability.            |
+| `chronic_health`   | Has a chronic health condition.       |
+| `mental_health`    | Has a mental health problem.          |
+| `alcohol`, `drug`  | Has an alcohol or drug abuse problem. |
+| `dv_survivor`      | Is a domestic violence survivor.      |
+| `chronic_homeless` | Is chronically homeless.              |
+
+**Situation at entry (text categories)**
+
+| Column | Meaning |
+|------------------------------------|------------------------------------|
+| `housing_status` | `homeless`, `imminent_risk` (about to lose housing), `at_risk`, `stably_housed` or `other`. |
+| `prior_residence` | Where the household came from: `emergency_shelter`, `transitional`, `substance_tx`, `hospital`, `family_home`, `friend_home`, `not_habitation` (a place not meant for habitation), `rental_subsidy`, `rental_nosubsidy`, `owned` or `other`. |
+
+### Exploratory Visualization
+
+Take 15 minutes to generate 2-3 figures from the `synthetic_hims_data`
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+### Big Picture
+
+The columns to keep are eye on are `housing_status` `eligibility` `service`and `reentry`
+
+```{r}
+unique(synthetic_hims_data$housing_status)
+unique(synthetic_hims_data$prev_eligible)
+unique(synthetic_hims_data$service)
+unique(synthetic_hims_data$reentry)
+```
+
+We ***❤️*** sankey diagrams
+
+```{r}
+flow <- synthetic_hims_data %>%
+  mutate(
+    housing  = case_when(housing_status == "homeless" ~ "Homeless",
+                         housing_status %in% c("imminent_risk", "at_risk") ~ "At risk",
+                         housing_status == "stably_housed" ~ "Stably housed",
+                         TRUE ~ "Other"),
+    housing  = factor(housing, levels = c("At risk", "Stably housed", "Homeless", "Other")),
+    eligible = factor(if_else(prev_eligible == 1, "Eligible", "Not eligible"),
+                      levels = c("Eligible", "Not eligible")),
+    service  = factor(service, levels = c("Prev", "RRH", "TH", "ES")),
+    outcome  = factor(if_else(reentry == 1, "Returned", "No return"),
+                      levels = c("No return", "Returned"))
+  ) %>%
+  count(housing, eligible, service, outcome)   # households on each path
+
+# Plot: each box shows its name and its share of all households
+ggplot(flow, aes(axis1 = housing, axis2 = eligible, axis3 = service, axis4 = outcome, y = n)) +
+  geom_alluvium(aes(fill = outcome), alpha = 0.6, width = 0.15) +
+  geom_stratum(width = 0.15, fill = "grey95") +
+  geom_text(stat = "stratum", size = 3,
+            aes(label = paste0(after_stat(stratum), "\n",
+                               scales::percent(after_stat(prop), accuracy = 0.1)))) +
+  scale_x_discrete(limits = c("Housing", "Eligibility", "Service", "Reentry")) +
+  scale_fill_manual(values = c("No return" = "#9FC5D9", "Returned" = "#E07A5F")) +
+  labs(y = "Households", fill = NULL) +
+  theme_minimal() +
+  theme(panel.grid = element_blank(), axis.text.y = element_blank())
+```
+
+### Goal of Analysis
+
+We want to see which service is the most effective based on household characteristics
+
+It seems that houeseholds that go into the homeless prevention service are the least likely to reenter
+
+```{r}
+synthetic_hims_data |> 
+  tabyl(service, reentry) |> 
+  adorn_percentages("row")
+```
+
+But all households are not eligible for homeless prevention service
+
+```{r}
+synthetic_hims_data %>%
+  group_by(prev_eligible, service) %>%
+  summarize(n = n(), reentry_rate = round(mean(reentry), 3), .groups = "drop")
+```
+
+Also raw rates of reentry are not a fair comparison statistic because the services support households at varying levels of risk
+
+### BART
+
+#### Prep
+
+```{r}
+
+
+# 1. Make the data numeric: categories become 0/1 columns, and service is just another column
+synthetic_hims_data <- synthetic_hims_data %>%
+  mutate(service = factor(service, levels = c("ES", "TH", "RRH", "Prev")))
+
+X <- synthetic_hims_data %>%
+  select(-id, -reentry) %>%
+  mutate(across(c(race, housing_status, prior_residence), as.factor))
+
+fac_cols <- names(X)[sapply(X, is.factor)]
+Xm <- model.matrix(~ . - 1, data = X,
+                   contrasts.arg = lapply(X[fac_cols], contrasts, contrasts = FALSE))
+
+dat <- data.frame(reentry = synthetic_hims_data$reentry, Xm)
+
+```
+
+#### Model
+
+```{r}
+# 2. Fit BART: 200 trees, 4 chains x 250 kept draws = 1000 posterior draws
+set.seed(84735)
+fit <- bart2(
+  reentry ~ ., data = dat,
+  n.trees = 200,
+  n.chains = 4, n.burn = 500, n.samples = 250,
+  keepTrees = TRUE, combineChains = FALSE,
+  n.threads = 4, seed = 84735, verbose = FALSE
+)
+
+dim(fit$yhat.train)   # 4 chains x 250 draws x 10,043 households
+```
+
+#### Accuracy Metrics
+
+```{r}
+library(pROC)   # install.packages("pROC") once
+
+p_hat <- apply(pnorm(fit$yhat.train), 3, mean)   # posterior mean P(reentry)
+y     <- synthetic_hims_data$reentry
+pred  <- as.integer(p_hat >= 0.5)
+
+table(predicted = pred, actual = y)        # confusion matrix
+
+
+```
+
+```{r}
+auc(response = y, predictor = p_hat)       # AUC
+mean(pred != y)                            # misclassification error/sensitivity
+sum(pred == 1 & y == 1) / sum(pred == 1)   # precision
+sum(pred == 1 & y == 1) / sum(y == 1)      # recall
+```
+
+### Counterfactual Predictions
+
+Flip `service` for every household, predict
+
+```{r}
+service_cols <- grep("^service", colnames(Xm), value = TRUE)   # the four service columns
+
+predict_under <- function(s) {
+  newX <- as.data.frame(Xm)
+  newX[service_cols] <- 0                 # clear all service columns
+  newX[[paste0("service", s)]] <- 1       # set everyone to service s
+  predict(fit, newX, type = "ev")         # probabilities: 1000 draws x 10,043 households
+}
+
+P <- map(c(ES = "ES", TH = "TH", RRH = "RRH", Prev = "Prev"), predict_under)
+
+dim(P$TH)   # should be 1000 x 10043
+```
+
+Dive further into the output `P`
+
+```{r}
+P$TH[1:4, 1:5]         # 4 draws x 5 households
+```
+
+Plot one household across services
+
+```{r}
+eligible <- synthetic_hims_data$prev_eligible == 1
+
+i <- 30   # <- change this to any household number
+
+services <- if (eligible[i]) c("ES", "TH", "RRH", "Prev") else c("ES", "TH", "RRH")
+
+h <- synthetic_hims_data[i, ]   # this household's row
+
+details <- paste0(
+  "Actually received: ", h$service,
+  " | Family: ", ifelse(h$family == 1, "yes", "no"),
+  " | Comorbid: ", ifelse(h$comorbid == 1, "yes", "no"),
+  "\nIncome: $", round(h$income),
+  " | Calls: ", h$calls,
+  " | Age: ", h$age,
+  " | Housing: ", h$housing_status
+)
+
+map_dfr(services, ~ tibble(service = .x, p = P[[.x]][, i])) %>%
+  mutate(service = factor(service, levels = c("ES", "TH", "RRH", "Prev"))) %>%
+  ggplot(aes(p, fill = service)) +
+  geom_density(alpha = 0.5) +
+  labs(x = "P(reentry) for this household", y = NULL,
+       title = paste("Household", i, "- posterior under each service, 1000 draws per service"),
+       subtitle = details)
+```
+
+All Households
+
+```{r}
+eligible <- synthetic_hims_data$prev_eligible == 1
+
+map_dfr(c("ES", "TH", "RRH", "Prev"),
+        ~ tibble(service = .x,
+                 p = colMeans(P[[.x]]),          # posterior mean per household
+                 group = if_else(eligible, "Prevention-eligible", "Not eligible"))) %>%
+  filter(!(service == "Prev" & group == "Not eligible")) %>%   # Prevention isn't defined for them
+  ggplot(aes(p, fill = service)) +
+  geom_density(alpha = 0.5) +
+  facet_wrap(~ group) +
+  labs(x = "Predicted P(reentry) under each service", y = NULL)
+```
+
+```{r}
+eligible <- synthetic_hims_data$prev_eligible == 1
+rows <- !eligible & synthetic_hims_data$comorbid == 1
+
+# Figure 1: posterior of the group's average reentry probability under each service
+map_dfr(c("ES", "TH", "RRH"),
+        ~ tibble(service = .x, p = rowMeans(P[[.x]][, rows]))) %>%
+  ggplot(aes(p, fill = service)) +
+  geom_density(alpha = 0.5) +
+  labs(x = "Average P(reentry) for comorbid, ineligible households", y = NULL)
+
+# Figure 2: posterior of the difference (the CATE)
+tibble(cate = 100 * rowMeans(P$TH[, rows] - P$RRH[, rows])) %>%
+  ggplot(aes(cate)) +
+  geom_density(fill = "#2A6F97", alpha = 0.6) +
+  geom_vline(xintercept = 0, linetype = 2) +
+  labs(x = "TH − RRH (percentage points)", y = NULL)
+```
+
+### Average Treatment Effect (ATE)
+
+```{r}
+eligible <- synthetic_hims_data$prev_eligible == 1
+
+ate_summary <- function(a, b, rows) {
+  d <- 100 * rowMeans(P[[a]][, rows, drop = FALSE] - P[[b]][, rows, drop = FALSE])
+  tibble(contrast = paste(a, "-", b),
+         mean_pp = mean(d),
+         lo_pp = quantile(d, 0.025),
+         hi_pp = quantile(d, 0.975),
+         prob_negative = mean(d < 0))
+}
+
+bind_rows(
+  ate_summary("Prev", "TH", eligible),     # eligible households: is Prevention better?
+  ate_summary("TH", "RRH", !eligible)      # ineligible households: TH vs RRH
+) %>%
+  mutate(across(where(is.numeric), ~ round(.x, 2)))
+```
+
+### Conditional Average Treatment Effect (CATE)
+
+```{r}
+dat_h <- synthetic_hims_data
+inel  <- dat_h$prev_eligible == 0
+
+disabled  <- pmax(dat_h$disabling, dat_h$phys_disab) == 1
+substance <- dat_h$alcohol == 1 | dat_h$drug == 1
+
+# The paper's nine subgroups, in the paper's order, defined from our columns
+groups <- list(
+  "Two of: Disability,\nAlcohol or Drug Abuse"       = dat_h$comorbid == 1,
+  "Drug Abuse"                                       = dat_h$drug == 1,
+  "Alcohol Abuse"                                    = dat_h$alcohol == 1,
+  "Single, No Comorbid\nDisability and\nSubstance Abuse" = dat_h$members == 1 & dat_h$comorbid == 0,
+  "Disabled"                                         = disabled,
+  "Youth No Disability\nor Substance Abuse\nor Children" = dat_h$age <= 24 & !disabled & !substance & dat_h$children == 0,
+  "Mental Health\nCondition"                         = dat_h$mental_health == 1,
+  "Disabled No\nSubstance Abuse"                     = disabled & !substance,
+  "Family No Disability\nor Substance Abuse"         = dat_h$family == 1 & !disabled & !substance
+)
+
+# CATE of TH − RRH for a group, in probability units like the paper's axis
+cate_prob <- function(label, rows) {
+  d <- rowMeans(P$TH[, rows, drop = FALSE] - P$RRH[, rows, drop = FALSE])
+  tibble(test = label, mean = mean(d), lo = quantile(d, 0.025), hi = quantile(d, 0.975))
+}
+
+ate <- mean(rowMeans(P$TH[, inel] - P$RRH[, inel]))   # the dashed line
+
+cate_fig <- imap_dfr(groups, ~ cate_prob(.y, inel & .x)) %>%
+  mutate(test   = factor(test, levels = names(groups)),
+         better = if_else(mean < ate, "Better than Average in TH",
+                          "Better than Average in RRH"))
+
+ggplot(cate_fig, aes(test, mean, color = better)) +
+  geom_hline(yintercept = ate, linetype = "dashed") +
+  geom_pointrange(aes(ymin = lo, ymax = hi)) +
+  scale_color_manual(values = c("Better than Average in TH"  = "#6CB4F0",
+                                "Better than Average in RRH" = "#8E3B8E")) +
+  labs(x = "Test", y = "Conditional Average Treatment Effect", color = NULL) +
+  theme_bw() +
+  theme(legend.position = "bottom", panel.grid.minor = element_blank())
+```
+
+### App
+
+```{r}
+
+
+library(shiny)
+library(tidyverse)
+library(dbarts)
+library(here)
+
+svc        <- c("ES", "TH", "RRH", "Prev")
+svc_name   <- c(ES = "Emergency Shelter", TH = "Transitional Housing",
+                RRH = "Rapid Re-Housing", Prev = "Homelessness Prevention")
+svc_col    <- c(ES = "#9AA5B1", TH = "#2A6F97", RRH = "#E07A5F", Prev = "#3A9D6E")
+# approximate cost per household, from the paper's Table 3 (total / households served)
+svc_cost   <- c(ES = 674.97, TH = 1414.65, RRH = 800.91, Prev = 146.67)
+
+hh <- read_csv(here("data/synthetic_hmis.csv")) %>%
+  mutate(service = factor(service, levels = svc))
+
+X <- hh %>%
+  select(-id, -reentry) %>%
+  mutate(across(c(race, housing_status, prior_residence), as.factor))
+fac_cols <- names(X)[sapply(X, is.factor)]
+
+design <- function(d) {
+  model.matrix(~ . - 1, data = d,
+               contrasts.arg = lapply(d[fac_cols], contrasts, contrasts = FALSE))
+}
+
+message("Fitting BART (one time)...")
+Xm  <- design(X)
+dat <- data.frame(reentry = hh$reentry, Xm)
+fit <- bart2(reentry ~ ., data = dat,
+             n.trees = 200, n.chains = 4, n.burn = 500, n.samples = 250,
+             keepTrees = TRUE, combineChains = FALSE,
+             n.threads = max(1, min(4, parallel::detectCores())),
+             seed = 84735, verbose = FALSE)
+
+# Precompute the average TH - RRH effect for each (eligible, family, comorbid) group
+pred_all <- function(s) {
+  nd <- X
+  nd$service <- factor(s, levels = svc)
+  predict(fit, as.data.frame(design(nd)), type = "ev")
+}
+grp_key <- with(hh, paste(as.integer(prev_eligible), as.integer(family), as.integer(comorbid)))
+.pth <- pred_all("TH")
+.prr <- pred_all("RRH")
+group_cate <- map(split(seq_len(nrow(hh)), grp_key),
+                  ~ 100 * rowMeans(.pth[, .x, drop = FALSE] - .prr[, .x, drop = FALSE]))
+group_n <- table(grp_key)
+rm(.pth, .prr); invisible(gc())
+message("Ready.")
+
+## ------------------------------------------------------------
+## 2. Helpers
+## ------------------------------------------------------------
+fmt  <- function(x, d = 1) formatC(x, format = "f", digits = d)
+pct  <- function(x, d = 0) paste0(formatC(100 * x, format = "f", digits = d), "%")
+sgn  <- function(x, d = 1) paste0(ifelse(x > 0, "+", ""), fmt(x, d))
+
+# Build the 4-row data frame (one row per service) for a household
+household_rows <- function(i) {
+  r <- X[1, ]
+  r$prev_eligible    <- as.numeric(i$eligible)
+  r$housing_status   <- factor(i$housing_status,  levels = levels(X$housing_status))
+  r$prior_residence  <- factor(i$prior_residence, levels = levels(X$prior_residence))
+  r$race             <- factor(i$race,            levels = levels(X$race))
+  r$age              <- i$age
+  r$income           <- i$income
+  r$calls            <- i$calls
+  r$wait_days        <- i$wait_days
+  r$children         <- i$children
+  r$spouse           <- as.numeric(i$spouse)
+  r$female           <- as.numeric(i$female)
+  r$veteran          <- as.numeric(i$veteran)
+  r$disabling        <- as.numeric(i$disabling)
+  r$phys_disab       <- as.numeric(i$phys_disab)
+  r$chronic_health   <- as.numeric(i$chronic_health)
+  r$mental_health    <- as.numeric(i$mental_health)
+  r$alcohol          <- as.numeric(i$alcohol)
+  r$drug             <- as.numeric(i$drug)
+  r$chronic_homeless <- as.numeric(i$chronic_homeless)
+  # things not on the form: typical values
+  r$hispanic <- 0; r$dv_survivor <- 0; r$unrel_adults <- 0; r$unrel_children <- 0
+  # derived exactly as in the data
+  r$members  <- 1 + r$spouse + r$children
+  r$family   <- as.numeric(r$children >= 1)
+  r$comorbid <- as.numeric(max(r$disabling, r$phys_disab) + r$alcohol + r$drug >= 2)
+  map_dfr(svc, function(s) { x <- r; x$service <- factor(s, levels = svc); x })
+}
+
+# 1000 posterior draws of reentry probability, one column per available service
+household_draws <- function(i) {
+  rows <- household_rows(i)
+  pr <- predict(fit, as.data.frame(design(rows)), type = "ev")
+  colnames(pr) <- svc
+  avail <- if (isTRUE(i$eligible)) svc else c("ES", "TH", "RRH")
+  pr[, avail, drop = FALSE]
+}
+
+summarize_draws <- function(d) {
+  best_draw <- colnames(d)[max.col(-d, ties.method = "first")]
+  tibble(service = colnames(d),
+         mean = colMeans(d),
+         lo   = apply(d, 2, quantile, 0.025),
+         hi   = apply(d, 2, quantile, 0.975),
+         p_best = as.numeric(table(factor(best_draw, levels = colnames(d)))) / nrow(d),
+         cost = svc_cost[colnames(d)]) %>%
+    arrange(mean)
+}
+
+## ------------------------------------------------------------
+## 3. Plain-language recommendation
+## ------------------------------------------------------------
+recommendation_html <- function(d, s, i) {
+  best   <- s$service[1]
+  second <- s$service[2]
+  pb     <- s$p_best[1]
+  diff   <- 100 * (d[, second] - d[, best])        # > 0 means `best` has lower reentry
+  d_mean <- mean(diff); d_lo <- quantile(diff, 0.025); d_hi <- quantile(diff, 0.975)
+  p_better <- mean(diff > 0)
+  
+  strength <- if (pb >= 0.80) "clear"
+  else if (pb >= 0.55) "leaning"
+  else "toss-up"
+  
+  headline <- switch(strength,
+                     clear   = paste0("Recommended: ", svc_name[best]),
+                     leaning = paste0("Leaning toward: ", svc_name[best]),
+                     `toss-up` = paste0("Too close to call. Slight edge: ", svc_name[best]))
+  
+  badge_col <- switch(strength, clear = "#2E7D32", leaning = "#B26A00", `toss-up` = "#6B7280")
+  
+  s1 <- paste0("The model predicts a <b>", pct(s$mean[1]), "</b> chance this household needs homeless services ",
+               "again within 2 years under <b>", svc_name[best], "</b> (95% interval ",
+               pct(s$lo[1]), " to ", pct(s$hi[1]), "), compared with <b>", pct(s$mean[2]),
+               "</b> under ", svc_name[second], ".")
+  
+  s2 <- paste0(svc_name[best], " had the lowest predicted reentry in <b>", pct(pb),
+               "</b> of the 1,000 posterior draws. ",
+               switch(strength,
+                      clear   = "That is strong, consistent support within the model.",
+                      leaning = "That is moderate support: the best option changes in a meaningful share of draws.",
+                      `toss-up` = "The best option changes from draw to draw, so the model cannot separate the leading services for this household."))
+  
+  s3 <- paste0("Choosing ", svc_name[best], " over ", svc_name[second], " lowers predicted reentry by about <b>",
+               fmt(d_mean), " percentage points</b> (95% interval ", sgn(d_lo), " to ", sgn(d_hi),
+               "). The model puts <b>", pct(p_better), "</b> probability on ", svc_name[best],
+               " truly being better for this household.")
+  
+  # cost note: a cheaper option the model cannot rule out as equally good
+  cheaper <- s %>% filter(service != best, cost < s$cost[1])
+  s4 <- ""
+  for (k in seq_len(nrow(cheaper))) {
+    alt <- cheaper$service[k]
+    dd  <- 100 * (d[, alt] - d[, best])
+    if (quantile(dd, 0.025) <= 0) {
+      s4 <- paste0("<b>Cost note:</b> ", svc_name[alt], " costs roughly $", formatC(s$cost[1] - cheaper$cost[k], format = "d", big.mark = ","),
+                   " less per household, and the interval for the difference (", sgn(quantile(dd, 0.025)), " to ",
+                   sgn(quantile(dd, 0.975)), " percentage points) includes zero, so the data cannot rule out that it works about as well.")
+      break
+    }
+  }
+  
+  elig <- if (isTRUE(i$eligible))
+    "This household is marked <b>Prevention-eligible</b>, so Prevention is included in the comparison."
+  else
+    "This household is <b>not</b> Prevention-eligible, so only Emergency Shelter, Transitional Housing and Rapid Re-Housing are compared."
+  
+  key <- paste(as.integer(isTRUE(i$eligible)), as.integer(i$children >= 1),
+               as.integer(max(i$disabling, i$phys_disab) + i$alcohol + i$drug >= 2))
+  g <- group_cate[[key]]
+  s5 <- ""
+  if (!is.null(g)) {
+    s5 <- paste0("<b>Households like this:</b> across the ", format(as.integer(group_n[key]), big.mark = ","),
+                 " households in the data with the same eligibility, family and comorbidity profile, the average ",
+                 "Transitional Housing minus Rapid Re-Housing effect is <b>", sgn(mean(g)), " percentage points</b> (95% interval ",
+                 sgn(quantile(g, 0.025)), " to ", sgn(quantile(g, 0.975)), "). Negative values favor Transitional Housing.")
+  }
+  
+  HTML(paste0(
+    "<div style='border-left:6px solid ", badge_col, "; padding:10px 16px; background:#F8FAFC; border-radius:6px;'>",
+    "<div style='font-size:22px; font-weight:700;'>", headline, "</div>",
+    "<div style='margin-top:4px;'><span style='background:", badge_col,
+    "; color:white; padding:2px 8px; border-radius:10px; font-size:12px;'>", toupper(strength), " SIGNAL</span></div>",
+    "<p style='margin-top:10px;'>", s1, "</p><p>", s2, "</p><p>", s3, "</p>",
+    if (nzchar(s4)) paste0("<p>", s4, "</p>") else "",
+    "<p style='color:#475569;'>", elig, "</p>",
+    if (nzchar(s5)) paste0("<p style='color:#475569;'>", s5, "</p>") else "",
+    "</div>"))
+}
+
+## ------------------------------------------------------------
+## 4. Plots (functions, so they can be tested outside the app)
+## ------------------------------------------------------------
+theme_app <- theme_minimal(base_size = 14) +
+  theme(legend.position = "bottom", panel.grid.minor = element_blank())
+
+plot_density <- function(d, s) {
+  long <- as_tibble(d) %>%
+    pivot_longer(everything(), names_to = "service", values_to = "p") %>%
+    mutate(service = factor(service, levels = svc))
+  ggplot(long, aes(p, fill = service, color = service)) +
+    geom_density(alpha = 0.45, linewidth = 0.6) +
+    geom_vline(data = s, aes(xintercept = mean, color = factor(service, levels = svc)),
+               linetype = 2, show.legend = FALSE) +
+    scale_fill_manual(values = svc_col, labels = svc_name, name = NULL, drop = TRUE) +
+    scale_color_manual(values = svc_col, labels = svc_name, name = NULL, drop = TRUE) +
+    scale_x_continuous(labels = scales::percent) +
+    labs(x = "Predicted chance of returning to services within 2 years", y = NULL,
+         title = "What the model expects for this household under each service",
+         subtitle = "Each curve is 1,000 posterior draws; dashed line = posterior mean; wider = less certain") +
+    theme_app + theme(axis.text.y = element_blank())
+}
+
+plot_best <- function(s) {
+  s %>% mutate(service = factor(service, levels = rev(svc))) %>%
+    ggplot(aes(p_best, service, fill = service)) +
+    geom_col(show.legend = FALSE) +
+    geom_text(aes(label = pct(p_best)), hjust = -0.15, size = 5) +
+    scale_fill_manual(values = svc_col) +
+    scale_y_discrete(labels = svc_name) +
+    scale_x_continuous(labels = scales::percent, limits = c(0, 1.08)) +
+    labs(x = "Share of posterior draws in which this service has the LOWEST reentry", y = NULL,
+         title = "How often is each service the best choice?") +
+    theme_app
+}
+
+plot_diff <- function(d, s) {
+  best <- s$service[1]; second <- s$service[2]
+  diff <- 100 * (d[, second] - d[, best])
+  ggplot(tibble(diff = diff), aes(diff)) +
+    geom_density(fill = svc_col[best], alpha = 0.55) +
+    geom_vline(xintercept = 0, linetype = 2) +
+    geom_vline(xintercept = quantile(diff, c(0.025, 0.975)), color = "grey40") +
+    labs(x = paste0("Reentry under ", svc_name[second], " minus reentry under ", svc_name[best],
+                    " (percentage points)"), y = NULL,
+         title = paste0("Advantage of ", svc_name[best], " over the runner-up"),
+         subtitle = "Right of the dashed line = recommended service is better. Grey lines = 95% interval.") +
+    theme_app + theme(axis.text.y = element_blank())
+}
+
+plot_group <- function(d, i) {
+  key <- paste(as.integer(isTRUE(i$eligible)), as.integer(i$children >= 1),
+               as.integer(max(i$disabling, i$phys_disab) + i$alcohol + i$drug >= 2))
+  g <- group_cate[[key]]
+  hh_eff <- 100 * (d[, "TH"] - d[, "RRH"])
+  bind_rows(tibble(who = "This household", x = hh_eff),
+            tibble(who = "Average of similar households in the data", x = g)) %>%
+    ggplot(aes(x, fill = who)) +
+    geom_density(alpha = 0.5) +
+    geom_vline(xintercept = 0, linetype = 2) +
+    scale_fill_manual(values = c("This household" = "#2A6F97",
+                                 "Average of similar households in the data" = "#8E3B8E"), name = NULL) +
+    labs(x = "Transitional Housing minus Rapid Re-Housing (percentage points; below 0 favors TH)", y = NULL,
+         title = "Individual prediction vs the group average",
+         subtitle = "Averaging over many similar households narrows the curve; one household stays uncertain") +
+    theme_app + theme(axis.text.y = element_blank())
+}
+
+## ------------------------------------------------------------
+## 5. UI
+## ------------------------------------------------------------
+presets <- list(
+  single_sub = list(eligible = FALSE, housing_status = "homeless", prior_residence = "not_habitation",
+                    age = 45, income = 300, calls = 6, wait_days = 300, children = 0, spouse = FALSE,
+                    female = FALSE, race = "black", veteran = FALSE, disabling = TRUE, phys_disab = FALSE,
+                    chronic_health = FALSE, mental_health = TRUE, alcohol = FALSE, drug = TRUE,
+                    chronic_homeless = TRUE),
+  family_ineligible = list(eligible = FALSE, housing_status = "homeless", prior_residence = "friend_home",
+                           age = 32, income = 1200, calls = 3, wait_days = 200, children = 2, spouse = FALSE,
+                           female = TRUE, race = "black", veteran = FALSE, disabling = FALSE, phys_disab = FALSE,
+                           chronic_health = FALSE, mental_health = FALSE, alcohol = FALSE, drug = FALSE,
+                           chronic_homeless = FALSE),
+  family_prevention = list(eligible = TRUE, housing_status = "imminent_risk", prior_residence = "rental_nosubsidy",
+                           age = 34, income = 2000, calls = 1, wait_days = 100, children = 2, spouse = FALSE,
+                           female = TRUE, race = "black", veteran = FALSE, disabling = FALSE, phys_disab = FALSE,
+                           chronic_health = FALSE, mental_health = FALSE, alcohol = FALSE, drug = FALSE,
+                           chronic_homeless = FALSE)
+)
+
+# the values every input starts with; the Reset button restores these
+defaults <- list(eligible = FALSE, housing_status = "homeless", prior_residence = "friend_home",
+                 age = 35, income = 800, calls = 3, wait_days = 250, children = 0, spouse = FALSE,
+                 female = FALSE, race = "black", veteran = FALSE, disabling = FALSE, phys_disab = FALSE,
+                 chronic_health = FALSE, mental_health = FALSE, alcohol = FALSE, drug = FALSE,
+                 chronic_homeless = FALSE)
+
+ui <- fluidPage(
+  tags$head(tags$style(HTML("
+    body { font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; }
+    .well { background: #F8FAFC; }
+    h4 { margin-top: 14px; font-size: 15px; font-weight: 700; color: #334155; }
+    .disclaimer { background:#FFF7ED; border:1px solid #FDBA74; padding:8px 12px; border-radius:6px; font-size:13px; }
+  "))),
+  titlePanel("Which homeless service fits this household?"),
+  div(class = "disclaimer",
+      "Teaching demo built on synthetic data"),
+  br(),
+  sidebarLayout(
+    sidebarPanel(width = 4,
+                 strong("Quick examples"),
+                 div(style = "margin: 6px 0 10px 0;",
+                     actionButton("p1", "Single adult, health + substance", class = "btn-sm"),
+                     actionButton("p2", "Family, not eligible", class = "btn-sm"),
+                     actionButton("p3", "Family at risk (eligible)", class = "btn-sm")),
+                 actionButton("reset", "Reset to defaults", icon = icon("rotate-left"),
+                              class = "btn-sm btn-outline-secondary",
+                              style = "margin-bottom: 8px;"),
+                 h4("Eligibility and housing"),
+                 checkboxInput("eligible", "Eligible for Homelessness Prevention", FALSE),
+                 selectInput("housing_status", "Housing status at entry",
+                             levels(X$housing_status), selected = "homeless"),
+                 selectInput("prior_residence", "Where the household came from",
+                             levels(X$prior_residence), selected = "friend_home"),
+                 h4("Household"),
+                 sliderInput("children", "Number of children", 0, 6, 0, step = 1),
+                 checkboxInput("spouse", "Spouse or partner present", FALSE),
+                 sliderInput("age", "Age of head of household", 18, 85, 35),
+                 checkboxInput("female", "Head of household is female", FALSE),
+                 selectInput("race", "Race", levels(X$race), selected = "black"),
+                 checkboxInput("veteran", "Veteran", FALSE),
+                 h4("Money and system contact"),
+                 sliderInput("income", "Monthly income ($)", 0, 6000, 800, step = 50),
+                 sliderInput("calls", "Calls to the hotline before entry", 0, 20, 3),
+                 sliderInput("wait_days", "Days waited before entry", 0, 1500, 250, step = 10),
+                 h4("Health and risk"),
+                 checkboxInput("disabling", "Disabling condition", FALSE),
+                 checkboxInput("phys_disab", "Physical disability", FALSE),
+                 checkboxInput("chronic_health", "Chronic health condition", FALSE),
+                 checkboxInput("mental_health", "Mental health problem", FALSE),
+                 checkboxInput("alcohol", "Alcohol abuse problem", FALSE),
+                 checkboxInput("drug", "Drug abuse problem", FALSE),
+                 checkboxInput("chronic_homeless", "Chronically homeless", FALSE)
+    ),
+    mainPanel(width = 8,
+              uiOutput("recommendation"),
+              br(),
+              tabsetPanel(
+                tabPanel("Predicted reentry", br(), plotOutput("p_density", height = 380),
+                         br(), tableOutput("summary_table")),
+                tabPanel("Which is best?", br(), plotOutput("p_best", height = 300),
+                         br(), plotOutput("p_diff", height = 330)),
+                tabPanel("Households like this", br(), plotOutput("p_group", height = 400)),
+                tabPanel("How to read this", br(), uiOutput("about"))
+              )
+    )
+  )
+)
+
+## ------------------------------------------------------------
+## 6. Server
+## ------------------------------------------------------------
+server <- function(input, output, session) {
+  
+  apply_preset <- function(p) {
+    for (nm in names(p)) {
+      v <- p[[nm]]
+      if (is.logical(v))        updateCheckboxInput(session, nm, value = v)
+      else if (is.character(v)) updateSelectInput(session, nm, selected = v)
+      else                      updateSliderInput(session, nm, value = v)
+    }
+  }
+  observeEvent(input$p1, apply_preset(presets$single_sub))
+  observeEvent(input$p2, apply_preset(presets$family_ineligible))
+  observeEvent(input$p3, apply_preset(presets$family_prevention))
+  observeEvent(input$reset, apply_preset(defaults))
+  
+  hh_input <- reactive({
+    list(eligible = input$eligible, housing_status = input$housing_status,
+         prior_residence = input$prior_residence, children = input$children,
+         spouse = input$spouse, age = input$age, female = input$female,
+         race = input$race, veteran = input$veteran, income = input$income,
+         calls = input$calls, wait_days = input$wait_days,
+         disabling = input$disabling, phys_disab = input$phys_disab,
+         chronic_health = input$chronic_health, mental_health = input$mental_health,
+         alcohol = input$alcohol, drug = input$drug, chronic_homeless = input$chronic_homeless)
+  })
+  
+  draws <- reactive(household_draws(hh_input()))
+  summ  <- reactive(summarize_draws(draws()))
+  
+  output$recommendation <- renderUI(recommendation_html(draws(), summ(), hh_input()))
+  output$p_density <- renderPlot(plot_density(draws(), summ()))
+  output$p_best    <- renderPlot(plot_best(summ()))
+  output$p_diff    <- renderPlot(plot_diff(draws(), summ()))
+  output$p_group   <- renderPlot(plot_group(draws(), hh_input()))
+  
+  output$summary_table <- renderTable({
+    s <- summ()
+    tibble(Service = svc_name[s$service],
+           `Predicted reentry` = pct(s$mean, 1),
+           `95% interval` = paste0(pct(s$lo, 1), " to ", pct(s$hi, 1)),
+           `Chance it is best` = pct(s$p_best),
+           `Approx. cost per household` = paste0("$", formatC(s$cost, format = "d", big.mark = ",")))
+  }, align = "lrrrr")
+  
+  output$about <- renderUI(HTML("
+    <h4>What the app does</h4>
+    <p>A BART model was fit once to 10,043 synthetic households. For the household you describe, the app sets the
+    <i>service</i> to each option in turn and asks the model for 1,000 plausible reentry probabilities (posterior draws).
+    Everything on screen summarizes those draws.</p>
+    <h4>The recommendation</h4>
+    <p>The recommended service has the lowest average predicted reentry. The signal label reflects how often it is lowest across draws:
+    80% or more is a clear signal, 55-80% is leaning, below 55% is a toss-up.</p>
+    <h4>What the model cannot know</h4>
+    <ul>
+      <li>It adjusts only for the characteristics on this form (plus a few set to typical values). Unmeasured factors can bias the comparison.</li>
+      <li>BART shrinks subgroup differences toward the average, so real differences may be larger than shown.</li>
+      <li>Costs are rough averages implied by the paper's Table 3, and capacity limits are ignored.</li>
+      <li>Prevention is only compared for households marked eligible.</li>
+    </ul>"))
+}
+
+shinyApp(ui, server)
+```
+
+### Questions & Answers
+
+**1**. Click "Reset to defaults", then click "Single adult, health + substance". Which service does the app recommend, what is its predicted reentry, and how clear is it which service is most appropriate?
+
+**2.** Now click **"Family, not eligible"**. Is the recommended service the same as in Question 1? Name two household characteristics that differ between the two presets and that might explain the change.
+
+**3.** Click **"Family at risk (eligible)"**. Which service is recommended? Why is Homelessness Prevention shown for this household but not for the first two?
+
+**4.** Start from the "Single adult, health + substance" preset and change **one** thing (for example, turn off the drug abuse checkbox or raise income). Report what changed in the recommendation, the predicted reentry, and the "chance it is best."
+
+**5.** In the "Predicted reentry" table, pick one service and interpret its 95% interval in a sentence a program director would understand.
+
+**6.** Reset to default. Look at the density plot on the "Predicted reentry" tab. What does it mean when two curves overlap a lot?
+
+**7.** Explain the difference between "Predicted reentry" and "Chance it is best."
+
+8.Click "Single adult, health + substance." The app recommends Transitional Housing and shows a Cost note.
+
+a. In your own words, what does the cost note say?
+
+b. Using the table on the "Predicted reentry" tab, compare Transitional Housing with Rapid Re-Housing. How much more does TH cost per household, and how much lower is its predicted reentry?
+
+c. Suppose a program serves 100 households like this one. About how much extra would it spend on TH instead of RRH, and about how many fewer households would return to services? Divide to get the approximate cost per avoided reentry.
+
+d. Would you recommend the cheaper service? Explain using both the cost and the 95% interval for the difference (hint: look at the "Which is best?" tab).
+
+**9.** On the "Households like this" tab, compare the curve for your household with the group average. Why is the group curve narrower, and what does the dashed line at zero tell you?
