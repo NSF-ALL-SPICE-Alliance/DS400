@@ -1,0 +1,157 @@
+---
+title: "Spotify Hierarchical"
+format: html
+editor: visual
+---
+
+### Welcome
+
+Today we will continue building our knowledge of hierarchical models with some spotify data
+
+### Libraries
+
+```{r}
+library(tidyverse)
+library(bayesrules)
+library(ggpubr)
+library(rstanarm)
+library(tidybayes)
+library(broom.mixed)
+```
+
+### Data
+
+```{r}
+spotify <- bayesrules::spotify
+```
+
+### Exploratory Data Viz
+
+```{r}
+?bayesrules::spotify
+```
+
+1.  What is the popularity distribution in this data. Is this typical for all spotify songs?
+
+```{r}
+
+```
+
+Lets frame it that you are a music agent and these are your clients, who tend to be fairly popular signed artists
+
+2.  How many artists are represented in this data?
+
+```{r}
+
+```
+
+3.  what is the distribution of popularity for each artist?
+
+```{r}
+
+```
+
+4.  is genre associated with popularity?
+
+```{r}
+
+```
+
+5.  is valence associated with popularity? (complete pooling)
+
+```{r}
+
+```
+
+6.  What does individual pooling look like?
+
+```{r}
+ggplot(spotify, aes(x = valence, y = popularity)) +
+  geom_smooth(aes(group = artist), method = "lm", se = FALSE,
+              linewidth = 0.4, color = "grey60") +
+  geom_smooth(method = "lm", se = FALSE, color = "blue", linewidth = 1.2) +
+  labs(title = "Popularity vs valence: one line per artist, pooled line in blue")
+```
+
+### Modeling
+
+#### Hierarchical model for valence
+
+```{r}
+spotify_valence_popularity_model <- stan_glmer(
+  popularity ~ valence + (1 | artist),
+  data = spotify, family = gaussian,
+  prior_intercept = normal(50, 2.5, autoscale = TRUE),
+  prior = normal(0, 2.5, autoscale = TRUE),
+  prior_aux = exponential(1, autoscale = TRUE),
+  prior_covariance = decov(reg = 1, conc = 1, shape = 1, scale = 1),
+  chains = 4, iter = 5000*2, seed = 84735)
+```
+
+| Piece | What it does |
+|------------------------------------|------------------------------------|
+| `stan_glmer(...)` | Fits a Bayesian multilevel (mixed-effects) regression with Stan, from the `rstanarm` package. |
+| `popularity ~ valence` | The fixed part: popularity changes linearly with valence, with one shared slope β₁ for all artists. |
+| `+ (1 | artist)` | The random intercept. Each artist gets their own baseline shift b₀ⱼ, drawn from a common distribution with SD σ₀. The `1` means intercept only. `(valence | artist)` would also give each artist their own valence slope. |
+| `data = spotify` | The dataset. |
+| `family = gaussian` | The likelihood: individual popularity scores are normally distributed around the line, with SD σ_y. |
+| `prior_intercept = normal(50, 2.5, autoscale = TRUE)` | The prior on the average intercept: centered at 50, meaning you expect a typical song to be around 50. |
+| `prior = normal(0, 2.5, autoscale = TRUE)` | The prior on the valence slope: centered at 0, meaning “no relationship until the data say otherwise.” |
+| `prior_aux = exponential(1, autoscale = TRUE)` | The prior on σ_y, the song-to-song noise left after accounting for artist and valence. An exponential favors smaller values. |
+| `prior_covariance = decov(...)` | The prior on how much artists differ (σ₀). |
+| `chains = 4, iter = 5000*2, seed = 84735` | Four independent MCMC chains of 10,000 iterations each. The first half of each chain is discarded as warmup, leaving 5,000 draws per chain and 20,000 in total. The seed makes the run reproducible. |
+
+note: **`autoscale = TRUE` changes what the `2.5` means.** It is not “2.5 points.” With autoscaling, `rstanarm` rescales the prior to the data. The intercept prior’s SD becomes 2.5 times the SD of popularity, and the slope prior’s SD becomes 2.5 times SD(popularity)/SD(valence). With popularity’s SD around 20 (from the variance estimates I computed earlier), these priors are very wide, so they are weakly informative.
+
+Summarize model
+
+```{r}
+tidy_summary_1 <- tidy(spotify_valence_popularity_model, effects = "fixed",
+                       conf.int = TRUE, conf.level = 0.80)
+tidy_summary_1
+```
+
+Comparing songs by the same artist, happier-sounding songs tend to be slightly more popular, but the effect is small and uncertain. Valence is not a strong predictor for popularity
+
+#### Hierarchical model for appearance on curated playlists
+
+```{r}
+set.seed(84735)
+
+# playlist "culture" differs by genre: more niche playlists for genres with lower average popularity
+genre_base <- c(edm = 20, rock = 16, rap = 14, pop = 10, latin = 9, `r&b` = 8)
+
+spotify <- spotify %>%
+  group_by(artist) %>%
+  mutate(artist_mean_pop = mean(popularity),
+         artist_genre    = names(which.max(table(genre)))) %>%   # each artist's main genre
+  ungroup() %>%
+  mutate(n_playlists = round(unname(genre_base[artist_genre]) +            # between artists: genre culture
+                               0.15 * (popularity - artist_mean_pop) +       # within artist: more popular song, more playlists
+                               rnorm(n(), 0, 3.5)),                          # noise
+         n_playlists = pmax(n_playlists, 0)) %>%
+  select(-artist_mean_pop, -artist_genre)
+```
+
+ggplot with Frequentist correlation coefficient and p values
+
+```{r}
+ggplot(spotify, aes(x = n_playlists, y = popularity)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  stat_cor()
+```
+
+interpret p value: A p-value of 0.45 means that if there were truly no linear relationship, you would see a sample correlation at least as far from zero as yours about 45% of the time. That is entirely ordinary, so there is no evidence against “no relationship.”
+
+Your turn: Create the hierarchical model for n_playlists as a predictor, accounting for each artist having different levels of popularity, and summarize the outputs of the model in words
+
+- Keep priors & mcmc parameters the same as our previous model
+
+```{r}
+
+```
+
+```{r}
+
+```
